@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     Conditions: [
       ["content-length-range", 0, 1048576], // up to 1 MB
     ],
+    ACL: "public-read",
   });
 
   res.status(200).json(post);
