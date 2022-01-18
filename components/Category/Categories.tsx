@@ -18,7 +18,6 @@ const Categories = () => {
   const { data, error } = useSWR<swrReturnValue>("/api/get-category", fetcher);
 
   const categories = data?.categories;
-  console.log(categories);
 
   return (
     <div>
@@ -38,5 +37,16 @@ const Categories = () => {
     </div>
   );
 };
+
+export async function getStaticProps() {
+  const data = await axios.get("/api/get-category");
+  return {
+    props: {
+      fallback: {
+        "/api/get-category": data,
+      },
+    },
+  };
+}
 
 export default Categories;
