@@ -1,3 +1,4 @@
+import Link from "next/link";
 import SearchBar from "./SearchBar";
 
 const NavBar = () => {
@@ -37,7 +38,9 @@ const NavBar = () => {
           </div>
         </div>
         <div className="flex items-center py-4">
-          <h1 className="pr-4 text-2xl text-black">Recoverly</h1>
+          <div className="pr-4 text-2xl text-black">
+            <Link href={"/"}>Recoverly</Link>
+          </div>
 
           <SearchBar />
         </div>

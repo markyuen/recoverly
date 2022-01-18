@@ -8,3 +8,11 @@ export const capitaliseFirstLetterOfString = (s) => {
     .map((item) => capitalizeFirstLetter(item))
     .join(" ");
 };
+
+export const lowercaseAllLetter = (s) => {
+  return s.map((item) => item.toLowerCase()).join("-");
+};
+
+export const generateItemSlugLink = (itemTitle) => {
+  return lowercaseAllLetter(itemTitle.split(" "));
+};

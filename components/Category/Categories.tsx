@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "../../lib/swr";
+import Header from "../Common/Header";
 import CategoryCard from "./CategoryCard";
 
 type CategoryData = {
@@ -14,12 +15,9 @@ type CategoriesProp = {
 };
 
 const Categories = ({ categories }: CategoriesProp) => {
-  console.log(categories);
   return (
     <div>
-      <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-black">
-        Categories
-      </h1>
+      <Header name="Categories" />
       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
         {categories &&
           categories.map((item, index) => {

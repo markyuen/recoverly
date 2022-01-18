@@ -10,7 +10,9 @@ export default function ShopNav({ children }) {
     <>
       <div className="min-h-full">
         <NavBar />
-        <div className="max-w-4xl xl:max-w-6xl mx-auto mt-8">{children}</div>
+        <div className="max-w-4xl px-4 xl:max-w-6xl mx-auto mt-8">
+          {children}
+        </div>
         <Footer />
       </div>
     </>
