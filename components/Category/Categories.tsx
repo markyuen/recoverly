@@ -9,16 +9,12 @@ type CategoryData = {
   image_url: string;
 };
 
-type swrReturnValue = {
+type CategoriesProp = {
   categories: CategoryData[];
-  message: string;
 };
 
-const Categories = () => {
-  const { data, error } = useSWR<swrReturnValue>("/api/get-category", fetcher);
-
-  const categories = data?.categories;
-
+const Categories = ({ categories }: CategoriesProp) => {
+  console.log(categories);
   return (
     <div>
       <h1 className="text-5xl pt-4 px-2 md:px-0 font-bold text-black">
@@ -37,16 +33,5 @@ const Categories = () => {
     </div>
   );
 };
-
-export async function getStaticProps() {
-  const data = await axios.get("/api/get-category");
-  return {
-    props: {
-      fallback: {
-        "/api/get-category": data,
-      },
-    },
-  };
-}
 
 export default Categories;
