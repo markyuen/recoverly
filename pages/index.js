@@ -1,11 +1,12 @@
 import React from "react";
 
 // Import Components
+import Categories from "../components/Category/Categories";
 
 const Index = () => {
   return (
     <>
-      <h1 className="text-4xl pt-4 font-bold text-black">Categories</h1>
+      <Categories />
     </>
   );
 };

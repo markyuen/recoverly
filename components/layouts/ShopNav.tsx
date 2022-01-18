@@ -1,6 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 
 import { Disclosure, Menu, Transition } from "@headlessui/react";
+import Footer from "../footer/FooterContainer";
 
 import NavBar from "../nav/NavBar";
 
@@ -9,7 +10,8 @@ export default function ShopNav({ children }) {
     <>
       <div className="min-h-full">
         <NavBar />
-        <div className="mx-auto max-w-6xl">{children}</div>
+        <div className="max-w-4xl xl:max-w-6xl mx-auto mt-8">{children}</div>
+        <Footer />
       </div>
     </>
   );

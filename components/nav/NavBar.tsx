@@ -3,7 +3,7 @@ import SearchBar from "./SearchBar";
 const NavBar = () => {
   return (
     <div className="bg-gray-100 py-10 ">
-      <div className="mx-auto max-w-6xl px-4">
+      <div className="mx-auto max-w-4xl xl:max-w-6xl px-4">
         <div className="flex justify-between  text-gray-600 text-xs">
           <div className="flex items-center">
             <svg
