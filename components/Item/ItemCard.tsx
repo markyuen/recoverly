@@ -2,19 +2,7 @@ import React from "react";
 import Image from "next/image";
 import LinkContainer from "../Common/LinkContainer";
 import { generateItemSlugLink } from "../../lib/string";
-
-type ItemProp = {
-  category: string;
-  description: string;
-  id: number;
-  image: string;
-  price: number;
-  title: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-};
+import { ItemProp } from "../../types/items";
 
 type ItemCardProp = {
   item: ItemProp;
