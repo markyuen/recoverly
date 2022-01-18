@@ -17,7 +17,7 @@ const Categories = ({ categories }: CategoriesProp) => {
   console.log(categories);
   return (
     <div>
-      <h1 className="text-5xl pt-4 px-2 md:px-0 font-bold text-black">
+      <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-black">
         Categories
       </h1>
       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
