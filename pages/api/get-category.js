@@ -1,6 +1,3 @@
-// import dbConnect from "../../lib/db";
-// import Category from "../../models/Category";
-
 const categories = [
   "apparel",
   "consumer electronics",
@@ -26,11 +23,4 @@ export default async function handler(req, res) {
     message: "ok",
     categories: category_and_link,
   });
-  // await dbConnect();
-  // try {
-  //   const Categories = await Category.find({});
-  //   res.status(200).json({ success: true, data: users });
-  // } catch (error) {
-  //   res.status(400).json({ success: false });
-  // }
 }
