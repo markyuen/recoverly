@@ -15,13 +15,13 @@ type CategoryProps = {
 
 const Category = ({ items }) => {
   const router = useRouter();
-  const id = router.query.id as string;
-  const name = id
-    .split("-")
-    .map((item) => capitalizeFirstLetter(item))
-    .join(" ");
 
-  console.log(items);
+  const id = router.query.id as string;
+  const name = "";
+  // id
+  //   .split("-")
+  //   .map((item) => capitalizeFirstLetter(item))
+  //   .join(" ");
 
   return (
     <>
@@ -50,6 +50,7 @@ export async function getStaticPaths() {
       },
     };
   });
+
   return {
     paths,
     fallback: true, // false or 'blocking'

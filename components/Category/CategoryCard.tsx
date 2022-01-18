@@ -16,7 +16,10 @@ const CategoryCard = ({ name, image_url }: CategoryCardProps) => {
     .join("-");
 
   const handleClick = () => {
-    router.push(`/category/${slug}`);
+    router.push({
+      pathname: "/category/[pid]",
+      query: { pid: slug },
+    });
   };
   return (
     <div

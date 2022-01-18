@@ -3,6 +3,7 @@ export const capitalizeFirstLetter = (s) => {
 };
 
 export const capitaliseFirstLetterOfString = (s) => {
+  if (!s) return "";
   return s
     .split(" ")
     .map((item) => capitalizeFirstLetter(item))
