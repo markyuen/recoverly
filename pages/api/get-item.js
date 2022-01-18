@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { store } from "../../data/store";
 export default async function handler(req, res) {
   const data = getCategoryItems();
 
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 }
 
 export const getItem = async (id) => {
-  const items = await axios.get(process.env.NEXT_PUBLIC_DB_PRODUCTS_API);
+  const items = { data: store };
 
   return items.data.filter((item) => item.id === parseInt(id));
 };

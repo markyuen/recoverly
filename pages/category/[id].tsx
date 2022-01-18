@@ -16,12 +16,13 @@ type CategoryProps = {
 const Category = ({ items }) => {
   const router = useRouter();
 
-  const id = router.query.id as string;
-  const name = "";
-  // id
-  //   .split("-")
-  //   .map((item) => capitalizeFirstLetter(item))
-  //   .join(" ");
+  const id = router.query["id"] as string;
+  const name = id
+    ? id
+        .split("-")
+        .map((item) => capitalizeFirstLetter(item))
+        .join(" ")
+    : "";
 
   return (
     <>

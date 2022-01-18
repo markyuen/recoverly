@@ -13,12 +13,12 @@ const ItemCard = ({ item }: ItemCardProp) => {
 
   return (
     <LinkContainer href={`/product/${id}`}>
-      <div className="card flex flex-col justify-center ">
+      <div className="card flex flex-col justify-center cursor-pointer px-2">
         <div className="px-4 py-10 mx-auto">
           <Image src={image} width={200} height={200} alt={title} />
         </div>
-        <p className="text-md uppercase text-gray-900 font-bold">{title}</p>
-        <p className="text-sm text-left">{price}</p>
+        <p className="text-md text-gray-900 font-bold">{title}</p>
+        <p className="text-sm text-left">${price}</p>
       </div>
     </LinkContainer>
   );
