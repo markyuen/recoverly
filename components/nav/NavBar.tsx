@@ -1,10 +1,43 @@
 import Link from "next/link";
 import InternalLink from "../Common/Link";
 import SearchBar from "./SearchBar";
+import { useUser } from '@auth0/nextjs-auth0';
+import Layout from '../layouts/layout'
 
 const NavBar = () => {
+  const { user, error, isLoading } = useUser();
+
   return (
-    <div className="bg-gray-100 py-10 ">
+    <Layout>
+      <h1>Next.js and Auth0 Example</h1>
+
+      {isLoading && <p>Loading login info...</p>}
+
+      {error && (
+        <>
+          <h4>Error</h4>
+          <pre>{error.message}</pre>
+        </>
+      )}
+
+      {user && (
+        <>
+          <h4>Logged in, go to Protected page to view info.</h4>
+        </>
+      )}
+
+      {!isLoading && !error && !user && (
+        <>
+          <p>
+            To test the login click in <i>Login</i>
+          </p>
+          <p>
+            Once you have logged in you should be able to click in <i>Protected Page</i> and <i>Logout</i>
+          </p>
+        </>
+      )}
+
+<div className="bg-gray-100 py-10 ">
       <div className="mx-auto max-w-4xl xl:max-w-6xl px-4">
         <div className="flex justify-between  text-gray-600 text-xs">
           <div className="flex items-center">
@@ -51,7 +84,8 @@ const NavBar = () => {
         </div>
       </div>
     </div>
-  );
+    </Layout>
+  )
 };
 
 export default NavBar;
