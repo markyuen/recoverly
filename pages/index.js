@@ -4,11 +4,14 @@ import React from "react";
 // Import Components
 import Categories from "../components/Category/Categories";
 import { getCategories } from "./api/get-category";
+import ShopNav from "../components/layouts/ShopNav";
 
 const Index = ({ categories }) => {
   return (
     <>
-      <Categories categories={categories} />
+      <ShopNav>
+        <Categories categories={categories} />
+      </ShopNav>
     </>
   );
 };

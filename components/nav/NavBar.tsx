@@ -1,4 +1,5 @@
 import Link from "next/link";
+import InternalLink from "../Common/Link";
 import SearchBar from "./SearchBar";
 
 const NavBar = () => {
@@ -24,8 +25,8 @@ const NavBar = () => {
             <span className="px-2 flex items-center"> +65 1234-1234</span>
           </div>
           <div className="flex items-center justify-center">
-            <span className="px-2">Login</span>
-            <span className="px-2">Sign Up</span>
+            <InternalLink href="/login" name="Login" styling="px-2" />
+            <InternalLink href="/sign-up" name="Sign Up" styling="px-2" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 mx-2"

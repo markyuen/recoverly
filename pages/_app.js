@@ -1,11 +1,9 @@
-import '../styles/global.css'
+import "../styles/global.css";
 
-import ShopNav from '../components/layouts/ShopNav'
+import ShopNav from "../components/layouts/ShopNav";
 
 function MyApp({ Component, pageProps }) {
-  return <ShopNav>
-  <Component {...pageProps} />
-  </ShopNav>
+  return <Component {...pageProps} />;
 }
 
-export default MyApp
+export default MyApp;

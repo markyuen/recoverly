@@ -1,7 +1,7 @@
 import React from "react";
-
+import ShopNav from "../components/layouts/ShopNav";
 const Brands = () => {
-  return <div>Brands</div>;
+  return <ShopNav>Brands</ShopNav>;
 };
 
 export default Brands;
