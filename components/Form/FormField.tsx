@@ -9,10 +9,10 @@ type FormFieldProps = {
 const FormField = ({ item, register }: FormFieldProps) => {
   const { name, config, type } = item;
   return (
-    <div>
+    <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
       <label
         htmlFor={name}
-        className="block text-sm my-2 font-medium text-gray-700"
+        className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"
       >
         {name}
       </label>
@@ -22,7 +22,7 @@ const FormField = ({ item, register }: FormFieldProps) => {
           name={name}
           type={type}
           autoComplete={name}
-          className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          className="flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
           {...register(name)}
           placeholder={name}
           {...config}
