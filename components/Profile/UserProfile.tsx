@@ -1,9 +1,8 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 import React, { useState } from "react";
-import { FieldData } from "../../types/form";
-import FormContainer from "../Form/FormContainer";
 import FormInput from "../Form/FormInput";
+import { uploadProfileImage } from "../../lib/s3";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -32,30 +31,7 @@ const UserProfile = () => {
   const uploadImage = async () => {
     const extension = profileImage.name.split(".").pop();
     const fileName = `profile-image-${nickname}.${extension}`;
-    console.log(fileName);
-    const filename = encodeURIComponent(fileName);
-    const res = await fetch(`/api/upload-url?file=${filename}`);
-    const { url, fields } = await res.json();
-    const formData = new FormData();
-
-    Object.entries({ ...fields, file: profileImage }).forEach(
-      ([key, value]) => {
-        formData.append(key, value);
-      }
-    );
-
-    const upload = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-
-    console.log(upload);
-
-    if (upload.ok) {
-      console.log("Uploaded successfully!");
-    } else {
-      console.error("Upload failed.");
-    }
+    uploadProfileImage(fileName, profileImage);
   };
 
   const handleSubmit = (e) => {
