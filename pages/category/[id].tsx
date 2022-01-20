@@ -8,6 +8,7 @@ import { capitalizeFirstLetter } from "../../lib/string";
 import { getCategoryItems } from "../api/get-category-items";
 import { getCategories } from "../api/get-category";
 import ItemCard from "../../components/Item/ItemCard";
+import ShopNav from "../../components/layouts/ShopNav";
 
 type CategoryProps = {
   items: any[];
@@ -25,7 +26,7 @@ const Category = ({ items }) => {
     : "";
 
   return (
-    <>
+    <ShopNav>
       <InternalLink
         name="← View All Categories"
         href="/"
@@ -38,7 +39,7 @@ const Category = ({ items }) => {
             return <ItemCard key={index} item={item} />;
           })}
       </div>
-    </>
+    </ShopNav>
   );
 };
 
