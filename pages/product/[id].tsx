@@ -6,6 +6,7 @@ import { getItem } from "../api/get-item";
 import Image from "next/image";
 import InternalLink from "../../components/Common/Link";
 import ShopNav from "../../components/layouts/ShopNav";
+import QuantityButton from "../../components/Product/QuantityButton";
 
 type ProductProps = {
   data: ItemProp;
@@ -41,12 +42,7 @@ const Product = ({ data }: ProductProps) => {
           <div className="w-full md:w-1/2 px-10">
             <h1 className="text-xl font-bold">{title}</h1>
             <p className="text-sm">SGD$ {price}</p>
-            <button
-              type="button"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Add To Cart
-            </button>
+            <QuantityButton data={data} />
           </div>
         </div>
       </div>
