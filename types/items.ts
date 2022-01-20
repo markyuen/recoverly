@@ -10,3 +10,7 @@ export type ItemProp = {
     count: number;
   };
 };
+
+export interface CartItem extends ItemProp {
+  quantity: number;
+}

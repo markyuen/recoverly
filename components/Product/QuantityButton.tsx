@@ -6,13 +6,14 @@ type QuantityButtonProps = {
   data: ItemProp;
 };
 
-const QuantityButton = (data) => {
+const QuantityButton = ({ data }) => {
   const { addToCart, getCurrentCount, removeFromCart } = useCart();
 
   const addOne = () => {
     addToCart(data, 1);
   };
 
+  // How to save cart data in between refreshes
   const removeOne = () => {
     switch (getCurrentCount(data.id)) {
       case 0:
