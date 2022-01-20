@@ -1,13 +1,15 @@
 import "../styles/global.css";
-import { UserProvider } from '@auth0/nextjs-auth0';
+import { UserProvider } from "@auth0/nextjs-auth0";
 
-import ShopNav from "../components/layouts/ShopNav";
+import { CartWrapper } from "../context/CartContext";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <UserProvider>
-      <Component {...pageProps} />;
-    </UserProvider>
+    <CartWrapper>
+      <UserProvider>
+        <Component {...pageProps} />;
+      </UserProvider>
+    </CartWrapper>
   );
 }
 
