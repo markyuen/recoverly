@@ -22,17 +22,17 @@ const Header = () => {
           {user ? (
             <>
               <li>
-                <a href="/api/auth/logout" data-testid="logout">
+                <Link href="/api/auth/logout" data-testid="logout">
                   Logout
-                </a>
+                </Link>
               </li>
             </>
           ) : (
             <>
               <li>
-                <a href="/api/auth/login" data-testid="login">
+                <Link href="/api/auth/login" data-testid="login">
                   Login
-                </a>
+                </Link>
               </li>
             </>
           )}

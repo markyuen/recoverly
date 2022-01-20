@@ -32,7 +32,7 @@ export default function Upload() {
         type="file"
         accept="image/png, image/jpeg"
       />
-      <img src="https://recoverly-images.s3.ap-southeast-1.amazonaws.com/Screenshot+2021-11-15+at+10.18.09+PM.png" />
+      <img src="https://recoverly-images.s3.ap-southeast-1.amazonaws.com/Screenshot+2021-11-15+at+10.18.09+PM.png" alt="Upload an image." />
     </>
   );
 }
