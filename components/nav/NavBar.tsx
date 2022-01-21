@@ -39,6 +39,11 @@ const NavBar = () => {
               ) : (
                 <>
                   <InternalLink
+                    href="/admin"
+                    name="Admin Panel"
+                    styling="px-2"
+                  />
+                  <InternalLink
                     href="/account"
                     name="Your Account"
                     styling="px-2"
