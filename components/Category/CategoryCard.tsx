@@ -23,7 +23,7 @@ const CategoryCard = ({ name, image_url }: CategoryCardProps) => {
   };
   return (
     <div
-      id="category test"
+      id="category"
       onClick={handleClick}
       className="transition ease-in-out delay-50 duration-300 cursor-pointer hover:shadow-md py-4 px-4 hover: flex flex-col items-center justify-center"
     >
