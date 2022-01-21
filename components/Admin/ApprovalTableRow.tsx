@@ -19,7 +19,6 @@ const ApprovalTableRow = ({ seller }: ApprovalTableRowProps) => {
     if (status == newStatus) {
       alert("No changes made. Please select a new status.");
     }
-    console.log("-----UPDATING STATUS-----");
   };
 
   return (
