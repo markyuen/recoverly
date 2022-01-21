@@ -1,9 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { ItemProp } from "../types/items";
-
-interface CartItem extends ItemProp {
-  quantity: number;
-}
+import { ItemProp, CartItem } from "../types/items";
 
 type CartContext = {
   cartItems: CartItem[];
@@ -30,6 +26,7 @@ export function CartWrapper({ children }) {
         })
       );
     } else {
+      console.log({ ...item, quantity: 1 });
       setCartItems([...cartItems, { ...item, quantity: 1 }]);
 
       const existingIds = { ...existingCartIds };
