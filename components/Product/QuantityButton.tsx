@@ -6,7 +6,12 @@ type QuantityButtonProps = {
   data: ItemProp;
 };
 
-const QuantityButton = ({ data }) => {
+const iconSize = {
+  small: "h-6 w-6 cursor-pointer",
+  medium: "h-8 w-8 cursor-pointer",
+};
+
+const QuantityButton = ({ data, size = "medium" }) => {
   const { addToCart, getCurrentCount, removeFromCart } = useCart();
 
   const addOne = () => {
@@ -28,10 +33,10 @@ const QuantityButton = ({ data }) => {
   };
 
   return (
-    <div className="flex items-center mt-4">
+    <div className="flex items-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-10 w-10 cursor-pointer"
+        className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
         onClick={removeOne}
@@ -45,7 +50,7 @@ const QuantityButton = ({ data }) => {
       <p className="px-2 text-md">{getCurrentCount(data.id)}</p>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-10 w-10 cursor-pointer"
+        className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
         onClick={addOne}

@@ -16,8 +16,6 @@ export function CartWrapper({ children }) {
 
   const addToCart = (item, quantity) => {
     //  Exists in Cart
-    // TODO: Fix bug with adding to cart ( Item becomes data: {id: 2, title: 'Mens Casual Premium Slim Fit T-Shirts ', price: 22.3, description: 'Slim-fitting style, contrast raglan long sleeve, t…e round neckline includes a three-button placket.', category: "men's clothing", …}
-    //  quantity: 3)
     if (existingCartIds[item.id]) {
       setCartItems((cartItems) =>
         cartItems.map((prevItem) => {
