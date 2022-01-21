@@ -13,7 +13,10 @@ const ItemCard = ({ item }: ItemCardProp) => {
 
   return (
     <LinkContainer href={`/product/${id}`}>
-      <div className="card flex flex-col justify-center cursor-pointer px-2">
+      <div
+        id="category-item"
+        className="card flex flex-col justify-center cursor-pointer px-2"
+      >
         <div className="px-4 py-10 mx-auto">
           <Image src={image} width={200} height={200} alt={title} />
         </div>

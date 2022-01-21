@@ -6,13 +6,13 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ChakraProvider>
-      <CartWrapper>
-        <UserProvider>
-          <Component {...pageProps} />;
-        </UserProvider>
-      </CartWrapper>
-    </ChakraProvider>
+    <UserProvider>
+      <ChakraProvider>
+        <CartWrapper>
+          <Component {...pageProps} />
+        </CartWrapper>
+      </ChakraProvider>
+    </UserProvider>
   );
 }
 

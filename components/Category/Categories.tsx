@@ -24,7 +24,12 @@ const Categories = ({ categories }: CategoriesProp) => {
             const { name, image_url } = item;
 
             return (
-              <CategoryCard key={index} name={name} image_url={image_url} />
+              <CategoryCard
+                id="category"
+                key={index}
+                name={name}
+                image_url={image_url}
+              />
             );
           })}
       </div>

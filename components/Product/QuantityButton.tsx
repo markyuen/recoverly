@@ -1,6 +1,9 @@
+import { useUser } from "@auth0/nextjs-auth0";
+import { Router, useRouter } from "next/router";
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import { ItemProp } from "../../types/items";
+import { useToast } from "@chakra-ui/react";
 
 type QuantityButtonProps = {
   data: ItemProp;
@@ -13,13 +16,40 @@ const iconSize = {
 
 const QuantityButton = ({ data, size = "medium" }) => {
   const { addToCart, getCurrentCount, removeFromCart } = useCart();
+  const { user } = useUser();
+  const router = useRouter();
+  const toast = useToast();
+
+  const checkForUser = () => {
+    if (!user) {
+      toast({
+        position: "top",
+        title: "Authorization Error",
+        description:
+          "Please login to add items to cart, redirecting to login now.",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+      router.push("/api/auth/login");
+      return false;
+    }
+    return true;
+  };
 
   const addOne = () => {
+    if (!checkForUser()) {
+      return;
+    }
+
     addToCart(data, 1);
   };
 
   // How to save cart data in between refreshes
   const removeOne = () => {
+    if (!checkForUser()) {
+      return;
+    }
     switch (getCurrentCount(data.id)) {
       case 0:
         return;
