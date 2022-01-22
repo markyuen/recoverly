@@ -25,9 +25,6 @@ export default async function handler(req, res) {
   if (errors) {
     res.status(400).json({ message: "Error Encountered", error: errors });
   }
-
-  console.log(data);
-
   res.status(200).json({
     ...data.data,
   });

@@ -4,10 +4,12 @@ import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import Header from "../Common/Header";
 import CategoryCard from "./CategoryCard";
-import { getProducts } from "../../queries/getProducts";
+import { getCategories } from "../../queries/getCategories";
+import { Skeleton } from "@chakra-ui/react";
+import SkeletonGrid from "../Skeleton/SkeletonGrid";
 
 type CategoryData = {
-  name: string;
+  category_name: string;
   image_url: string;
 };
 
@@ -18,25 +20,41 @@ type CategoriesProp = {
 const Categories = ({ categories }: CategoriesProp) => {
   const { data, error } = useSWR(
     [
-      "/api/graphql/getProducts",
+      "/api/graphql/getCategories",
       {
-        query: getProducts,
+        query: getCategories,
       },
     ],
     fetcherWithBody
   );
 
+  if (!data && !error) {
+    return (
+      <div>
+        <Header name="Categories" />
+        <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
+          <SkeletonGrid count={8} />
+        </div>
+      </div>
+    );
+  }
+
+  console.log(data.category);
+
   return (
     <div>
       <Header name="Categories" />
-      {!data ? <div>Loading Query</div> : <div>Data Loaded</div>}
       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
-        {categories &&
-          categories.map((item, index) => {
-            const { name, image_url } = item;
+        {data.category &&
+          data.category.map((item, index) => {
+            const { category_name, image_url } = item;
 
             return (
-              <CategoryCard key={index} name={name} image_url={image_url} />
+              <CategoryCard
+                key={index}
+                name={category_name}
+                image_url={image_url}
+              />
             );
           })}
       </div>
