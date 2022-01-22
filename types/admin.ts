@@ -9,7 +9,4 @@ export type product_category = {
   category_id: number;
   category_name: string;
   image_url: null | string;
-  // categorryname: string;
-  // image_url: string;
-  // parent: number;
 };

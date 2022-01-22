@@ -2,7 +2,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 import React, { useState } from "react";
 import FormInput from "../Form/FormInput";
-import { uploadProfileImage } from "../../lib/s3";
+import { updateImage } from "../../lib/s3";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -22,7 +22,7 @@ const UserProfile = () => {
     setUserData(newUserData);
   };
 
-  const updateImage = (e) => {
+  const updateLocalImage = (e) => {
     const filename = URL.createObjectURL(e.target.files[0]);
     setUserData({ ...userData, picture: filename });
     setProfileImage(e.target.files[0]);
@@ -31,7 +31,8 @@ const UserProfile = () => {
   const uploadImage = async () => {
     const extension = profileImage.name.split(".").pop();
     const fileName = `profile-image-${nickname}.${extension}`;
-    uploadProfileImage(fileName, profileImage);
+    //TODO: Add some chained toasts for this
+    updateImage(profileImage, fileName, fileName);
   };
 
   const handleSubmit = (e) => {
@@ -80,7 +81,7 @@ const UserProfile = () => {
                   </span>
                   <input
                     className="ml-5 bg-white py-2 px-3  text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    onChange={updateImage}
+                    onChange={updateLocalImage}
                     type="file"
                     accept="image/png, image/jpeg"
                   />
