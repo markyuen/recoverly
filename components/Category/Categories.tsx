@@ -39,8 +39,6 @@ const Categories = ({ categories }: CategoriesProp) => {
     );
   }
 
-  console.log(data.category);
-
   return (
     <div>
       <Header name="Categories" />
