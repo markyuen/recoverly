@@ -74,6 +74,17 @@ const AddNewCategoryModal = ({ categories }: NewCategoryProps) => {
   const submitNewCategory = (e) => {
     e.preventDefault();
 
+    if (parent === "" && !imageFile) {
+      toast({
+        title: "Invalid Input",
+        description: "Cover image required for main categories",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
+
     updateImage(imageFile, null, generateItemSlugLink(categoryName))
       .then((url) => {
         return fetcherWithBody(`/api/graphql/insertNewCategory`, {
