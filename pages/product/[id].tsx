@@ -25,6 +25,7 @@ const Product = ({ data }: ProductProps) => {
     <ShopNav>
       <div className="w-full max-w-4xl rounded   mx-auto text-gray-800 relative md:text-left">
         <InternalLink
+          type="customer"
           name="← View All Categories"
           href="/"
           styling="cursor-pointer text-blue-400 hover:underline transition duration-75 mb-10"

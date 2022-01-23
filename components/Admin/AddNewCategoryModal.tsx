@@ -20,7 +20,7 @@ import { insertNewCategory } from "../../queries/insertNewCategory";
 import { fetcherWithBody } from "../../lib/swr";
 import { generateItemSlugLink } from "../../lib/string";
 import { getCategoriesAndParent } from "../../queries/getCategoriesAndParent";
-import { useGraphQLQuery } from "../../hooks/useGraphQLQuery";
+import useGraphQLQuery from "../../hooks/useQuery";
 
 type NewCategoryProps = {
   categories: product_category[];

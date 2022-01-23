@@ -28,6 +28,7 @@ const Category = ({ items }) => {
   return (
     <ShopNav>
       <InternalLink
+        type="customer"
         name="← View All Categories"
         href="/"
         styling="px-2 cursor-pointer text-blue-400 hover:underline transition duration-75"

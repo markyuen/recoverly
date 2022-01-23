@@ -1,7 +1,6 @@
 import React from "react";
 import ApprovalTable from "../components/Admin/ApprovalTable";
 import CategoryTable from "../components/Admin/CategoryTable";
-import Header from "../components/Common/Header";
 import ShopNav from "../components/layouts/ShopNav";
 import ProtectedRoute from "../components/route/ProtectedRoute";
 
@@ -15,5 +14,14 @@ const Admin = () => {
     </ProtectedRoute>
   );
 };
+
+export async function getStaticProps(context) {
+  return {
+    props: {
+      protected: true,
+      userTypes: ["admin"],
+    },
+  };
+}
 
 export default Admin;

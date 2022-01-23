@@ -18,8 +18,6 @@ const CategoryTable = () => {
     fetcherWithBody
   );
 
-  console.log(data);
-
   return (
     <>
       {data && data.category && (

@@ -35,6 +35,7 @@ const NavBar = () => {
                   href="/api/auth/login"
                   name="Login/Signup"
                   styling="px-2"
+                  type="customer"
                 />
               ) : (
                 <>
