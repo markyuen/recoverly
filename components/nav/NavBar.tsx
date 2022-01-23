@@ -35,6 +35,7 @@ const NavBar = () => {
                   href="/api/auth/login"
                   name="Login/Signup"
                   styling="px-2"
+                  type="customer"
                 />
               ) : (
                 <>
@@ -42,16 +43,19 @@ const NavBar = () => {
                     href="/admin"
                     name="Admin Panel"
                     styling="px-2"
+                    type="admin"
                   />
                   <InternalLink
                     href="/account"
                     name="Your Account"
                     styling="px-2"
+                    type="customer"
                   />
                   <InternalLink
                     href="/api/auth/logout"
                     name="Sign Out"
                     styling="px-2"
+                    type="customer"
                   />
                 </>
               )}

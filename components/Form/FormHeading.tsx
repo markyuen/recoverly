@@ -18,6 +18,7 @@ const FormHeading = ({
       <p className="mt-2 flex  items-center text-sm text-gray-600">
         Or{" "}
         <InternalLink
+          type="customer"
           name={subtitle}
           href={subtitle_link}
           styling="ml-1 font-medium text-indigo-600 hover:text-indigo-500"

@@ -9,7 +9,6 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-
 import { useDisclosure } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { mutate } from "swr";
@@ -21,6 +20,7 @@ import { insertNewCategory } from "../../queries/insertNewCategory";
 import { fetcherWithBody } from "../../lib/swr";
 import { generateItemSlugLink } from "../../lib/string";
 import { getCategoriesAndParent } from "../../queries/getCategoriesAndParent";
+import useGraphQLQuery from "../../hooks/useQuery";
 
 type NewCategoryProps = {
   categories: product_category[];
@@ -28,6 +28,7 @@ type NewCategoryProps = {
 
 const AddNewCategoryModal = ({ categories }: NewCategoryProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { makeGraphQLRequest } = useGraphQLQuery();
   const toast = useToast();
   const [categoryName, setCategoryName] = useState("");
   const [parent, setParent] = useState("");
@@ -57,20 +58,6 @@ const AddNewCategoryModal = ({ categories }: NewCategoryProps) => {
     setCategoryName(e.target.value);
   };
 
-  const uploadImage = () => {
-    updateImage(imageFile, null).then((url) => {
-      fetcherWithBody(`/api/graphql/insertNewCategory`, {
-        query: insertNewCategory,
-        variables: {
-          category_id: categoryId,
-          category_name: categoryName,
-          image_url: url,
-          parent_id: parent === "" ? null : parseInt(parent),
-        },
-      });
-    });
-  };
-
   const submitNewCategory = (e) => {
     e.preventDefault();
 
@@ -85,62 +72,31 @@ const AddNewCategoryModal = ({ categories }: NewCategoryProps) => {
       return;
     }
 
-    updateImage(imageFile, null, generateItemSlugLink(categoryName))
-      .then((url) => {
-        return fetcherWithBody(`/api/graphql/insertNewCategory`, {
-          query: insertNewCategory,
-          variables: {
-            category_id: categoryId,
-            category_name: categoryName,
-            image_url: url,
-            parent_id: parent === "" ? null : parseInt(parent),
-          },
-        });
-      })
-      .then((res) => {
-        console.log(res);
-        if (!res || !res.insert_category_one) {
-          const errors = "Error: " + res.errors[0].message;
-          toast({
-            title: "Error Encountered",
-            description: errors,
-            status: "warning",
-            duration: 2000,
-            isClosable: true,
-          });
-        } else {
-          toast({
-            title: "Success!",
-            description: "We've succesfully updated category information.",
-            status: "success",
-            duration: 2000,
-            isClosable: true,
-          });
-          mutate(
-            [
-              "/api/graphql/getCategoriesAndParent",
-              {
-                query: getCategoriesAndParent,
-              },
-            ],
-            async (data) => {
-              const newCategory = {
-                category_id: categoryId,
-                category_name: categoryName,
-                image_url: res.insert_category_one.image_url,
-                parent_id: parent === "" ? null : parseInt(parent),
-              };
+    updateImage(imageFile, null, generateItemSlugLink(categoryName)).then(
+      (url) => {
+        const new_category = {
+          category_id: categoryId,
+          category_name: categoryName,
+          image_url: url,
+          parent_id: parent === "" ? null : parseInt(parent),
+        };
 
-              return {
-                ...data,
-                category: [...data.category, newCategory],
-              };
-            },
-            false
-          );
+        const mutate_cb = async (data) => {
+          return {
+            ...data,
+            category: [new_category, ...data.category],
+          };
+        };
+
+        return makeGraphQLRequest(
+          "insertNewCategory",
+          new_category,
+          mutate_cb
+        ).then((res) => {
           onClose();
-        }
-      });
+        });
+      }
+    );
   };
 
   return (
