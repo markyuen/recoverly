@@ -10,17 +10,24 @@ export default function useGraphQLQuery() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const makeGraphQLRequest = (operation, variables, cb) => {
-    const req_url = `/api/graphql${operation}`;
+  const makeGraphQLRequest = (
+    operation,
+    variables,
+    mutate_cb,
+    supressToast = false
+  ) => {
+    const req_url = `/api/graphql/${operation}`;
     const req_body = {
       query: queries[operation],
       variables,
     };
     setLoading(true);
     return fetcherWithBody(req_url, req_body).then((res) => {
+      if (supressToast) return res;
       if (!res || res.errors) {
         const errors = "Error: " + res.errors[0].message;
         setError(res.errors);
+
         toast({
           title: "Error Encountered",
           description: errors,
@@ -37,7 +44,9 @@ export default function useGraphQLQuery() {
           duration: 2000,
           isClosable: true,
         });
-        mutate([req_url]);
+        if (mutate_cb) {
+          mutate([req_url, req_body], mutate_cb, false);
+        }
         return res;
       }
     });
