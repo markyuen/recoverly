@@ -10,13 +10,15 @@ import useGraphQLQuery from "../hooks/useQuery";
 
 type UserContext = {
   role: string;
+  loading: boolean;
 };
 
 const UserContext = createContext<UserContext>(null!);
 
 export function UserRoleWrapper({ children }) {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const [userRole, setUserRole] = useState("unauthenticated");
+  const [loading, setLoading] = useState(true);
   const { makeGraphQLRequest } = useGraphQLQuery();
 
   const fetchUserRole = useCallback(
@@ -32,22 +34,30 @@ export function UserRoleWrapper({ children }) {
         } else {
           setUserRole("customer");
         }
+        setLoading(false);
       });
     },
     [makeGraphQLRequest]
   );
 
   useEffect(() => {
+    if (isLoading) {
+      setUserRole("pending");
+      return;
+    }
+
     if (!user) {
-      setUserRole("unauthenticated");
+      setUserRole("unauehtnticated");
+      setLoading(false);
     } else {
       const { email } = user;
       fetchUserRole(email);
     }
-  }, [user, fetchUserRole]);
+  }, [user, fetchUserRole, isLoading]);
 
   let sharedState = {
     role: userRole,
+    loading,
   };
 
   return (
