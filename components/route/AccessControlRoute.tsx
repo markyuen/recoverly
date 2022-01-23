@@ -5,11 +5,14 @@ import { useUserRole } from "../../context/UserRoleContext";
 import SkeletonPage from "../Skeleton/SkeletonPage";
 
 const AccessControlRoute = ({ children, pageProps }) => {
-  const { user } = useUser();
+  const { user, isLoading } = useUser();
   const { role } = useUserRole();
   const router = useRouter();
 
   if (pageProps.protected && !user) {
+    if (!isLoading) {
+      router.push("/api/auth/login");
+    }
     return <SkeletonPage />;
   }
 
