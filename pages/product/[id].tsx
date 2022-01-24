@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import React from "react";
 import { ItemProp } from "../../types/items";
-import { getCategories } from "../api/get-category";
 import { getItem } from "../api/get-item";
 import Image from "next/image";
 import InternalLink from "../../components/Common/Link";
@@ -52,14 +51,14 @@ const Product = ({ data }: ProductProps) => {
 };
 
 export async function getStaticPaths() {
-  const categories = await getCategories();
-  const paths = categories.map((item, index) => {
+  const paths = Array.from({ length: 20 }, (_, i) => i + 1).map((item) => {
     return {
       params: {
-        id: index.toString(),
+        id: item.toString(),
       },
     };
   });
+
   return {
     paths,
     fallback: true, // false or 'blocking'
