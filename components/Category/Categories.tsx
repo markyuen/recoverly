@@ -13,11 +13,7 @@ type CategoryData = {
   image_url: string;
 };
 
-type CategoriesProp = {
-  categories: CategoryData[];
-};
-
-const Categories = ({ categories }: CategoriesProp) => {
+const Categories = () => {
   const { data, error } = useSWR(
     [
       "/api/graphql/getCategories",

@@ -1,6 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { mutate } from "swr";
+import { makeGraphQLQuery } from "../lib/GraphQL";
 import { fetcherWithBody } from "../lib/swr";
 import queries from "../queries/main";
 
@@ -16,40 +17,39 @@ export default function useGraphQLQuery() {
     mutate_cb,
     supressToast = false
   ) => {
-    const req_url = `/api/graphql/${operation}`;
-    const req_body = {
-      query: queries[operation],
-      variables,
-    };
     setLoading(true);
-    return fetcherWithBody(req_url, req_body).then((res) => {
-      if (supressToast) return res;
-      if (!res || res.errors) {
-        const errors = "Error: " + res.errors[0].message;
-        setError(res.errors);
-
-        toast({
-          title: "Error Encountered",
-          description: errors,
-          status: "warning",
-          duration: 2000,
-          isClosable: true,
-        });
-      } else {
-        setLoading(false);
-        toast({
-          title: "Success!",
-          description: "Information Updated",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-        if (mutate_cb) {
-          mutate([req_url, req_body], mutate_cb, false);
+    return makeGraphQLQuery(operation, variables)
+      .then((res) => {
+        if (!supressToast) {
+          toast({
+            title: "Success!",
+            description: "Information Updated",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
         }
-        return res;
-      }
-    });
+
+        if (mutate_cb) {
+          mutate(
+            [
+              `/api/graphql/${operation}`,
+              {
+                query: queries[operation],
+                variables,
+              },
+            ],
+            mutate_cb,
+            false
+          );
+        }
+
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err);
+      });
   };
 
   return { makeGraphQLRequest, error, loading };

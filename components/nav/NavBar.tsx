@@ -5,7 +5,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import ShoppingCartIcon from "./ShoppingCartIcon";
 
 const NavBar = () => {
-  const { user, error, isLoading } = useUser();
+  const { user } = useUser();
 
   return (
     <>

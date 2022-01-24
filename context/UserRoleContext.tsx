@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import useGraphQLQuery from "../hooks/useQuery";
+import { makeGraphQLQuery } from "../lib/GraphQL";
 
 type UserContext = {
   role: string;
@@ -17,34 +17,26 @@ const UserContext = createContext<UserContext>(null!);
 export function UserRoleWrapper({ children }) {
   const { user } = useUser();
   const [userRole, setUserRole] = useState("unauthenticated");
-  const { makeGraphQLRequest } = useGraphQLQuery();
-
-  const fetchUserRole = useCallback(
-    (email) => {
-      makeGraphQLRequest("getUserInfo", { email }, null, true).then((res) => {
-        const { user } = res;
-        if (!user) return;
-
-        if (user[0] && user[0].admin) {
-          setUserRole("admin");
-        } else if (user[0] && user[0].seller) {
-          setUserRole("seller");
-        } else {
-          setUserRole("customer");
-        }
-      });
-    },
-    [makeGraphQLRequest]
-  );
 
   useEffect(() => {
     if (!user) {
       setUserRole("unauthenticated");
     } else {
       const { email } = user;
-      fetchUserRole(email);
+      makeGraphQLQuery("getUserInfo", { email })
+        .then((res) => {
+          const user_data = res.user;
+          if (user_data && user_data.length > 0 && user_data[0].admin) {
+            setUserRole("admin");
+          } else if (user_data && user_data.length > 0 && user_data[0].seller) {
+            setUserRole("seller");
+          } else {
+            setUserRole("customer");
+          }
+        })
+        .catch((err) => console.log(err));
     }
-  }, [user, fetchUserRole]);
+  }, [user]);
 
   let sharedState = {
     role: userRole,
