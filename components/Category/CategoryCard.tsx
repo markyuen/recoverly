@@ -1,7 +1,10 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
-import { capitaliseFirstLetterOfString } from "../../lib/string";
+import {
+  capitaliseFirstLetterOfString,
+  generateItemSlugLink,
+} from "../../lib/string";
 
 type CategoryCardProps = {
   name: string;
@@ -10,15 +13,12 @@ type CategoryCardProps = {
 
 const CategoryCard = ({ name, image_url }: CategoryCardProps) => {
   const router = useRouter();
-  const slug = name
-    .split(" ")
-    .map((item) => item.toLowerCase())
-    .join("-");
+  const slug = generateItemSlugLink(name);
 
   const handleClick = () => {
     router.push({
-      pathname: "/category/[pid]",
-      query: { pid: slug },
+      pathname: "/category/[category_slug]",
+      query: { category_slug: slug },
     });
   };
   return (

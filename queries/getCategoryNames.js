@@ -1,7 +1,7 @@
 const query = `
-query getCategoryIDs{
+query getCategoryNames{
     category {
-      category_id
+      category_name
     }
   }
 `;

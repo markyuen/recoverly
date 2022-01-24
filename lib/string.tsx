@@ -15,5 +15,17 @@ export const lowercaseAllLetter = (s) => {
 };
 
 export const generateItemSlugLink = (itemTitle) => {
-  return lowercaseAllLetter(itemTitle.split(" "));
+  return itemTitle
+    .split(" ")
+    .map((item) => item.toLowerCase())
+    .join("-");
+};
+
+export const decodeItemSlug = (slug) => {
+  return decodeURIComponent(
+    slug
+      .split("-")
+      .map((item) => capitalizeFirstLetter(item))
+      .join(" ")
+  );
 };
