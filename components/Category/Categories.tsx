@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect } from "react";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
@@ -13,11 +12,7 @@ type CategoryData = {
   image_url: string;
 };
 
-type CategoriesProp = {
-  categories: CategoryData[];
-};
-
-const Categories = ({ categories }: CategoriesProp) => {
+const Categories = () => {
   const { data, error } = useSWR(
     [
       "/api/graphql/getCategories",
@@ -43,7 +38,8 @@ const Categories = ({ categories }: CategoriesProp) => {
     <div>
       <Header name="Categories" />
       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
-        {data.category &&
+        {data &&
+          data.category &&
           data.category.map((item, index) => {
             const { category_name, image_url } = item;
 
