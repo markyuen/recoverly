@@ -1,57 +1,68 @@
+DO $$ DECLARE
+  r RECORD;
+BEGIN
+  -- if the schema you operate on is not "current", you will want to
+  -- replace current_schema() in query with 'schematodeletetablesfrom'
+  -- *and* update the generate 'DROP...' accordingly.
+  FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+    EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+  END LOOP;
+END $$;
+
 ---------------------------------------------------------------------
 -- MODELING USERS
 ---------------------------------------------------------------------
 
 -- User id returned by Auth0
 -- Other fields we can retrieve from Auth0: https://auth0.com/docs/customize/rules/user-object-in-rules
-CREATE TABLE 'user' (
-  'user_id' TEXT PRIMARY KEY,
-  'admin' BOOLEAN NOT NULL DEFAULT FALSE
+CREATE TABLE "user" (
+  "user_id" TEXT PRIMARY KEY,
+  "admin" BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- Stripe handles verification of business, so we simply need to store the
--- id returned by Stripe
-CREATE TABLE 'seller' (
-  'user_id' TEXT PRIMARY KEY REFERENCES 'user' ('user_id'),
-  'stripe_id' TEXT UNIQUE,
-  'company_name' TEXT NOT NULL,
-  'address' TEXT NOT NULL,
-  'office_number' TEXT,
-  'acra_uen' TEXT NOT NULL UNIQUE,
-  'first_name' TEXT NOT NULL,
-  'last_name' TEXT NOT NULL,
-  'flat_shipping_fee' INTEGER NOT NULL CHECK ('flat_shipping_fee' >= 0),
-  'product_total_free_delivery' INTEGER NOT NULL CHECK ('product_total_free_delivery' >= 0),
-  'verified' BOOLEAN NOT NULL DEFAULT FALSE
+-- Stripe handles verification of business, but we store these
+-- fields since we can't retrieve them from Stripe
+CREATE TABLE "seller" (
+  "user_id" TEXT PRIMARY KEY REFERENCES "user" ("user_id"),
+  "stripe_id" TEXT UNIQUE,
+  "company_name" TEXT NOT NULL,
+  "address" TEXT NOT NULL,
+  "office_number" TEXT,
+  "acra_uen" TEXT NOT NULL UNIQUE,
+  "first_name" TEXT NOT NULL,
+  "last_name" TEXT NOT NULL,
+  "flat_shipping_fee" INTEGER NOT NULL CHECK ("flat_shipping_fee" >= 0),
+  "product_total_free_delivery" INTEGER NOT NULL CHECK ("product_total_free_delivery" >= 0),
+  "verified" BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 ---------------------------------------------------------------------
 -- MODELING PRODUCTS
 ---------------------------------------------------------------------
 
-CREATE TABLE 'brand' (
-  'brand_id' INTEGER SERIAL PRIMARY KEY,
-  'brand_name' TEXT NOT NULL UNIQUE,
-  'active' BOOLEAN NOT NULL DEFAULT TRUE
+CREATE TABLE "brand" (
+  "brand_id" SERIAL PRIMARY KEY,
+  "brand_name" TEXT NOT NULL UNIQUE,
+  "active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- A product category can have a parent category
--- (e.g. Men's apparel -> T-shirts)
-CREATE TABLE 'category' (
-  'category_id' INTEGER SERIAL PRIMARY KEY,
-  'parent_category_id' INTEGER REFERENCES 'category' ('category_id'),
-  'category_name' TEXT NOT NULL,
-  'image_url'
-  'active' BOOLEAN NOT NULL DEFAULT TRUE
+-- (e.g. Men"s apparel -> T-shirts)
+CREATE TABLE "category" (
+  "category_id" SERIAL PRIMARY KEY,
+  "parent_category_id" INTEGER REFERENCES "category" ("category_id"),
+  "category_name" TEXT NOT NULL,
+  "image_url" TEXT,
+  "active" BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Products can be active, archived, or removed
-CREATE TABLE 'product_status' (
-  'product_status_id' INTEGER SERIAL PRIMARY KEY,
-  'product_status_name' TEXT NOT NULL UNIQUE
+CREATE TABLE "product_status" (
+  "product_status_id" SERIAL PRIMARY KEY,
+  "product_status_name" TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO 'product_status' ('product_status_name') VALUES
+INSERT INTO "product_status" ("product_status_name") VALUES
   ('ACTIVE'),
   ('ARCHIVED'),
   ('REMOVED');
@@ -59,37 +70,37 @@ INSERT INTO 'product_status' ('product_status_name') VALUES
 -- References a seller, brand, and status, note that status
 -- has no default, should be indicated by seller if it should
 -- be listed immediately
-CREATE TABLE 'product' (
-  'product_id' INTEGER SERIAL PRIMARY KEY,
-  'seller_id' TEXT NOT NULL REFERENCES 'seller' ('user_id'),
-  'brand_id' TEXT NOT NULL REFERENCES 'brand' ('brand_id'),
-  'product_status' INTEGER NOT NULL REFERENCES 'product_status' ('product_status_id'),
-  'product_name' TEXT NOT NULL,
-  'ind_usual_retail_price' INTEGER NOT NULL CHECK ('ind_usual_retail_price' > 0),
-  'ind_current_price' INTEGER NOT NULL CHECK ('ind_current_price' > 0),
-  'number_in_stock' INTEGER NOT NULL CHECK ('number_in_stock' > 0),
-  'description' TEXT
+CREATE TABLE "product" (
+  "product_id" SERIAL PRIMARY KEY,
+  "seller_id" TEXT NOT NULL REFERENCES "seller" ("user_id"),
+  "brand_id" INTEGER NOT NULL REFERENCES "brand" ("brand_id"),
+  "product_status" INTEGER NOT NULL REFERENCES "product_status" ("product_status_id"),
+  "product_name" TEXT NOT NULL,
+  "ind_usual_retail_price" INTEGER NOT NULL CHECK ("ind_usual_retail_price" > 0),
+  "ind_current_price" INTEGER NOT NULL CHECK ("ind_current_price" > 0),
+  "number_in_stock" INTEGER NOT NULL CHECK ("number_in_stock" > 0),
+  "description" TEXT
 );
 
 -- Each product can have multiple specification documents
-CREATE TABLE 'product_specification' (
-  'product_specification_id' INTEGER SERIAL PRIMARY KEY,
-  'product_id' INTEGER NOT NULL REFERENCES 'product' ('product_id'),
-  'url' TEXT NOT NULL
+CREATE TABLE "product_specification" (
+  "product_specification_id" SERIAL PRIMARY KEY,
+  "product_id" INTEGER NOT NULL REFERENCES "product" ("product_id"),
+  "url" TEXT NOT NULL
 );
 
 -- Each product can have multiple images
-CREATE TABLE 'product_image' (
-  'product_image_id' INTEGER SERIAL PRIMARY KEY,
-  'product_id' INTEGER NOT NULL REFERENCES 'product' ('product_id'),
-  'url' TEXT NOT NULL
+CREATE TABLE "product_image" (
+  "product_image_id" SERIAL PRIMARY KEY,
+  "product_id" INTEGER NOT NULL REFERENCES "product" ("product_id"),
+  "url" TEXT NOT NULL
 );
 
 -- [INTERMEDIARY] Each product can have multiple categories,
 -- just as each category can have multiple products
-CREATE TABLE 'products_categories' (
-  'product_id' INTEGER REFERENCES 'product' ('product_id'),
-  'category_id' INTEGER REFERENCES 'category' ('category_id'),
+CREATE TABLE "products_categories" (
+  "product_id" INTEGER REFERENCES "product" ("product_id"),
+  "category_id" INTEGER REFERENCES "category" ("category_id"),
   PRIMARY KEY ("product_id", "category_id")
 );
 
@@ -99,12 +110,12 @@ CREATE TABLE 'products_categories' (
 
 -- Orders are either pending payment, payment received (upon which merchant
 -- must be notified to ship items), completed, or canceled
-CREATE TABLE 'order_status' (
-  'order_status_id' INTEGER SERIAL PRIMARY KEY,
-  'order_status_name' TEXT NOT NULL UNIQUE
+CREATE TABLE "order_status" (
+  "order_status_id" SERIAL PRIMARY KEY,
+  "order_status_name" TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO 'order_status' ('order_status_name') VALUES
+INSERT INTO "order_status" ("order_status_name") VALUES
   ('PAYMENT_PENDING'),
   ('PAYMENT_RECEIVED'),
   ('COMPLETED'),
@@ -115,22 +126,22 @@ INSERT INTO 'order_status' ('order_status_name') VALUES
 -- which will have a unique checkout id, a charge on the
 -- checkout can then be transfered to any number of connected
 -- accounts
-CREATE TABLE 'order' (
-  'order_id' INTEGER SERIAL PRIMARY KEY,
-  'user_id' TEXT NOT NULL REFERENCES 'user' ('user_id'),
-  'order_status_id' INTEGER NOT NULL REFERENCES 'order_status' ('order_status_id') DEFAULT 1,
-  'shipping_address' TEXT NOT NULL,
-  'stripe_checkout_id' TEXT UNIQUE
+CREATE TABLE "order" (
+  "order_id" SERIAL PRIMARY KEY,
+  "user_id" TEXT NOT NULL REFERENCES "user" ("user_id"),
+  "order_status_id" INTEGER NOT NULL REFERENCES "order_status" ("order_status_id") DEFAULT 1,
+  "shipping_address" TEXT NOT NULL,
+  "stripe_checkout_id" TEXT UNIQUE
 );
 
 -- Each product in an order can be pending confirmation,
 -- accepted, or rejected
-CREATE TABLE 'orders_products_status' (
-  'orders_products_status_id' INTEGER SERIAL PRIMARY KEY,
-  'orders_products_status_name' TEXT NOT NULL UNIQUE
+CREATE TABLE "orders_products_status" (
+  "orders_products_status_id" SERIAL PRIMARY KEY,
+  "orders_products_status_name" TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO 'orders_products_status' ('orders_products_status_name') VALUES
+INSERT INTO "orders_products_status" ("orders_products_status_name") VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
   ('REJECTED');
@@ -139,63 +150,65 @@ INSERT INTO 'orders_products_status' ('orders_products_status_name') VALUES
 -- just as each product can belong to multiple orders,
 -- furthermore, the status of the product and details are tracked,
 -- price should be locked in once the order is submitted
-CREATE TABLE 'orders_products' (
-  'order_id' INTEGER REFERENCES 'order' ('order_id'),
-  'product_id' INTEGER REFERENCES 'product' ('product_id'),
+CREATE TABLE "orders_products" (
+  "order_id" INTEGER REFERENCES "order" ("order_id"),
+  "product_id" INTEGER REFERENCES "product" ("product_id"),
   PRIMARY KEY ("order_id", "product_id"),
-  'orders_products_status_id' INTEGER NOT NULL REFERENCES 'orders_products_status' ('orders_products_status_id') DEFAULT 1,
-  'product_amount' INTEGER NOT NULL CHECK ('product_amount' > 0),
-  'total_price' INTEGER NOT NULL CHECK ('price' > 0)
+  "orders_products_status_id" INTEGER NOT NULL REFERENCES "orders_products_status" ("orders_products_status_id") DEFAULT 1,
+  "product_amount" INTEGER NOT NULL CHECK ("product_amount" > 0),
+  "total_price" INTEGER NOT NULL CHECK ("total_price" > 0)
 );
 
--- Each seller's portion of an order can be pending confirmation
--- for each of the order's products, accepted, meaning all products
+-- Each seller"s portion of an order can be pending confirmation
+-- for each of the order"s products, accepted, meaning all products
 -- are accounted for and at least one is accepted, shipped, completed
 -- or rejected if all products are rejected
-CREATE TABLE 'orders_sellers_status' (
-  'orders_sellers_status_id' INTEGER SERIAL PRIMARY KEY,
-  'orders_sellers_status_name' TEXT NOT NULL UNIQUE
+CREATE TABLE "orders_sellers_status" (
+  "orders_sellers_status_id" SERIAL PRIMARY KEY,
+  "orders_sellers_status_name" TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO 'orders_sellers_status' ('orders_sellers_status_name') VALUES
+INSERT INTO "orders_sellers_status" ("orders_sellers_status_name") VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
   ('SHIPPED'),
   ('COMPLETED'),
   ('REJECTED');
 
--- Tracks each seller for a given order, where the delivery fee
--- is locked in at time of placing order, once a checkout session's
+-- [INTERMEDIARY] Each order can contain multiple sellers,
+-- just as each seller can part of multiple orders,
+-- tracks each seller for a given order, where the delivery fee
+-- is locked in at time of placing order, once a checkout session"s
 -- charge succeeds and the order is completed, the charge id can be
 -- extracted and used to create the related transfers to sellers
-CREATE TABLE 'orders_sellers' (
-  'order_id' INTEGER REFERENCES 'order' ('order_id'),
-  'user_id' INTEGER REFERENCES 'seller' ('user_id'),
+CREATE TABLE "orders_sellers" (
+  "order_id" INTEGER REFERENCES "order" ("order_id"),
+  "user_id" TEXT REFERENCES "seller" ("user_id"),
   PRIMARY KEY ("order_id", "user_id"),
-  'orders_sellers_status_id' INTEGER NOT NULL REFERENCES 'orders_sellers_status' ('orders_sellers_status_id') DEFAULT 1,
-  'delivery_fee' INTEGER NOT NULL CHECK ('delivery_fee' >= 0),
-  'stripe_transfer_id' TEXT UNIQUE
+  "orders_sellers_status_id" INTEGER NOT NULL REFERENCES "orders_sellers_status" ("orders_sellers_status_id") DEFAULT 1,
+  "delivery_fee" INTEGER NOT NULL CHECK ("delivery_fee" >= 0),
+  "stripe_transfer_id" TEXT UNIQUE
 );
 
 ---------------------------------------------------------------------
 -- MODELING THE CART
 ---------------------------------------------------------------------
 
--- A product in a user's cart is either present, ordered, or removed
-CREATE TABLE 'cart_product_status' (
-  'cart_product_status_id' INTEGER SERIAL PRIMARY KEY,
-  'cart_product_status_name' TEXT NOT NULL UNIQUE
+-- A product in a user"s cart is either present, ordered, or removed
+CREATE TABLE "cart_product_status" (
+  "cart_product_status_id" SERIAL PRIMARY KEY,
+  "cart_product_status_name" TEXT NOT NULL UNIQUE
 );
 
-INSERT INTO 'cart_product_status' ('cart_product_status_name') VALUES
+INSERT INTO "cart_product_status" ("cart_product_status_name") VALUES
   ('PRESENT'),
   ('ORDERED'),
   ('REMOVED');
 
--- A user's cart can contain multiple products
-CREATE TABLE 'cart_product' (
-  'user_id' TEXT PRIMARY KEY REFERENCES 'user' ('user_id'),
-  'product_id' INTEGER NOT NULL REFERENCES 'product' ('product_id'),
-  'cart_product_status_id' INTEGER NOT NULL REFERENCES 'cart_product_status' ('cart_product_status_id') DEFAULT 1,
-  'product_amount' INTEGER NOT NULL CHECK ('product_amount' > 0)
+-- A user"s cart can contain multiple products
+CREATE TABLE "cart_product" (
+  "user_id" TEXT PRIMARY KEY REFERENCES "user" ("user_id"),
+  "product_id" INTEGER NOT NULL REFERENCES "product" ("product_id"),
+  "cart_product_status_id" INTEGER NOT NULL REFERENCES "cart_product_status" ("cart_product_status_id") DEFAULT 1,
+  "product_amount" INTEGER NOT NULL CHECK ("product_amount" > 0)
 );
