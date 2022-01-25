@@ -29,7 +29,7 @@ export function UserRoleWrapper({ children }) {
 
         if (user[0] && user[0].admin) {
           setUserRole("admin");
-        } else if (user[0] && user[0].stripe_id) {
+        } else if (user[0] && user[0].verified) {
           setUserRole("seller");
         } else {
           setUserRole("customer");

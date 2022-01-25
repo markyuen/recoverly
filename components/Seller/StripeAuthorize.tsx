@@ -1,43 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@auth0/nextjs-auth0";
-import useGraphQLQuery from "../../hooks/useQuery";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import { useRouter } from 'next/router';
 
 const StripeAuthorize = () => {
-  const { makeGraphQLRequest } = useGraphQLQuery();
 
   const { user } = useUser();
   const { sub } = user;
 
   const router = useRouter()
   const body = router.query;
+  body.user_id = sub;
 
-  if (body) {
-    const { data, error } = useSWR(
-      [
-        "/api/verifyStripe",
-        body,
-      ],
-      fetcherWithBody
-    );
+  const { data } = useSWR(
+    [
+      "/api/verifyStripe",
+      body,
+    ],
+    fetcherWithBody
+  );
 
-    if (error) return <div>Something went wrong...</div>
-    if (!data) return <div>Authorizing with Stripe...</div>
-
-    console.log(data);
-    if (data?.account?.id) {
-      console.log(data.account.id);
-      // makeGraphQLRequest("updateSellerStripeId", { user_id: sub, stripe_id: data.account.id }, undefined);
+  useEffect(() => {
+    if (data) {
+      router.push("/");
     }
-  }
-
-  // router.push("/");
+  })
 
   return (
     <div className="max-w-5xl mx-auto">
-      <p>Authorizing with Stripe...</p>
+      <p>Finalizing authorization with Stripe...</p>
     </div>
   );
 };

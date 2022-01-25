@@ -5,6 +5,7 @@ query getUserInfo($user_id:String!){
       admin
       seller {
         stripe_id
+        verified
       }
       email
       phone_number

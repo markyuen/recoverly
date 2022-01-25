@@ -1,5 +1,4 @@
 import React from "react";
-import fetch from 'isomorphic-unfetch';
 
 import Categories from "../components/Category/Categories";
 import { getCategories } from "./api/get-category";
@@ -17,37 +16,12 @@ const Index = ({ categories }) => {
 
 export default Index;
 
-export async function getServerSideProps(context) {
+export async function getStaticProps() {
   const categories = await getCategories();
 
-  // const body = context.query;
-
-  // // TODO properly use `state` from Stripe OAuth
-  // if (body.code) {
-  //   body.scope = 'read_write';
-  //   let response;
-  //   try {
-  //     response = await fetch(
-  //       process.env.NEXT_PUBLIC_BASE_URL + '/api/verifyStripe',
-  //       {
-  //         method: 'POST',
-  //         body: JSON.stringify(body),
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       },
-  //     ).then((res) => res.json());
-  //     console.log(response);
-  //   } catch (error) {
-  //     // TODO: throw proper error if Stripe OAuth fails
-  //   }
-  //   // return {
-  //   //   redirect: {
-  //   //     destination: "/",
-  //   //     permanent: false,
-  //   //   }
-  //   // };
-  // }
-
-  return { props: { categories } };
-};
+  return {
+    props: {
+      categories,
+    },
+  };
+}
