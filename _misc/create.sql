@@ -20,6 +20,8 @@ CREATE TABLE 'seller' (
   'acra_uen' TEXT NOT NULL UNIQUE,
   'first_name' TEXT NOT NULL,
   'last_name' TEXT NOT NULL,
+  'flat_shipping_fee' INTEGER NOT NULL CHECK ('flat_shipping_fee' >= 0),
+  'product_total_free_delivery' INTEGER NOT NULL CHECK ('product_total_free_delivery' >= 0),
   'verified' BOOLEAN NOT NULL DEFAULT FALSE
 );
 
@@ -109,14 +111,20 @@ INSERT INTO 'order_status' ('order_status_name') VALUES
   ('CANCELED');
 
 -- Order table, with default status being payment pending
+-- Each order is instantiated by a Stripe checkout session,
+-- which will have a unique checkout id, a charge on the
+-- checkout can then be transfered to any number of connected
+-- accounts
 CREATE TABLE 'order' (
   'order_id' INTEGER SERIAL PRIMARY KEY,
+  'user_id' TEXT NOT NULL REFERENCES 'user' ('user_id'),
   'order_status_id' INTEGER NOT NULL REFERENCES 'order_status' ('order_status_id') DEFAULT 1,
-  'shipping_address' TEXT NOT NULL
+  'shipping_address' TEXT NOT NULL,
+  'stripe_checkout_id' TEXT UNIQUE
 );
 
 -- Each product in an order can be pending confirmation,
--- accepted, shipped, completed (payment received), or rejected
+-- accepted, or rejected
 CREATE TABLE 'orders_products_status' (
   'orders_products_status_id' INTEGER SERIAL PRIMARY KEY,
   'orders_products_status_name' TEXT NOT NULL UNIQUE
@@ -125,8 +133,6 @@ CREATE TABLE 'orders_products_status' (
 INSERT INTO 'orders_products_status' ('orders_products_status_name') VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
-  ('SHIPPED'),
-  ('COMPLETED'),
   ('REJECTED');
 
 -- [INTERMEDIARY] Each order can contain multiple products,
@@ -140,6 +146,35 @@ CREATE TABLE 'orders_products' (
   'orders_products_status_id' INTEGER NOT NULL REFERENCES 'orders_products_status' ('orders_products_status_id') DEFAULT 1,
   'product_amount' INTEGER NOT NULL CHECK ('product_amount' > 0),
   'total_price' INTEGER NOT NULL CHECK ('price' > 0)
+);
+
+-- Each seller's portion of an order can be pending confirmation
+-- for each of the order's products, accepted, meaning all products
+-- are accounted for and at least one is accepted, shipped, completed
+-- or rejected if all products are rejected
+CREATE TABLE 'orders_sellers_status' (
+  'orders_sellers_status_id' INTEGER SERIAL PRIMARY KEY,
+  'orders_sellers_status_name' TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO 'orders_sellers_status' ('orders_sellers_status_name') VALUES
+  ('CONFIRMATION_PENDING'),
+  ('ACCEPTED'),
+  ('SHIPPED'),
+  ('COMPLETED'),
+  ('REJECTED');
+
+-- Tracks each seller for a given order, where the delivery fee
+-- is locked in at time of placing order, once a checkout session's
+-- charge succeeds and the order is completed, the charge id can be
+-- extracted and used to create the related transfers to sellers
+CREATE TABLE 'orders_sellers' (
+  'order_id' INTEGER REFERENCES 'order' ('order_id'),
+  'user_id' INTEGER REFERENCES 'seller' ('user_id'),
+  PRIMARY KEY ("order_id", "user_id"),
+  'orders_sellers_status_id' INTEGER NOT NULL REFERENCES 'orders_sellers_status' ('orders_sellers_status_id') DEFAULT 1,
+  'delivery_fee' INTEGER NOT NULL CHECK ('delivery_fee' >= 0),
+  'stripe_transfer_id' TEXT UNIQUE
 );
 
 ---------------------------------------------------------------------
