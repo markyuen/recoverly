@@ -22,14 +22,14 @@ export function UserRoleWrapper({ children }) {
   const { makeGraphQLRequest } = useGraphQLQuery();
 
   const fetchUserRole = useCallback(
-    (email) => {
-      makeGraphQLRequest("getUserInfo", { email }, null, true).then((res) => {
+    (user_id) => {
+      makeGraphQLRequest("getUserInfo", { user_id }, null, true).then((res) => {
         const { user } = res;
         if (!user) return;
 
         if (user[0] && user[0].admin) {
           setUserRole("admin");
-        } else if (user[0] && user[0].seller) {
+        } else if (user[0] && user[0].stripe_id) {
           setUserRole("seller");
         } else {
           setUserRole("customer");
@@ -47,11 +47,11 @@ export function UserRoleWrapper({ children }) {
     }
 
     if (!user) {
-      setUserRole("unauehtnticated");
+      setUserRole("unauthenticated");
       setLoading(false);
     } else {
-      const { email } = user;
-      fetchUserRole(email);
+      const { sub } = user;
+      fetchUserRole(sub);
     }
   }, [user, fetchUserRole, isLoading]);
 

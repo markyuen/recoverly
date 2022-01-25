@@ -1,10 +1,10 @@
 export const getUserInfo = `
-query getUserInfo($email:String!){
-    user(where: {email: {_eq: $email}}) {
+query getUserInfo($user_id:String!){
+    user(where: {user_id: {_eq: $user_id}}) {
       user_id
       admin
       seller {
-        user_id
+        stripe_id
       }
       email
       phone_number
