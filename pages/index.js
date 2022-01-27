@@ -1,6 +1,5 @@
 import React from "react";
 
-// Import Components
 import Categories from "../components/Category/Categories";
 import ShopNav from "../components/layouts/ShopNav";
 
