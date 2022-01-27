@@ -1,4 +1,6 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
+import { makeGraphQLQuery } from "../../lib/GraphQL";
+import { seller_category } from "../../types/seller";
 import FormBorder from "../Common/FormBorder";
 import FormInputWithLeading from "../Common/FormInputWithLeading";
 import FormMultipleFileUpload from "../Common/FormMultipleFileUpload";
@@ -31,6 +33,8 @@ export const REMOVE_IMAGES_FROM_FORM = "REMOVE_IMAGES_FROM_FORM";
 export const ADD_SPECIFICATIONS_TO_FORM = "ADD_SPECIFICATIONS_TO_FORM";
 export const REMOVE_SPECIFICATIONS_FROM_FORM =
   "REMOVE_SPECIFICATIONS_FROM_FORM";
+export const ADD_CATEGORY_TO_FORM = "ADD_CATEGORY_TO_FORM";
+export const REMOVE_CATEGORY_FROM_FORM = "REMOVE_CATEGORY_FROM_FORM";
 
 const SellerItemReducer = (state, action) => {
   switch (action.type) {
@@ -65,6 +69,18 @@ const SellerItemReducer = (state, action) => {
           (_, index) => index !== action.payload
         ),
       };
+    case ADD_CATEGORY_TO_FORM:
+      return {
+        ...state,
+        categories: state.categories.concat(action.payload),
+      };
+    case REMOVE_CATEGORY_FROM_FORM:
+      return {
+        ...state,
+        categories: state.categories.filter(
+          (item) => item.id !== action.payload
+        ),
+      };
 
     default:
       throw new Error(
@@ -76,10 +92,27 @@ const SellerItemReducer = (state, action) => {
 const AddItemForm = () => {
   const [formState, dispatch] = useReducer(SellerItemReducer, initialState);
 
-  console.log(formState);
+  const [categories, setCategories] = useState<seller_category[]>([]);
+
+  useEffect(() => {
+    makeGraphQLQuery("getCategoryNamesAndID", {}).then((res) => {
+      const normalized_categories = res["category"].map((item) => {
+        return {
+          name: item.category_name,
+          id: item.category_id,
+        };
+      });
+      setCategories(normalized_categories);
+    });
+  }, []);
+
+  const addProduct = (e) => {
+    e.preventDefault();
+    console.log(formState);
+  };
 
   return (
-    <>
+    <form onSubmit={addProduct}>
       <FormSegment
         title="Product Information"
         description="Tell us more about the product you're listing"
@@ -127,7 +160,14 @@ const AddItemForm = () => {
           dispatch={dispatch}
           action_type={MODIFY_NUMBER_IN_STOCK}
         />
-        <FormMultipleTags label="Categories" />
+        <FormMultipleTags
+          categories={categories}
+          value={formState.categories}
+          label="Categories"
+          dispatch={dispatch}
+          action_type={ADD_CATEGORY_TO_FORM}
+          remove_type={REMOVE_CATEGORY_FROM_FORM}
+        />
       </FormSegment>
 
       <FormBorder />
@@ -152,7 +192,15 @@ const AddItemForm = () => {
           value={formState.images}
         />
       </FormSegment>
-    </>
+      <div className="flex flex-row-reverse mt-10">
+        <button
+          onClick={addProduct}
+          className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+        >
+          Add Product
+        </button>
+      </div>
+    </form>
   );
 };
 
