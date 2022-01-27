@@ -25,8 +25,8 @@ END $$;
 CREATE TABLE "user" (
   user_id TEXT PRIMARY KEY,
   admin BOOLEAN NOT NULL DEFAULT FALSE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "user"
@@ -46,8 +46,8 @@ CREATE TABLE "seller" (
   flat_shipping_fee INTEGER NOT NULL CHECK (flat_shipping_fee >= 0),
   product_total_free_delivery INTEGER NOT NULL CHECK (product_total_free_delivery >= 0),
   verified BOOLEAN NOT NULL DEFAULT FALSE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "seller"
@@ -61,8 +61,8 @@ CREATE TABLE "brand" (
   brand_id SERIAL PRIMARY KEY,
   brand_name TEXT NOT NULL UNIQUE,
   active BOOLEAN NOT NULL DEFAULT TRUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "brand"
@@ -76,8 +76,8 @@ CREATE TABLE "category" (
   category_name TEXT NOT NULL,
   image_url TEXT,
   active BOOLEAN NOT NULL DEFAULT TRUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "category"
@@ -87,8 +87,8 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "category"
 CREATE TABLE "product_status" (
   product_status_id SERIAL PRIMARY KEY,
   product_status_name TEXT NOT NULL UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "product_status"
@@ -112,8 +112,8 @@ CREATE TABLE "product" (
   ind_current_price INTEGER NOT NULL CHECK (ind_current_price > 0),
   number_in_stock INTEGER NOT NULL CHECK (number_in_stock > 0),
   description TEXT,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "product"
@@ -124,8 +124,8 @@ CREATE TABLE "product_specification" (
   product_specification_id SERIAL PRIMARY KEY,
   product_id INTEGER NOT NULL REFERENCES "product" (product_id),
   url TEXT NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "product_specification"
@@ -136,8 +136,8 @@ CREATE TABLE "product_image" (
   product_image_id SERIAL PRIMARY KEY,
   product_id INTEGER NOT NULL REFERENCES "product" (product_id),
   url TEXT NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "product_image"
@@ -149,11 +149,33 @@ CREATE TABLE "products_categories" (
   product_id INTEGER REFERENCES "product" (product_id),
   category_id INTEGER REFERENCES "category" (category_id),
   PRIMARY KEY (product_id, category_id),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "products_categories"
+  FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TABLE "variation_category" (
+  variation_category_id SERIAL PRIMARY KEY,
+  variation_category_name TEXT NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation_category"
+  FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TABLE "variation" (
+  variation_id SERIAL PRIMARY KEY,
+  product_id INTEGER NOT NULL REFERENCES "product" (product_id),
+  variation_category_id INTEGER NOT NULL REFERENCES "variation_category" (variation_category_id),
+  variation_name TEXT NOT NULL,
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation"
   FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
 
 ---------------------------------------------------------------------
@@ -165,8 +187,8 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "products_categories"
 CREATE TABLE "order_status" (
   order_status_id SERIAL PRIMARY KEY,
   order_status_name TEXT NOT NULL UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "order_status"
@@ -189,8 +211,8 @@ CREATE TABLE "order" (
   order_status_id INTEGER NOT NULL REFERENCES "order_status" (order_status_id) DEFAULT 1,
   shipping_address TEXT NOT NULL,
   stripe_checkout_id TEXT UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "order"
@@ -201,8 +223,8 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "order"
 CREATE TABLE "orders_products_status" (
   orders_products_status_id SERIAL PRIMARY KEY,
   orders_products_status_name TEXT NOT NULL UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products_status"
@@ -224,8 +246,8 @@ CREATE TABLE "orders_products" (
   orders_products_status_id INTEGER NOT NULL REFERENCES "orders_products_status" (orders_products_status_id) DEFAULT 1,
   product_amount INTEGER NOT NULL CHECK (product_amount > 0),
   total_price INTEGER NOT NULL CHECK (total_price > 0),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products"
@@ -238,8 +260,8 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products"
 CREATE TABLE "orders_sellers_status" (
   orders_sellers_status_id SERIAL PRIMARY KEY,
   orders_sellers_status_name TEXT NOT NULL UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_sellers_status"
@@ -265,8 +287,8 @@ CREATE TABLE "orders_sellers" (
   orders_sellers_status_id INTEGER NOT NULL REFERENCES "orders_sellers_status" (orders_sellers_status_id) DEFAULT 1,
   delivery_fee INTEGER NOT NULL CHECK (delivery_fee >= 0),
   stripe_transfer_id TEXT UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_sellers"
@@ -280,8 +302,8 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_sellers"
 CREATE TABLE "cart_product_status" (
   cart_product_status_id SERIAL PRIMARY KEY,
   cart_product_status_name TEXT NOT NULL UNIQUE,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "cart_product_status"
@@ -298,8 +320,8 @@ CREATE TABLE "cart_product" (
   product_id INTEGER NOT NULL REFERENCES "product" (product_id),
   cart_product_status_id INTEGER NOT NULL REFERENCES "cart_product_status" (cart_product_status_id) DEFAULT 1,
   product_amount INTEGER NOT NULL CHECK (product_amount > 0),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  created_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "cart_product"

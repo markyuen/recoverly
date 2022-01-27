@@ -93,6 +93,20 @@ const SellerSignUpForm = () => {
                       }&stripe_user[last_name]=${userData.last_name
                       }`;
                     window.document.location.href = url;
+
+                    // TODO: switch to Stripe server link generation instead of
+                    // manually creating link, however, will then need to properly
+                    // manage user flows and what happens if user does not finish
+                    // the onboarding properly, since going this route will generate
+                    // the account link immediately
+
+                    // const link = await fetch("/api/stripe-onboard-link", {
+                    //   method: "POST",
+                    //   headers: {
+                    //     "Content-Type": "application/json"
+                    //   },
+                    //   body: JSON.stringify(userData),
+                    // })
                   }
                 }}
               >
