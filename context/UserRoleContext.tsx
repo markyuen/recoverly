@@ -21,13 +21,13 @@ export function UserRoleWrapper({ children }) {
     if (!user) {
       setUserRole("unauthenticated");
     } else {
-      const { email } = user;
-      makeGraphQLQuery("getUserInfo", { email })
+      const { sub } = user;
+      makeGraphQLQuery("getUserInfo", { user_id: sub })
         .then((res) => {
           const user_data = res.user;
           if (user_data && user_data.length > 0 && user_data[0].admin) {
             setUserRole("admin");
-          } else if (user_data && user_data.length > 0 && user_data[0].seller) {
+          } else if (user_data && user_data.length > 0 && user_data[0].verified) {
             setUserRole("seller");
           } else {
             setUserRole("customer");

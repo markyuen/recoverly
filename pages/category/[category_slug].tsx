@@ -35,6 +35,8 @@ const Category = ({ category_name }: CategoryProps) => {
     fetcherWithBody
   );
 
+  console.log(data)
+
   if (!data && !error) {
     return (
       <ShopNav>
@@ -57,7 +59,7 @@ const Category = ({ category_name }: CategoryProps) => {
       <div className="grid grid-cols-3 mx-4 pt-10">
         {data &&
           data.category &&
-          data.category[0].product_categories.map((item, index) => (
+          data.category[0].products_categories.map((item, index) => (
             <p key={index}>Product Exists</p>
           ))}
       </div>

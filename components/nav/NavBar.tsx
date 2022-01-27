@@ -46,7 +46,7 @@ const NavBar = () => {
                     type="admin"
                   />
                   <InternalLink
-                    href="/Seller"
+                    href="/seller"
                     name="Seller Dashboard"
                     styling="px-2"
                     type="seller"

@@ -44,8 +44,8 @@ CREATE TABLE "seller" (
   acra_uen TEXT NOT NULL UNIQUE,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  flat_shipping_fee INTEGER NOT NULL CHECK (flat_shipping_fee >= 0),
-  product_total_free_delivery INTEGER NOT NULL CHECK (product_total_free_delivery >= 0),
+  flat_shipping_fee INTEGER CHECK (flat_shipping_fee >= 0),
+  product_total_free_delivery INTEGER CHECK (product_total_free_delivery >= 0),
   verified BOOLEAN NOT NULL DEFAULT FALSE,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()

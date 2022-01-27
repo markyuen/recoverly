@@ -8,7 +8,7 @@ const Index = () => {
       This is a main seller dashboard. Click{" "}
       <InternalLink
         name="add Item"
-        href="/Seller/add_item"
+        href="/seller/add_item"
         styling=""
         type="seller"
       />{" "}

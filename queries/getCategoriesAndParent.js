@@ -4,7 +4,7 @@ query getCategoriesAndParent{
       category_id
       category_name
       image_url
-      parent_id
+      parent_category_id
     }
   }  
 `;

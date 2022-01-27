@@ -8,7 +8,6 @@ query getUserInfo($user_id:String!){
         verified
       }
       email
-      phone_number
     }
   }
 `;
