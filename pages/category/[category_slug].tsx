@@ -23,7 +23,6 @@ type CategoryProps = {
 
 const Category = ({ category_name }: CategoryProps) => {
   const router = useRouter();
-  console.log(category_name);
   const { data, error } = useSWR(
     [
       "/api/graphql/getCategoryItems",
@@ -34,8 +33,6 @@ const Category = ({ category_name }: CategoryProps) => {
     ],
     fetcherWithBody
   );
-
-  console.log(data)
 
   if (!data && !error) {
     return (
