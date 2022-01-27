@@ -46,6 +46,12 @@ const NavBar = () => {
                     type="admin"
                   />
                   <InternalLink
+                    href="/Seller"
+                    name="Seller Dashboard"
+                    styling="px-2"
+                    type="seller"
+                  />
+                  <InternalLink
                     href="/account"
                     name="Your Account"
                     styling="px-2"
