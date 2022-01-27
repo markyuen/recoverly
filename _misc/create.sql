@@ -24,6 +24,7 @@ END $$;
 -- Other fields we can retrieve from Auth0: https://auth0.com/docs/customize/rules/user-object-in-rules
 CREATE TABLE "user" (
   user_id TEXT PRIMARY KEY,
+  email TEXT,
   admin BOOLEAN NOT NULL DEFAULT FALSE,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
@@ -326,3 +327,55 @@ CREATE TABLE "cart_product" (
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "cart_product"
   FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
+
+---------------------------------------------------------------------
+-- Predefined categories
+---------------------------------------------------------------------
+
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'Home & Garden','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-household-living.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'Consumer Electronics','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-consumer-electronics.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'Commercial & Industrial Products','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-commercial-and-industrial-products.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'Toys & Babies','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-toys-and-babies.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'Apparel & Accessories','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-apparel.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (NULL,'General Merchandise','https://recoverly-images.s3.ap-southeast-1.amazonaws.com/category-image-general-merchandise.png');
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Kitchen & Appliances',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Home Improvement',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Yard & Garden',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Pet Supplies',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Furniture & Decor',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Bath & Bedding',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (1,'Home Improvement',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Cameras',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Monitors & Projectors',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Cellphones',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Cellphone Accessories',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Laptops',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Tablets',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Office Equipment',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Desktops',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'TVs & Home Theater',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Portable Audio',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (2,'Video Games & Consoles',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (3,'Commercial Equipment',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (3,'Commercial Tools',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (3,'Electrical & Electronics',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (3,'Stationary',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Nursery',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Stroller & Car Seats',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Baby Essentials',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Toys & Games',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Dolls & Stuffed Animals',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (4,'Crafts',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Kids'' & Baby Apparel',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Women''s Apparel',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Assorted Apparel',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Women''s Shoes',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Men''s Apparel',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Men''s Shoes',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Women''s Accessories',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Women''s Undergarments',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (5,'Men''s Undergarments',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (6,'Health & Nutrition',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (6,'Travel & Luggage',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (6,'Sporting Goods',NULL);
+INSERT INTO category (parent_category_id,category_name,image_url) VALUES (6,'Bath & Beauty',NULL);

@@ -2,8 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { handleAuth, handleCallback, handleLogin, handleLogout } from '@auth0/nextjs-auth0';
 
-const audience = process.env.AUTH0_AUDIENCE;
-const scope = process.env.AUTH0_SCOPE;
+const audience = process.env.HASURA_ENDPOINT;
+const scope = "openid profile email";
 
 function getUrls(req: NextApiRequest) {
   const host = req.headers['host'];
