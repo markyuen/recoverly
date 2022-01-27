@@ -1,5 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
+import { useUserRole } from "../../context/UserRoleContext";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
+import { uploadFile } from "../../lib/s3";
 import { seller_category } from "../../types/seller";
 import FormBorder from "../Common/FormBorder";
 import FormInputWithLeading from "../Common/FormInputWithLeading";
@@ -91,6 +93,9 @@ const SellerItemReducer = (state, action) => {
 
 const AddItemForm = () => {
   const [formState, dispatch] = useReducer(SellerItemReducer, initialState);
+  const { userId } = useUserRole();
+
+  console.log(userId);
 
   const [categories, setCategories] = useState<seller_category[]>([]);
 
@@ -108,7 +113,37 @@ const AddItemForm = () => {
 
   const addProduct = (e) => {
     e.preventDefault();
-    console.log(formState);
+
+    const imageFiles = formState.images.map((item, index) => {
+      return {
+        file: item,
+        name: `IMAGE_${index}`,
+      };
+    });
+    // const specificationFiles = formState.images.map((item, index) => {
+    //   return {
+    //     file: item,
+    //     name: `SPECIFICATION_${index}`,
+    //   };
+    // });
+    // const allFiles = imageFiles.concat(specificationFiles);
+    // const promises = allFiles.map((item) => {
+    //   return uploadFile(item.name, item.file);
+    // });
+    const product_upload = makeGraphQLQuery("insertNewProduct", {
+      brand_name: formState.brand_name,
+      current_price: formState.current_price,
+      description: formState.description,
+      number_in_stock: formState.number_in_stock,
+      product_name: formState.product_name,
+      user_id: userId,
+      usual_retail_price: formState.usual_retail_price,
+    });
+    Promise.all([product_upload]).then((res) => {
+      console.log(res);
+      // const images = res.filter((item) => item.name.includes("IMAGE"));
+      // const specifications = res.filter((item) => item.name.includes("IMAGE"));
+    });
   };
 
   return (

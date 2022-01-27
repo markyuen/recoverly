@@ -99,7 +99,7 @@ const FormMultipleFileUpload = ({
                 multiple
               />
             </label>
-            <p className="pl-1">or drag and drop</p>
+            {/* <p className="pl-1">or drag and drop</p> */}
           </div>
           <p className="text-xs text-gray-500">
             Currently supports file types of {supported_file_types.join(",")}

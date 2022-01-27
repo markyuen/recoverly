@@ -27,7 +27,8 @@
     "react-dropzone": "^11.5.1",
     "react-hook-form": "^7.24.1",
     "react-spinners": "^0.11.0",
-    "swr": "^1.1.2"
+    "swr": "^1.1.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.38",
