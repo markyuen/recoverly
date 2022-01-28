@@ -4,6 +4,7 @@ import getCategoryItems from "./getCategoryItems";
 import getCategoryNames from "./getCategoryNames";
 import getCategoryNamesAndID from "./getCategoryNameAndID";
 import insertNewProduct from "./insertNewProduct";
+import getProductStatusList from "./getProductStatusList";
 
 // Map Queries here so the hook can import the right query
 const mapping = {
@@ -13,6 +14,7 @@ const mapping = {
   getUserInfo,
   getCategoryNamesAndID,
   insertNewProduct,
+  getProductStatusList,
 };
 
 export default mapping;

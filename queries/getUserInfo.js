@@ -7,7 +7,6 @@ query getUserInfo($email:String!){
         user_id
       }
       email
-      phone_number
     }
   }
 `;

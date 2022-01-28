@@ -1,17 +1,23 @@
 import aws from "aws-sdk";
 
 export default async function handler(req, res) {
+  console.log(
+    process.env.AWS_S3_ACCESS_KEY,
+    process.env.AWS_S3_SECRET_KEY,
+    process.env.AWS_S3_BUCKET_NAME,
+    process.env.AWS_S3_REGION
+  );
   aws.config.update({
-    accessKeyId: process.env.ACCESS_KEY,
-    secretAccessKey: process.env.SECRET_KEY,
-    region: process.env.REGION,
+    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+    region: process.env.AWS_S3_REGION,
     signatureVersion: "v4",
   });
 
   const s3 = new aws.S3();
 
   const post = await s3.createPresignedPost({
-    Bucket: process.env.BUCKET_NAME,
+    Bucket: process.env.AWS_S3_BUCKET_NAME,
     Fields: {
       key: req.query.file,
     },

@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { useUserRole } from "../../context/UserRoleContext";
+import useChakraToast from "../../hooks/useChakraToast";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
 import { uploadFile } from "../../lib/s3";
 import { seller_category } from "../../types/seller";
@@ -8,9 +9,13 @@ import FormInputWithLeading from "../Common/FormInputWithLeading";
 import FormMultipleFileUpload from "../Common/FormMultipleFileUpload";
 import FormMultipleTags from "../Common/FormMultipleTags";
 import FormSegment from "../Common/FormSegment";
+import FormSelectInput from "../Common/FormSelectInput";
 import FormSingleInput from "../Common/FormSingleInput";
+import FormSingleInputSelect from "../Common/FormSingleInputSelect";
 import FormTextArea from "../Common/FormTextArea";
 import FormTwoInputFields from "../Common/FormTwoInputFields";
+import SkeletonGrid from "../Skeleton/SkeletonGrid";
+import SkeletonPage from "../Skeleton/SkeletonPage";
 
 const initialState = {
   product_name: "",
@@ -22,6 +27,7 @@ const initialState = {
   images: [],
   specifications: [],
   categories: [],
+  product_status: "",
 };
 
 export const MODIFY_PRODUCT_NAME = "MODIFY_PRODUCT_NAME";
@@ -37,6 +43,7 @@ export const REMOVE_SPECIFICATIONS_FROM_FORM =
   "REMOVE_SPECIFICATIONS_FROM_FORM";
 export const ADD_CATEGORY_TO_FORM = "ADD_CATEGORY_TO_FORM";
 export const REMOVE_CATEGORY_FROM_FORM = "REMOVE_CATEGORY_FROM_FORM";
+export const SET_PRODUCT_STATUS = "SET_PRODUCT_STATUS";
 
 const SellerItemReducer = (state, action) => {
   switch (action.type) {
@@ -83,6 +90,11 @@ const SellerItemReducer = (state, action) => {
           (item) => item.id !== action.payload
         ),
       };
+    case SET_PRODUCT_STATUS:
+      return {
+        ...state,
+        product_status: action.payload,
+      };
 
     default:
       throw new Error(
@@ -94,20 +106,41 @@ const SellerItemReducer = (state, action) => {
 const AddItemForm = () => {
   const [formState, dispatch] = useReducer(SellerItemReducer, initialState);
   const { userId } = useUserRole();
-
-  console.log(userId);
-
+  const [loading, setLoading] = useState(true);
+  const [productStatus, setProductStatus] = useState([]);
   const [categories, setCategories] = useState<seller_category[]>([]);
+  const { generateWarningToast, generateSuccessToast } = useChakraToast();
 
   useEffect(() => {
-    makeGraphQLQuery("getCategoryNamesAndID", {}).then((res) => {
-      const normalized_categories = res["category"].map((item) => {
-        return {
-          name: item.category_name,
-          id: item.category_id,
-        };
-      });
+    Promise.all([
+      makeGraphQLQuery("getCategoryNamesAndID", {}),
+      makeGraphQLQuery("getProductStatusList", {}),
+    ]).then(([categoryNamesandId, productStatusList]) => {
+      const normalized_categories = categoryNamesandId["category"].map(
+        (item) => {
+          return {
+            name: item.category_name,
+            id: item.category_id,
+          };
+        }
+      );
       setCategories(normalized_categories);
+
+      const normalizedProductStatus = productStatusList["product_status"].map(
+        (item) => {
+          return {
+            name: item.product_status_name,
+            value: item.product_status_id,
+          };
+        }
+      );
+      dispatch({
+        type: SET_PRODUCT_STATUS,
+        payload: normalizedProductStatus[0],
+      });
+      setProductStatus(normalizedProductStatus);
+
+      setLoading(false);
     });
   }, []);
 
@@ -120,16 +153,23 @@ const AddItemForm = () => {
         name: `IMAGE_${index}`,
       };
     });
-    // const specificationFiles = formState.images.map((item, index) => {
-    //   return {
-    //     file: item,
-    //     name: `SPECIFICATION_${index}`,
-    //   };
-    // });
+    const specificationFiles = formState.images.map((item, index) => {
+      return {
+        file: item,
+        name: `SPECIFICATION_${index}`,
+      };
+    });
     // const allFiles = imageFiles.concat(specificationFiles);
+    // uploadFile(allFiles[0].name, allFiles[0].file)
+    //   .then((res) => console.log(res))
+    //   .catch((err) => console.log("err: ", err));
     // const promises = allFiles.map((item) => {
     //   return uploadFile(item.name, item.file);
     // });
+    // TODO:
+    // 1. Debug why we can only upload files of type .jpg and .png and not .pdf et al
+    // 2. Fix up a graphql query for categories
+    //
     const product_upload = makeGraphQLQuery("insertNewProduct", {
       brand_name: formState.brand_name,
       current_price: formState.current_price,
@@ -138,13 +178,31 @@ const AddItemForm = () => {
       product_name: formState.product_name,
       user_id: userId,
       usual_retail_price: formState.usual_retail_price,
+      product_status: formState.product_status.value,
     });
-    Promise.all([product_upload]).then((res) => {
-      console.log(res);
-      // const images = res.filter((item) => item.name.includes("IMAGE"));
-      // const specifications = res.filter((item) => item.name.includes("IMAGE"));
-    });
+    Promise.all([product_upload, ...promises])
+      .then(([insert_product, ...fileUploads]) => {
+        // Cannot Upload Product
+        if (!insert_product) {
+          throw new Error("Failed to upload product. Please try again later");
+        }
+
+        console.log(fileUploads);
+
+        // const images = res.filter((item) => item.name.includes("IMAGE"));
+        // const specifications = res.filter((item) => item.name.includes("IMAGE"));
+      })
+      .catch((err) => {
+        generateWarningToast(
+          "Unable to upload Image",
+          "Please try again later. Contact our help desk if the problem persists"
+        );
+      });
   };
+
+  if (loading) {
+    return <SkeletonGrid count={10} />;
+  }
 
   return (
     <form onSubmit={addProduct}>
@@ -159,12 +217,20 @@ const AddItemForm = () => {
           action_type={MODIFY_PRODUCT_NAME}
           value={formState.product_name}
         />
+        {/* TODO : Convert this to pull from all existing brand names */}
         <FormSingleInput
           type="text"
           label="Brand Name"
           dispatch={dispatch}
           action_type={MODIFY_BRAND_NAME}
           value={formState.brand_name}
+        />
+        <FormSingleInputSelect
+          label="Product Status"
+          value={formState.product_status}
+          options={productStatus}
+          dispatch={dispatch}
+          action_type={SET_PRODUCT_STATUS}
         />
 
         <FormTextArea
