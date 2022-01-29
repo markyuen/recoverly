@@ -42,8 +42,6 @@ export function UserRoleWrapper({ children }) {
     }
   }, [user]);
 
-  console.log(userRole);
-
   let sharedState = {
     role: userRole,
     userId: userId,
