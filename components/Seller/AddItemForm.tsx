@@ -203,7 +203,7 @@ const AddItemForm = () => {
       description: formState.description,
       number_in_stock: formState.number_in_stock,
       product_name: formState.product_name,
-      user_id: formState.seller_id,
+      user_id: formState.seller_id.value,
       usual_retail_price: formState.usual_retail_price,
       product_status: formState.product_status.value,
     });
@@ -232,7 +232,7 @@ const AddItemForm = () => {
             };
           });
         const categories = formState.categories.map((item) => {
-          return { category_id: item.id, product_id };
+          return { category_id: item.value, product_id };
         });
         return makeGraphQLQuery("insertProductInformation", {
           categories,
@@ -241,17 +241,21 @@ const AddItemForm = () => {
         });
       })
       .then((res) => {
+        console.log(res);
         if (
           !res ||
           !res["insert_products_categories"] ||
           !res["insert_product_image"] ||
           !res["insert_product_specification"]
         ) {
-          throw new Error("Unable to upload product. Please try again later");
+          throw new Error(
+            "Unable to update product categories,images or specifications. Please try again later"
+          );
         }
         generateSuccessToast("Success!", "Product Uploaded Successfully");
       })
       .catch((err) => {
+        console.log(err);
         generateWarningToast(
           "Unable to upload Image",
           "Please try again later. Contact our help desk if the problem persists"
@@ -267,7 +271,7 @@ const AddItemForm = () => {
     dispatch({ type: SET_SELLER_ID, payload: userId });
   }
 
-  console.log(formState.seller_id);
+  console.log(formState);
 
   return (
     <form onSubmit={addProduct}>
