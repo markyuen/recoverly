@@ -144,8 +144,6 @@ const AddItemForm = () => {
     });
   }, []);
 
-  console.log(formState);
-
   const addProduct = (e) => {
     e.preventDefault();
 

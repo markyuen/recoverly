@@ -45,7 +45,6 @@ const Category = ({ category_name }: CategoryProps) => {
     );
   }
 
-  console.log(data);
   return (
     <ShopNav>
       <InternalLink

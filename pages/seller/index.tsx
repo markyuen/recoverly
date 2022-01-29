@@ -5,14 +5,14 @@ import ShopNav from "../../components/layouts/ShopNav";
 const Index = () => {
   return (
     <ShopNav>
-      This is a main seller dashboard. Click{" "}
+      {/* This is a main seller dashboard. Click{" "}
       <InternalLink
         name="add Item"
         href="/seller/add_item"
         styling=""
         type="seller"
       />{" "}
-      to add an item
+      to add an item */}
     </ShopNav>
   );
 };

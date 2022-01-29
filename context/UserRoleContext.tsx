@@ -14,8 +14,6 @@ export function UserRoleWrapper({ children }) {
   const [userRole, setUserRole] = useState("unauthenticated");
   const [userId, setUserId] = useState("");
 
-  console.log(userRole);
-
   useEffect(() => {
     if (!user) {
       setUserRole("unauthenticated");
