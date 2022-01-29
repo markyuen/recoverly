@@ -12,11 +12,11 @@ const AddItem = () => {
 
 export default AddItem;
 
-// export async function getStaticProps(context) {
-//   return {
-//     props: {
-//       protected: true,
-//       userTypes: ["seller"],
-//     },
-//   };
-// }
+export async function getStaticProps(context) {
+  return {
+    props: {
+      protected: true,
+      userTypes: ["seller", "admin"],
+    },
+  };
+}
