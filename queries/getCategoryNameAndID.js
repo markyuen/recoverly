@@ -1,5 +1,5 @@
 const query = `
-query getCategoryNamesAndID{
+query getCategoryNamesAndID {
     category {
       category_name
       category_id

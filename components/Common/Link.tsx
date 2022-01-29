@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { useUserRole } from "../../context/UserRoleContext";
 
@@ -11,7 +10,6 @@ type InternalLinkProps = {
 };
 
 const InternalLink = ({ name, href, styling, type }: InternalLinkProps) => {
-  const router = useRouter();
   const { role } = useUserRole();
 
   if (type == "admin" && role != "admin") return null;

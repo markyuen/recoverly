@@ -1,8 +1,10 @@
 export const getProducts = `
 query getProducts {
   product {
-    current_price
-    brand_name
+    ind_current_price
+    brand {
+      brand_name
+    }
     description
   }
 }

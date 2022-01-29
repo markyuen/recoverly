@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import FormInput from "../Form/FormInput";
 import { updateImage } from "../../lib/s3";
+import InternalLink from "../Common/Link";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -87,6 +88,21 @@ const UserProfile = () => {
                   />
                 </div>
               </div>
+            </div>
+
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
+              <label
+                htmlFor="photo"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Sign Up as a Seller
+              </label>
+              <InternalLink
+                href="/seller_sign_up"
+                name="Sign Up Form"
+                styling="px-2"
+                type="customer"
+              />
             </div>
           </div>
         </div>
