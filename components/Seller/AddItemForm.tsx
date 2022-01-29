@@ -144,6 +144,8 @@ const AddItemForm = () => {
     });
   }, []);
 
+  console.log(formState);
+
   const addProduct = (e) => {
     e.preventDefault();
 
@@ -159,17 +161,14 @@ const AddItemForm = () => {
         name: `SPECIFICATION_${index}`,
       };
     });
-    // const allFiles = imageFiles.concat(specificationFiles);
-    // uploadFile(allFiles[0].name, allFiles[0].file)
-    //   .then((res) => console.log(res))
-    //   .catch((err) => console.log("err: ", err));
-    // const promises = allFiles.map((item) => {
-    //   return uploadFile(item.name, item.file);
-    // });
+    const allFiles = imageFiles.concat(specificationFiles);
+    const promises = allFiles.map((item) => {
+      return uploadFile(item.name, item.file);
+    });
+
     // TODO:
-    // 1. Debug why we can only upload files of type .jpg and .png and not .pdf et al
     // 2. Fix up a graphql query for categories
-    //
+
     const product_upload = makeGraphQLQuery("insertNewProduct", {
       brand_name: formState.brand_name,
       current_price: formState.current_price,
@@ -181,16 +180,48 @@ const AddItemForm = () => {
       product_status: formState.product_status.value,
     });
     Promise.all([product_upload, ...promises])
-      .then(([insert_product, ...fileUploads]) => {
+      .then(([insert_product, ...urls]) => {
         // Cannot Upload Product
-        if (!insert_product) {
+        if (!insert_product || !insert_product["insert_product_one"]) {
           throw new Error("Failed to upload product. Please try again later");
         }
+        const product_id = insert_product["insert_product_one"]["product_id"];
 
-        console.log(fileUploads);
-
-        // const images = res.filter((item) => item.name.includes("IMAGE"));
-        // const specifications = res.filter((item) => item.name.includes("IMAGE"));
+        const images = urls
+          .filter((item) => item.includes("IMAGE"))
+          .map((url) => {
+            return {
+              product_id,
+              url,
+            };
+          });
+        const specifications = urls
+          .filter((item) => item.includes("IMAGE"))
+          .map((url) => {
+            return {
+              product_id,
+              url,
+            };
+          });
+        const categories = formState.categories.map((item) => {
+          return { category_id: item.id, product_id };
+        });
+        return makeGraphQLQuery("insertProductInformation", {
+          categories,
+          images,
+          specifications,
+        });
+      })
+      .then((res) => {
+        if (
+          !res ||
+          !res["insert_products_categories"] ||
+          !res["insert_product_image"] ||
+          !res["insert_product_specification"]
+        ) {
+          throw new Error("Unable to upload product. Please try again later");
+        }
+        generateSuccessToast("Success!", "Product Uploaded Successfully");
       })
       .catch((err) => {
         generateWarningToast(
