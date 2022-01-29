@@ -5,6 +5,7 @@ import { makeGraphQLQuery } from "../lib/GraphQL";
 type UserContext = {
   role: string;
   userId: string;
+  pendingQuery: boolean;
 };
 
 const UserContext = createContext<UserContext>(null!);
@@ -13,6 +14,7 @@ export function UserRoleWrapper({ children }) {
   const { user } = useUser();
   const [userRole, setUserRole] = useState("unauthenticated");
   const [userId, setUserId] = useState("");
+  const [pendingQuery, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -27,14 +29,14 @@ export function UserRoleWrapper({ children }) {
           } else if (
             user_data &&
             user_data.length > 0 &&
-            user_data[0]["seller"] &&
-            user_data[0]["seller"]["verified"]
+            user_data[0]["seller"]
           ) {
             setUserRole("seller");
           } else {
             setUserRole("customer");
           }
           setUserId(user_data[0].user_id);
+          setLoading(false);
         })
         .catch((err) => console.log(err));
     }
@@ -43,6 +45,7 @@ export function UserRoleWrapper({ children }) {
   let sharedState = {
     role: userRole,
     userId: userId,
+    pendingQuery,
   };
 
   return (
