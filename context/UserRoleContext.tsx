@@ -17,7 +17,7 @@ const UserContext = createContext<UserContext>(null!);
 export function UserRoleWrapper({ children }) {
   const { user } = useUser();
   const [userRole, setUserRole] = useState("unauthenticated");
-  const [userId, setUserId] = useState(0);
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     if (!user) {
