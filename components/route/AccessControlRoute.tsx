@@ -6,10 +6,10 @@ import SkeletonPage from "../Skeleton/SkeletonPage";
 
 const AccessControlRoute = ({ children, pageProps }) => {
   const { user, isLoading } = useUser();
-  const { role } = useUserRole();
+  const { role, pendingQuery } = useUserRole();
   const router = useRouter();
 
-  if (pageProps.protected && isLoading) {
+  if (pageProps.protected && (isLoading || pendingQuery)) {
     return <SkeletonPage />;
   }
 
