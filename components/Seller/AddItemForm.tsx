@@ -28,6 +28,7 @@ const initialState = {
   specifications: [],
   categories: [],
   product_status: "",
+  seller_id: "",
 };
 
 export const MODIFY_PRODUCT_NAME = "MODIFY_PRODUCT_NAME";
@@ -44,6 +45,7 @@ export const REMOVE_SPECIFICATIONS_FROM_FORM =
 export const ADD_CATEGORY_TO_FORM = "ADD_CATEGORY_TO_FORM";
 export const REMOVE_CATEGORY_FROM_FORM = "REMOVE_CATEGORY_FROM_FORM";
 export const SET_PRODUCT_STATUS = "SET_PRODUCT_STATUS";
+export const SET_SELLER_ID = "SET_SELLER_ID";
 
 const SellerItemReducer = (state, action) => {
   switch (action.type) {
@@ -87,13 +89,18 @@ const SellerItemReducer = (state, action) => {
       return {
         ...state,
         categories: state.categories.filter(
-          (item) => item.id !== action.payload
+          (item) => item.value !== action.payload
         ),
       };
     case SET_PRODUCT_STATUS:
       return {
         ...state,
         product_status: action.payload,
+      };
+    case SET_SELLER_ID:
+      return {
+        ...state,
+        seller_id: action.payload,
       };
 
     default:
@@ -105,22 +112,34 @@ const SellerItemReducer = (state, action) => {
 
 const AddItemForm = () => {
   const [formState, dispatch] = useReducer(SellerItemReducer, initialState);
-  const { userId } = useUserRole();
+  const userData = useUserRole();
+  const { role } = userData;
+  const [userId, setUserId] = useState(userData.userId);
   const [loading, setLoading] = useState(true);
   const [productStatus, setProductStatus] = useState([]);
   const [categories, setCategories] = useState<seller_category[]>([]);
   const { generateWarningToast, generateSuccessToast } = useChakraToast();
+  const [sellers, setSellers] = useState([]);
 
   useEffect(() => {
     Promise.all([
       makeGraphQLQuery("getCategoryNamesAndID", {}),
       makeGraphQLQuery("getProductStatusList", {}),
-    ]).then(([categoryNamesandId, productStatusList]) => {
+      makeGraphQLQuery("getVerifiedSellerIDs", {}),
+    ]).then(([categoryNamesandId, productStatusList, verifiedSellers]) => {
+      const normalized_sellers = verifiedSellers["seller"].map((item) => {
+        return {
+          value: item.user_id,
+          name: item.user.email,
+        };
+      });
+      setSellers(normalized_sellers);
+
       const normalized_categories = categoryNamesandId["category"].map(
         (item) => {
           return {
             name: item.category_name,
-            id: item.category_id,
+            value: item.category_id,
           };
         }
       );
@@ -138,6 +157,10 @@ const AddItemForm = () => {
         type: SET_PRODUCT_STATUS,
         payload: normalizedProductStatus[0],
       });
+      dispatch({
+        type: SET_SELLER_ID,
+        payload: normalized_sellers[0],
+      });
       setProductStatus(normalizedProductStatus);
 
       setLoading(false);
@@ -146,6 +169,16 @@ const AddItemForm = () => {
 
   const addProduct = (e) => {
     e.preventDefault();
+
+    if (!formState.images) {
+      generateWarningToast("Error", "Please add some images for product");
+      return;
+    }
+
+    if (!formState.seller_id) {
+      generateWarningToast("Error", "Each item must have an associated seller");
+      return;
+    }
 
     const imageFiles = formState.images.map((item, index) => {
       return {
@@ -164,16 +197,13 @@ const AddItemForm = () => {
       return uploadFile(item.name, item.file);
     });
 
-    // TODO:
-    // 2. Fix up a graphql query for categories
-
     const product_upload = makeGraphQLQuery("insertNewProduct", {
       brand_name: formState.brand_name,
       current_price: formState.current_price,
       description: formState.description,
       number_in_stock: formState.number_in_stock,
       product_name: formState.product_name,
-      user_id: userId,
+      user_id: formState.seller_id,
       usual_retail_price: formState.usual_retail_price,
       product_status: formState.product_status.value,
     });
@@ -233,12 +263,27 @@ const AddItemForm = () => {
     return <SkeletonGrid count={10} />;
   }
 
+  if (role === "seller") {
+    dispatch({ type: SET_SELLER_ID, payload: userId });
+  }
+
+  console.log(formState.seller_id);
+
   return (
     <form onSubmit={addProduct}>
       <FormSegment
         title="Product Information"
         description="Tell us more about the product you're listing"
       >
+        {role === "admin" && (
+          <FormSingleInputSelect
+            label="Seller Email ( Indicate which seller you are choosing for )"
+            value={formState.seller_id}
+            options={sellers}
+            dispatch={dispatch}
+            action_type={SET_SELLER_ID}
+          />
+        )}
         <FormSingleInput
           type="text"
           label="Product Name"

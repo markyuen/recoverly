@@ -1,4 +1,4 @@
 export type seller_category = {
-  id: number;
+  value: number;
   name: string;
 };
