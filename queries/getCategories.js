@@ -5,5 +5,5 @@ query getCategories {
     category_name
     image_url
   }
-} 
+}  
 `;
