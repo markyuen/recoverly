@@ -10,6 +10,8 @@ export default function Upload() {
       formData.append(key, value);
     });
 
+    console.log(file);
+
     const upload = await fetch(url, {
       method: "POST",
       body: formData,
@@ -27,12 +29,11 @@ export default function Upload() {
   return (
     <>
       <p>Upload a .png or .jpg image (max 1MB).</p>
-      <input
-        onChange={uploadPhoto}
-        type="file"
-        accept="image/png, image/jpeg"
+      <input onChange={uploadPhoto} type="file" accept="image/*" />
+      <img
+        src="https://recoverly-images.s3.ap-southeast-1.amazonaws.com/Screenshot+2021-11-15+at+10.18.09+PM.png"
+        alt="Upload an image."
       />
-      <img src="https://recoverly-images.s3.ap-southeast-1.amazonaws.com/Screenshot+2021-11-15+at+10.18.09+PM.png" alt="Upload an image." />
     </>
   );
 }

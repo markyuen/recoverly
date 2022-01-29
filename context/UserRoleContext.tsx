@@ -9,6 +9,7 @@ import { makeGraphQLQuery } from "../lib/GraphQL";
 
 type UserContext = {
   role: string;
+  userId: string;
 };
 
 const UserContext = createContext<UserContext>(null!);
@@ -16,6 +17,7 @@ const UserContext = createContext<UserContext>(null!);
 export function UserRoleWrapper({ children }) {
   const { user } = useUser();
   const [userRole, setUserRole] = useState("unauthenticated");
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
     if (!user) {
@@ -32,6 +34,7 @@ export function UserRoleWrapper({ children }) {
           } else {
             setUserRole("customer");
           }
+          setUserId(user_data[0].user_id);
         })
         .catch((err) => console.log(err));
     }
@@ -39,6 +42,7 @@ export function UserRoleWrapper({ children }) {
 
   let sharedState = {
     role: userRole,
+    userId: userId,
   };
 
   return (

@@ -9,6 +9,9 @@ export default async function handler(req, res) {
     query,
     variables
   );
+  if (errors) {
+    console.log(errors);
+  }
 
   if (errors) {
     res.status(400).json({ message: "Error Encountered", error: errors });

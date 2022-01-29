@@ -44,6 +44,8 @@ const Category = ({ category_name }: CategoryProps) => {
       </ShopNav>
     );
   }
+
+  console.log(data);
   return (
     <ShopNav>
       <InternalLink
@@ -56,9 +58,12 @@ const Category = ({ category_name }: CategoryProps) => {
       <div className="grid grid-cols-3 mx-4 pt-10">
         {data &&
           data.category &&
-          data.category[0].products_categories.map((item, index) => (
-            <p key={index}>Product Exists</p>
-          ))}
+          data.category[0] &&
+          data.category[0]["products_categories"] &&
+          data.category[0]["products_categories"].length > 0 &&
+          data.category[0]["products_categories"].map(({ product }, index) => {
+            return <p key={index}>{product.product_name}</p>;
+          })}
       </div>
     </ShopNav>
   );
