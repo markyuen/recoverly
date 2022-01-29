@@ -1,39 +1,51 @@
 import { Switch } from "@chakra-ui/react";
-
 import React, { useState } from "react";
+import { useUser } from "@auth0/nextjs-auth0";
+
 import { seller } from "../../types/admin";
+import { makeGraphQLQuery } from "../../lib/GraphQL";
 
 type ApprovalTableRowProps = {
   seller: seller;
 };
 
 const ApprovalTableRow = ({ seller }: ApprovalTableRowProps) => {
-  const { name, status, contact_number } = seller;
-  const [newStatus, setStatus] = useState(status);
+  const { company_name, acra_uen, address, contact_name, contact_email, stripe_id, verified, } = seller;
+  const [prevStatus, setPrevStatus] = useState(verified);
+  const [currStatus, setCurrStatus] = useState(verified);
+  const { user } = useUser();
+  const { sub } = user;
 
   const handleChange = () => {
-    setStatus(newStatus === "Approved" ? "Pending" : "Approved");
+    setPrevStatus(currStatus)
+    setCurrStatus(!currStatus)
   };
 
-  const confirmUpdate = () => {
-    if (status == newStatus) {
+  const confirmUpdate = async () => {
+    if (prevStatus == currStatus) {
       alert("No changes made. Please select a new status.");
+      return;
     }
+    await makeGraphQLQuery("updateSellerStatus", { "user_id": sub, "verified": currStatus, });
+    alert(`${company_name} status updated.`);
   };
 
   return (
     <tr>
-      <td className="px-6 py-4 whitespace-nowrap">{name}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{company_name}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{acra_uen}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{address}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{contact_name}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{contact_email}</td>
+      <td className="px-6 py-4 whitespace-nowrap">{stripe_id}</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <Switch
           onChange={handleChange}
           size="md"
-          isChecked={newStatus === "Approved"}
+          isChecked={currStatus === true}
         />
       </td>
-      <td className="px-6 py-4 whitespace-nowrap">{contact_number}</td>
-
-      <td className="py-4 whitespace-nowrap">
+      <td className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
         <button onClick={confirmUpdate} className="text-sm">
           Update
         </button>

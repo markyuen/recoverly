@@ -8,8 +8,8 @@ const Admin = () => {
   return (
     <ProtectedRoute>
       <ShopNav>
-        <CategoryTable />
         <ApprovalTable />
+        <CategoryTable />
       </ShopNav>
     </ProtectedRoute>
   );

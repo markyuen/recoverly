@@ -1,7 +1,13 @@
 export type seller = {
-  name: string;
-  status: string;
-  contact_number: string;
+  company_name: string;
+  acra_uen: string;
+  address: string;
+  first_name: string;
+  last_name: string;
+  stripe_id: string;
+  contact_name: string;
+  contact_email: string;
+  verified: boolean;
 };
 
 export type product_category = {
