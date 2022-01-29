@@ -1,10 +1,5 @@
 import { useUser } from "@auth0/nextjs-auth0";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { makeGraphQLQuery } from "../lib/GraphQL";
 
 type UserContext = {
@@ -19,6 +14,8 @@ export function UserRoleWrapper({ children }) {
   const [userRole, setUserRole] = useState("unauthenticated");
   const [userId, setUserId] = useState("");
 
+  console.log(userRole);
+
   useEffect(() => {
     if (!user) {
       setUserRole("unauthenticated");
@@ -29,7 +26,12 @@ export function UserRoleWrapper({ children }) {
           const user_data = res.user;
           if (user_data && user_data.length > 0 && user_data[0].admin) {
             setUserRole("admin");
-          } else if (user_data && user_data.length > 0 && user_data[0].verified) {
+          } else if (
+            user_data &&
+            user_data.length > 0 &&
+            user_data[0]["seller"] &&
+            user_data[0]["seller"]["verified"]
+          ) {
             setUserRole("seller");
           } else {
             setUserRole("customer");
