@@ -20,22 +20,17 @@ const FormMultipleTags = ({
   remove_type,
 }: FormMultipleTagsProps) => {
   const handleChange = (e) => {
-    if (e.target.value == -1) {
-      return;
-    }
+    console.log(e.target.value);
     const selected_category = categories.filter(
-      (item) => item.id == e.target.value
+      (item) => item.value == e.target.value
     );
+
     dispatch({ type: action_type, payload: selected_category });
-    // console.log({
-    //   type: action_type,
-    //   payload: selected_category,
-    // });
   };
 
   const valid_categories = categories.filter(
     (item) =>
-      value.filter((selected_category) => selected_category.id == item.id)
+      value.filter((selected_category) => selected_category.value == item.value)
         .length == 0
   );
 
@@ -54,11 +49,11 @@ const FormMultipleTags = ({
           onChange={handleChange}
           className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           defaultValue="Canada"
+          placeholder="Select a Category"
         >
-          <option value={-1}>Select A Category</option>
           {valid_categories.map((item) => {
             return (
-              <option key={item.id} value={item.id}>
+              <option key={item.value} value={item.value}>
                 {item.name}
               </option>
             );
@@ -68,8 +63,8 @@ const FormMultipleTags = ({
       <div className="flex flex-wrap">
         {value.map((item) => (
           <div
-            onClick={() => dispatch({ type: remove_type, payload: item.id })}
-            key={item.id}
+            onClick={() => dispatch({ type: remove_type, payload: item.value })}
+            key={item.value}
             className="mx-2 my-1"
           >
             <Tag
