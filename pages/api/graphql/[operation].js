@@ -9,13 +9,14 @@ export default async function handler(req, res) {
     query,
     variables
   );
-  if (errors) {
-    console.log(errors);
-  }
+
+  console.log(data);
+  console.log(errors);
 
   if (errors) {
     res.status(400).json({ message: "Error Encountered", error: errors });
   }
+
   res.status(200).json({
     ...data.data,
   });

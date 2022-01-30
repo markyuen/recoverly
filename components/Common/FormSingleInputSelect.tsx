@@ -1,10 +1,6 @@
 import { Select } from "@chakra-ui/react";
 import React from "react";
-
-type option = {
-  name: string;
-  value: any;
-};
+import { option } from "../../types/seller";
 
 type FormSingleInputSelectProps = {
   label: string;

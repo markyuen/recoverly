@@ -1,35 +1,26 @@
+import { Spinner, toast } from "@chakra-ui/react";
 import React, { useEffect, useReducer, useState } from "react";
 import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
 import { uploadFile } from "../../lib/s3";
-import { seller_category } from "../../types/seller";
+import { brand, ProductFormItem, seller_category } from "../../types/seller";
 import FormBorder from "../Common/FormBorder";
 import FormInputWithLeading from "../Common/FormInputWithLeading";
 import FormMultipleFileUpload from "../Common/FormMultipleFileUpload";
 import FormMultipleTags from "../Common/FormMultipleTags";
 import FormSegment from "../Common/FormSegment";
+import FormSelectCreatable from "../Common/FormSelectCreatable";
 import FormSelectInput from "../Common/FormSelectInput";
 import FormSingleInput from "../Common/FormSingleInput";
 import FormSingleInputSelect from "../Common/FormSingleInputSelect";
 import FormTextArea from "../Common/FormTextArea";
 import FormTwoInputFields from "../Common/FormTwoInputFields";
+import ImageCarousell, { CarousellImage } from "../Common/ImageCarousell";
+import PDFCarousell, { CarousellPDF } from "../Common/PDFCarousell";
+import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import SkeletonGrid from "../Skeleton/SkeletonGrid";
 import SkeletonPage from "../Skeleton/SkeletonPage";
-
-const initialState = {
-  product_name: "",
-  brand_name: "",
-  description: "",
-  current_price: 0,
-  usual_retail_price: 0,
-  number_in_stock: 0,
-  images: [],
-  specifications: [],
-  categories: [],
-  product_status: "",
-  seller_id: "",
-};
 
 export const MODIFY_PRODUCT_NAME = "MODIFY_PRODUCT_NAME";
 export const MODIFY_BRAND_NAME = "MODIFY_BRAND_NAME";
@@ -46,8 +37,12 @@ export const ADD_CATEGORY_TO_FORM = "ADD_CATEGORY_TO_FORM";
 export const REMOVE_CATEGORY_FROM_FORM = "REMOVE_CATEGORY_FROM_FORM";
 export const SET_PRODUCT_STATUS = "SET_PRODUCT_STATUS";
 export const SET_SELLER_ID = "SET_SELLER_ID";
+export const REMOVE_EXISTING_IMAGE_FROM_FORM_STATE =
+  "REMOVE_EXISTING_IMAGE_FROM_FORM_STATE";
+export const REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE =
+  "REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE";
 
-const SellerItemReducer = (state, action) => {
+const SellerItemReducer = (state: ProductFormItem, action) => {
   switch (action.type) {
     case MODIFY_PRODUCT_NAME:
       return { ...state, product_name: action.payload };
@@ -102,6 +97,20 @@ const SellerItemReducer = (state, action) => {
         ...state,
         seller_id: action.payload,
       };
+    case REMOVE_EXISTING_IMAGE_FROM_FORM_STATE:
+      return {
+        ...state,
+        existing_images: state.existing_images.filter(
+          (item) => item.image_id !== action.payload
+        ),
+      };
+    case REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE:
+      return {
+        ...state,
+        existing_specifications: state.existing_specifications.filter(
+          (item) => item.specification_id !== action.payload
+        ),
+      };
 
     default:
       throw new Error(
@@ -110,168 +119,146 @@ const SellerItemReducer = (state, action) => {
   }
 };
 
-const AddItemForm = () => {
+type AddItemFormProps = {
+  initialState: ProductFormItem;
+  handleSubmit: (productFormItem: ProductFormItem) => void;
+};
+
+const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
   const [formState, dispatch] = useReducer(SellerItemReducer, initialState);
   const userData = useUserRole();
-  const { role } = userData;
-  const [userId, setUserId] = useState(userData.userId);
+  const { userId, role } = userData;
   const [loading, setLoading] = useState(true);
   const [productStatus, setProductStatus] = useState([]);
   const [categories, setCategories] = useState<seller_category[]>([]);
-  const { generateWarningToast, generateSuccessToast } = useChakraToast();
   const [sellers, setSellers] = useState([]);
+  const [brandNames, setBrandNames] = useState<brand[]>([]);
+  const { generateSuccessToast } = useChakraToast();
 
   useEffect(() => {
+    if (!initialState) {
+      return;
+    }
     Promise.all([
       makeGraphQLQuery("getCategoryNamesAndID", {}),
       makeGraphQLQuery("getProductStatusList", {}),
       makeGraphQLQuery("getVerifiedSellerIDs", {}),
-    ]).then(([categoryNamesandId, productStatusList, verifiedSellers]) => {
-      const normalized_sellers = verifiedSellers["seller"].map((item) => {
-        return {
-          value: item.user_id,
-          name: item.user.email,
-        };
-      });
-      setSellers(normalized_sellers);
-
-      const normalized_categories = categoryNamesandId["category"].map(
-        (item) => {
+      makeGraphQLQuery("getBrandNames", {}),
+    ]).then(
+      ([
+        categoryNamesandId,
+        productStatusList,
+        verifiedSellers,
+        brandNames,
+      ]) => {
+        const normalized_sellers = verifiedSellers["seller"].map((item) => {
           return {
-            name: item.category_name,
-            value: item.category_id,
+            value: item.user_id,
+            name: item.user.email,
           };
-        }
-      );
-      setCategories(normalized_categories);
+        });
+        setSellers(normalized_sellers);
 
-      const normalizedProductStatus = productStatusList["product_status"].map(
-        (item) => {
+        const normalized_categories = categoryNamesandId["category"].map(
+          (item) => {
+            return {
+              name: item.category_name,
+              value: item.category_id,
+            };
+          }
+        );
+        setCategories(normalized_categories);
+
+        const normalizedProductStatus = productStatusList["product_status"].map(
+          (item) => {
+            return {
+              name: item.product_status_name,
+              value: item.product_status_id,
+            };
+          }
+        );
+
+        const { brand } = brandNames;
+        const normalizedBrandNames = brand.map((item) => {
           return {
-            name: item.product_status_name,
-            value: item.product_status_id,
+            value: item.brand_id,
+            label: item.brand_name,
           };
-        }
-      );
-      dispatch({
-        type: SET_PRODUCT_STATUS,
-        payload: normalizedProductStatus[0],
-      });
-      dispatch({
-        type: SET_SELLER_ID,
-        payload: normalized_sellers[0],
-      });
-      setProductStatus(normalizedProductStatus);
+        });
 
-      setLoading(false);
-    });
-  }, []);
+        setBrandNames(normalizedBrandNames);
+
+        dispatch({
+          type: SET_PRODUCT_STATUS,
+          payload: normalizedProductStatus[0],
+        });
+        if (role === "seller") {
+          dispatch({
+            type: SET_SELLER_ID,
+            payload: {
+              value: userId,
+              name: userId,
+            },
+          });
+        } else {
+          dispatch({
+            type: SET_SELLER_ID,
+            payload: normalized_sellers[0],
+          });
+        }
+
+        setProductStatus(normalizedProductStatus);
+        setLoading(false);
+      }
+    );
+  }, [initialState]);
 
   const addProduct = (e) => {
     e.preventDefault();
-
-    if (!formState.images) {
-      generateWarningToast("Error", "Please add some images for product");
-      return;
-    }
-
-    if (!formState.seller_id) {
-      generateWarningToast("Error", "Each item must have an associated seller");
-      return;
-    }
-
-    const imageFiles = formState.images.map((item, index) => {
-      return {
-        file: item,
-        name: `IMAGE_${index}`,
-      };
-    });
-    const specificationFiles = formState.images.map((item, index) => {
-      return {
-        file: item,
-        name: `SPECIFICATION_${index}`,
-      };
-    });
-    const allFiles = imageFiles.concat(specificationFiles);
-    const promises = allFiles.map((item) => {
-      return uploadFile(item.name, item.file);
-    });
-
-    const product_upload = makeGraphQLQuery("insertNewProduct", {
-      brand_name: formState.brand_name,
-      current_price: formState.current_price,
-      description: formState.description,
-      number_in_stock: formState.number_in_stock,
-      product_name: formState.product_name,
-      user_id: formState.seller_id.value,
-      usual_retail_price: formState.usual_retail_price,
-      product_status: formState.product_status.value,
-    });
-    Promise.all([product_upload, ...promises])
-      .then(([insert_product, ...urls]) => {
-        // Cannot Upload Product
-        if (!insert_product || !insert_product["insert_product_one"]) {
-          throw new Error("Failed to upload product. Please try again later");
-        }
-        const product_id = insert_product["insert_product_one"]["product_id"];
-
-        const images = urls
-          .filter((item) => item.includes("IMAGE"))
-          .map((url) => {
-            return {
-              product_id,
-              url,
-            };
-          });
-        const specifications = urls
-          .filter((item) => item.includes("IMAGE"))
-          .map((url) => {
-            return {
-              product_id,
-              url,
-            };
-          });
-        const categories = formState.categories.map((item) => {
-          return { category_id: item.value, product_id };
-        });
-        return makeGraphQLQuery("insertProductInformation", {
-          categories,
-          images,
-          specifications,
-        });
-      })
-      .then((res) => {
-        console.log(res);
-        if (
-          !res ||
-          !res["insert_products_categories"] ||
-          !res["insert_product_image"] ||
-          !res["insert_product_specification"]
-        ) {
-          throw new Error(
-            "Unable to update product categories,images or specifications. Please try again later"
-          );
-        }
-        generateSuccessToast("Success!", "Product Uploaded Successfully");
-      })
-      .catch((err) => {
-        console.log(err);
-        generateWarningToast(
-          "Unable to upload Image",
-          "Please try again later. Contact our help desk if the problem persists"
-        );
-      });
+    console.log("------Inserting New product----");
+    handleSubmit(formState);
   };
 
-  if (loading) {
-    return <SkeletonGrid count={10} />;
-  }
+  const setBrand = (brand: brand) => {
+    dispatch({
+      type: MODIFY_BRAND_NAME,
+      payload: brand,
+    });
+  };
 
-  if (role === "seller") {
-    dispatch({ type: SET_SELLER_ID, payload: userId });
-  }
+  const removeExistingImage = (image: CarousellImage) => {
+    makeGraphQLQuery("deleteImage", { image_id: image.image_id })
+      .then((res) => {
+        if (!res || !res["delete_product_image"]) {
+          throw new Error("Error deleting image");
+        }
+        dispatch({
+          type: REMOVE_EXISTING_IMAGE_FROM_FORM_STATE,
+          payload: image.image_id,
+        });
+        generateSuccessToast("Success!", "Image deleted successfully");
+      })
+      .catch((err) => console.log(err));
+  };
 
-  console.log(formState);
+  const removeExistingPDF = (pdf: CarousellPDF) => {
+    makeGraphQLQuery("deletePDFSpecification", {
+      specificationID: pdf.specification_id,
+    })
+      // UPDATE FORM STATE PDFS
+      .then((res) => {
+        dispatch({
+          type: REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE,
+          payload: pdf.specification_id,
+        });
+        generateSuccessToast("Success!", "Specification deleted successfully");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  if (loading || !formState) {
+    return <SpinnerWithMessage label="Configuring Form" />;
+  }
 
   return (
     <form onSubmit={addProduct}>
@@ -295,13 +282,11 @@ const AddItemForm = () => {
           action_type={MODIFY_PRODUCT_NAME}
           value={formState.product_name}
         />
-        {/* TODO : Convert this to pull from all existing brand names */}
-        <FormSingleInput
-          type="text"
-          label="Brand Name"
-          dispatch={dispatch}
-          action_type={MODIFY_BRAND_NAME}
+        <FormSelectCreatable
           value={formState.brand_name}
+          label="Brand Name"
+          options={brandNames}
+          createObject={setBrand}
         />
         <FormSingleInputSelect
           label="Product Status"
@@ -354,6 +339,13 @@ const AddItemForm = () => {
         title="Supporting Documents"
         description="Upload any PDFs or Images that are relevant to your listing"
       >
+        <ImageCarousell
+          label="Images on current Listing "
+          callToAction="Delete Image"
+          images={formState.existing_images}
+          onClickHandler={(img) => removeExistingImage(img)}
+        />
+
         <FormMultipleFileUpload
           label="Product Specifications"
           supported_file_types={["pdf"]}
@@ -362,6 +354,15 @@ const AddItemForm = () => {
           remove_type={REMOVE_SPECIFICATIONS_FROM_FORM}
           value={formState.specifications}
         />
+        {formState.existing_specifications &&
+          formState.existing_specifications.length > 0 && (
+            <PDFCarousell
+              label="Existing Product Specifications"
+              callToAction="Delete PDF"
+              pdfs={formState.existing_specifications}
+              onClickHandler={(pdf) => removeExistingPDF(pdf)}
+            />
+          )}
         <FormMultipleFileUpload
           label="Product Images"
           supported_file_types={["jpeg", "jpg", "png"]}
