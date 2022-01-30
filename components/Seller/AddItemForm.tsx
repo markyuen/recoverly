@@ -1,17 +1,41 @@
-import { Spinner, toast } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Spinner,
+  toast,
+} from "@chakra-ui/react";
 import React, { useEffect, useReducer, useState } from "react";
+import {
+  ADD_CATEGORY_TO_FORM,
+  ADD_IMAGES_TO_FORM,
+  ADD_NEW_VARIATION_CATEGORY_TO_FORM_STATE,
+  ADD_NEW_VARIATION_TO_FORM_STATE,
+  ADD_SPECIFICATIONS_TO_FORM,
+  MODIFY_BRAND_NAME,
+  MODIFY_CURRENT_PRICE,
+  MODIFY_NUMBER_IN_STOCK,
+  MODIFY_PRODUCT_DESCRIPTION,
+  MODIFY_PRODUCT_NAME,
+  MODIFY_USUAL_RETAIL_PRICE,
+  REMOVE_CATEGORY_FROM_FORM,
+  REMOVE_EXISTING_IMAGE_FROM_FORM_STATE,
+  REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE,
+  REMOVE_IMAGES_FROM_FORM,
+  REMOVE_SPECIFICATIONS_FROM_FORM,
+  SET_PRODUCT_STATUS,
+  SET_SELLER_ID,
+} from "../../constants/seller";
 import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
-import { uploadFile } from "../../lib/s3";
 import { brand, ProductFormItem, seller_category } from "../../types/seller";
 import FormBorder from "../Common/FormBorder";
-import FormInputWithLeading from "../Common/FormInputWithLeading";
 import FormMultipleFileUpload from "../Common/FormMultipleFileUpload";
 import FormMultipleTags from "../Common/FormMultipleTags";
 import FormSegment from "../Common/FormSegment";
 import FormSelectCreatable from "../Common/FormSelectCreatable";
-import FormSelectInput from "../Common/FormSelectInput";
 import FormSingleInput from "../Common/FormSingleInput";
 import FormSingleInputSelect from "../Common/FormSingleInputSelect";
 import FormTextArea from "../Common/FormTextArea";
@@ -19,105 +43,9 @@ import FormTwoInputFields from "../Common/FormTwoInputFields";
 import ImageCarousell, { CarousellImage } from "../Common/ImageCarousell";
 import PDFCarousell, { CarousellPDF } from "../Common/PDFCarousell";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import SkeletonGrid from "../Skeleton/SkeletonGrid";
-import SkeletonPage from "../Skeleton/SkeletonPage";
-
-export const MODIFY_PRODUCT_NAME = "MODIFY_PRODUCT_NAME";
-export const MODIFY_BRAND_NAME = "MODIFY_BRAND_NAME";
-export const MODIFY_PRODUCT_DESCRIPTION = "MODIFY_PRODUCT_DESCRIPTION";
-export const MODIFY_USUAL_RETAIL_PRICE = "MODIFY_USUAL_RETAIL_PRICE";
-export const MODIFY_CURRENT_PRICE = "MODIFY_CURRENT_PRICE";
-export const MODIFY_NUMBER_IN_STOCK = "MODIFY_NUMBER_IN_STOCK";
-export const ADD_IMAGES_TO_FORM = "ADD_IMAGES_TO_FORM";
-export const REMOVE_IMAGES_FROM_FORM = "REMOVE_IMAGES_FROM_FORM";
-export const ADD_SPECIFICATIONS_TO_FORM = "ADD_SPECIFICATIONS_TO_FORM";
-export const REMOVE_SPECIFICATIONS_FROM_FORM =
-  "REMOVE_SPECIFICATIONS_FROM_FORM";
-export const ADD_CATEGORY_TO_FORM = "ADD_CATEGORY_TO_FORM";
-export const REMOVE_CATEGORY_FROM_FORM = "REMOVE_CATEGORY_FROM_FORM";
-export const SET_PRODUCT_STATUS = "SET_PRODUCT_STATUS";
-export const SET_SELLER_ID = "SET_SELLER_ID";
-export const REMOVE_EXISTING_IMAGE_FROM_FORM_STATE =
-  "REMOVE_EXISTING_IMAGE_FROM_FORM_STATE";
-export const REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE =
-  "REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE";
-
-const SellerItemReducer = (state: ProductFormItem, action) => {
-  switch (action.type) {
-    case MODIFY_PRODUCT_NAME:
-      return { ...state, product_name: action.payload };
-    case MODIFY_BRAND_NAME:
-      return { ...state, brand_name: action.payload };
-    case MODIFY_PRODUCT_DESCRIPTION:
-      return { ...state, description: action.payload };
-    case MODIFY_USUAL_RETAIL_PRICE:
-      return { ...state, usual_retail_price: action.payload };
-    case MODIFY_CURRENT_PRICE:
-      return { ...state, current_price: action.payload };
-    case MODIFY_NUMBER_IN_STOCK:
-      return { ...state, number_in_stock: action.payload };
-    case ADD_IMAGES_TO_FORM:
-      return { ...state, images: state.images.concat(action.payload) };
-    case REMOVE_IMAGES_FROM_FORM:
-      return {
-        ...state,
-        images: state.images.filter((_, index) => index !== action.payload),
-      };
-    case ADD_SPECIFICATIONS_TO_FORM:
-      return {
-        ...state,
-        specifications: state.specifications.concat(action.payload),
-      };
-    case REMOVE_SPECIFICATIONS_FROM_FORM:
-      return {
-        ...state,
-        specifications: state.specifications.filter(
-          (_, index) => index !== action.payload
-        ),
-      };
-    case ADD_CATEGORY_TO_FORM:
-      return {
-        ...state,
-        categories: state.categories.concat(action.payload),
-      };
-    case REMOVE_CATEGORY_FROM_FORM:
-      return {
-        ...state,
-        categories: state.categories.filter(
-          (item) => item.value !== action.payload
-        ),
-      };
-    case SET_PRODUCT_STATUS:
-      return {
-        ...state,
-        product_status: action.payload,
-      };
-    case SET_SELLER_ID:
-      return {
-        ...state,
-        seller_id: action.payload,
-      };
-    case REMOVE_EXISTING_IMAGE_FROM_FORM_STATE:
-      return {
-        ...state,
-        existing_images: state.existing_images.filter(
-          (item) => item.image_id !== action.payload
-        ),
-      };
-    case REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE:
-      return {
-        ...state,
-        existing_specifications: state.existing_specifications.filter(
-          (item) => item.specification_id !== action.payload
-        ),
-      };
-
-    default:
-      throw new Error(
-        "Unsupported Form Field. Please look at SellerItemReducer"
-      );
-  }
-};
+import { SellerItemReducer } from "../Reducers/sellerReducer";
+import CreateVariation from "./CreateVariation";
+import VariationCategory from "./VariationCategory";
 
 type AddItemFormProps = {
   initialState: ProductFormItem;
@@ -167,7 +95,6 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
             };
           })
           .sort((a, b) => {
-            console.log(a, b);
             return a.name.localeCompare(b.name);
           });
 
@@ -376,6 +303,33 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           remove_type={REMOVE_IMAGES_FROM_FORM}
           value={formState.images}
         />
+      </FormSegment>
+      <FormBorder />
+      <FormSegment
+        title="Variations"
+        description="Tell us what different categories your products fall under"
+      >
+        {Object.keys(formState.variations).length < 2 && (
+          <CreateVariation
+            handleChange={(variation) =>
+              dispatch({
+                type: ADD_NEW_VARIATION_CATEGORY_TO_FORM_STATE,
+                payload: variation,
+              })
+            }
+          />
+        )}
+        {Object.keys(formState.variations).map((category, index) => {
+          return (
+            <VariationCategory
+              key={index}
+              category={category}
+              variations={formState.variations[category]}
+              dispatch={dispatch}
+              action_type={ADD_NEW_VARIATION_TO_FORM_STATE}
+            />
+          );
+        })}
       </FormSegment>
       <div className="flex flex-row-reverse mt-10">
         <button

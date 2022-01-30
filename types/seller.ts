@@ -61,6 +61,9 @@ export type ProductFormItem = {
   };
   existing_images: database_image[];
   existing_specifications: database_specification[];
+  variation_categories: string[];
+  variations: Record<string, string[]>;
+  variation_sku: Record<string, Record<string, number>>;
 };
 
 export const productInitialState: ProductFormItem = {
@@ -81,4 +84,7 @@ export const productInitialState: ProductFormItem = {
   },
   existing_images: [],
   existing_specifications: [],
+  variation_categories: [],
+  variations: {},
+  variation_sku: {},
 };
