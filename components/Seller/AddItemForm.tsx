@@ -159,14 +159,18 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
         });
         setSellers(normalized_sellers);
 
-        const normalized_categories = categoryNamesandId["category"].map(
-          (item) => {
+        const normalized_categories = categoryNamesandId["category"]
+          .map((item) => {
             return {
               name: item.category_name,
               value: item.category_id,
             };
-          }
-        );
+          })
+          .sort((a, b) => {
+            console.log(a, b);
+            return a.name.localeCompare(b.name);
+          });
+
         setCategories(normalized_categories);
 
         const normalizedProductStatus = productStatusList["product_status"].map(
@@ -179,12 +183,16 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
         );
 
         const { brand } = brandNames;
-        const normalizedBrandNames = brand.map((item) => {
-          return {
-            value: item.brand_id,
-            label: item.brand_name,
-          };
-        });
+        const normalizedBrandNames = brand
+          .map((item) => {
+            return {
+              value: item.brand_id,
+              label: item.brand_name,
+            };
+          })
+          .sort((a, b) => {
+            return a.label.localeCompare(b.label);
+          });
 
         setBrandNames(normalizedBrandNames);
 

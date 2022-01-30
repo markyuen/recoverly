@@ -37,9 +37,13 @@ const SellerItemRow = ({ item, removeProduct }: SellerItemProps) => {
 
   return (
     <tr>
-      <td className="px-6 py-4 whitespace-nowrap">{product_name}</td>
+      <td className="px-6 py-4 ">{product_name}</td>
       <td className="px-6 py-4 whitespace-nowrap">{brand_name}</td>
-      <td className="px-6 py-4 whitespace-nowrap">{description}</td>
+      <td className="px-6 py-4 ">
+        {description.length < 100
+          ? description
+          : description.slice(0, 100) + "..."}
+      </td>
       <td className="py-4 whitespace-nowrap">{number_in_stock}</td>
       <td className="py-4 whitespace-nowrap">{ind_current_price}</td>
       <td className="py-4 whitespace-nowrap">
