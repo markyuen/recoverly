@@ -21,14 +21,13 @@ const PDFCarousell = ({
   callToAction,
   label,
 }: PDFCarousellProps) => {
-  const [carouselPDFs, setCarouselPDFs] = useState(pdfs);
   const [currIndex, setCurrIndex] = useState(0);
 
   // PDF rendering stuff
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState(null);
 
-  if (!pdfs || pdfs.length == 0 || !carouselPDFs) {
+  if (!pdfs || pdfs.length == 0) {
     return null;
   }
 
@@ -41,11 +40,13 @@ const PDFCarousell = ({
   };
 
   const incrementIndex = () => {
-    setCurrIndex((currIndex) => incrementValue(currIndex, carouselPDFs.length));
+    setPageNumber(1);
+    setCurrIndex((currIndex) => incrementValue(currIndex, pdfs.length));
   };
 
   const decrementIndex = () => {
-    setCurrIndex((currIndex) => decrementValue(currIndex, carouselPDFs.length));
+    setPageNumber(1);
+    setCurrIndex((currIndex) => decrementValue(currIndex, pdfs.length));
   };
 
   const incrementPage = () => {
@@ -103,7 +104,7 @@ const PDFCarousell = ({
       </div>
       <Document
         file={{
-          url: carouselPDFs[currIndex].specification_url,
+          url: pdfs[currIndex].specification_url,
         }}
         onLoadSuccess={onDocumentLoadSuccess}
       >
@@ -152,16 +153,15 @@ const PDFCarousell = ({
         </div>
       </div>
 
-      <button
+      <div
         onClick={(e) => {
-          onClickHandler(carouselPDFs[currIndex]);
+          onClickHandler(pdfs[currIndex]);
           setCurrIndex(0);
-          setCarouselPDFs(null);
         }}
-        className="inline-flex mt-4 rounded-full items-center px-5 py-2 border border-transparent text-base font-medium  shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="inline-flex mt-4 rounded-full items-center px-5 py-2 border border-transparent text-base font-medium  shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
       >
         {callToAction}
-      </button>
+      </div>
     </div>
   );
 };

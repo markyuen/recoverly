@@ -215,7 +215,6 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
 
   const addProduct = (e) => {
     e.preventDefault();
-    console.log("------Inserting New product----");
     handleSubmit(formState);
   };
 
@@ -339,13 +338,12 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
         title="Supporting Documents"
         description="Upload any PDFs or Images that are relevant to your listing"
       >
-        <ImageCarousell
-          label="Images on current Listing "
-          callToAction="Delete Image"
-          images={formState.existing_images}
-          onClickHandler={(img) => removeExistingImage(img)}
+        <PDFCarousell
+          label="Existing Product Specifications"
+          callToAction="Delete PDF"
+          pdfs={formState.existing_specifications}
+          onClickHandler={(pdf) => removeExistingPDF(pdf)}
         />
-
         <FormMultipleFileUpload
           label="Product Specifications"
           supported_file_types={["pdf"]}
@@ -354,15 +352,14 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           remove_type={REMOVE_SPECIFICATIONS_FROM_FORM}
           value={formState.specifications}
         />
-        {formState.existing_specifications &&
-          formState.existing_specifications.length > 0 && (
-            <PDFCarousell
-              label="Existing Product Specifications"
-              callToAction="Delete PDF"
-              pdfs={formState.existing_specifications}
-              onClickHandler={(pdf) => removeExistingPDF(pdf)}
-            />
-          )}
+
+        <ImageCarousell
+          label="Images on current Listing "
+          callToAction="Delete Image"
+          images={formState.existing_images}
+          onClickHandler={(img) => removeExistingImage(img)}
+        />
+
         <FormMultipleFileUpload
           label="Product Images"
           supported_file_types={["jpeg", "jpg", "png"]}

@@ -19,7 +19,6 @@ const ImageCarousell = ({
   callToAction,
   label,
 }: ImageCarousellProps) => {
-  const [carouselImages, setCarouselImages] = useState(images);
   const [currIndex, setCurrIndex] = useState(0);
 
   if (!images || images.length == 0) {
@@ -27,12 +26,12 @@ const ImageCarousell = ({
   }
 
   const incrementIndex = () => {
-    setCurrIndex((currIndex) => (currIndex + 1) % carouselImages.length);
+    setCurrIndex((currIndex) => (currIndex + 1) % images.length);
   };
 
   const decrementIndex = () => {
     setCurrIndex((currIndex) =>
-      currIndex - 1 < 0 ? carouselImages.length - 1 : currIndex - 1
+      currIndex - 1 < 0 ? images.length - 1 : currIndex - 1
     );
   };
 
@@ -57,7 +56,7 @@ const ImageCarousell = ({
         </svg>
         <Image
           className=""
-          src={carouselImages[currIndex].image_url}
+          src={images[currIndex].image_url}
           width={300}
           height={300}
           alt={"Image Carousell Image"}
@@ -78,15 +77,15 @@ const ImageCarousell = ({
           />
         </svg>
       </div>
-      <button
+      <div
         onClick={(e) => {
-          onClickHandler(carouselImages[currIndex]);
+          onClickHandler(images[currIndex]);
           setCurrIndex(0);
         }}
-        className="inline-flex mt-4 rounded-full items-center px-5 py-2 border border-transparent text-base font-medium  shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="inline-flex mt-4 rounded-full items-center px-5 py-2 border border-transparent text-base font-medium  shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
       >
         {callToAction}
-      </button>
+      </div>
     </div>
   );
 };
