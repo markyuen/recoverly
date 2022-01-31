@@ -2,6 +2,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import React from "react";
 import { useUserRole } from "../../context/UserRoleContext";
+import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import SkeletonPage from "../Skeleton/SkeletonPage";
 
 const AccessControlRoute = ({ children, pageProps }) => {
@@ -10,13 +11,13 @@ const AccessControlRoute = ({ children, pageProps }) => {
   const router = useRouter();
 
   if (pageProps.protected && (isLoading || pendingQuery)) {
-    return <SkeletonPage />;
+    return <SpinnerWithMessage label="Setting up page" />;
   }
 
   if (pageProps.protected && !user) {
     router.push("/api/auth/login");
 
-    return <SkeletonPage />;
+    return <SpinnerWithMessage label="Setting up page" />;
   }
 
   if (
@@ -25,7 +26,7 @@ const AccessControlRoute = ({ children, pageProps }) => {
     pageProps.userTypes.indexOf(role) === -1
   ) {
     router.push("/");
-    return <SkeletonPage />;
+    return <SpinnerWithMessage label="Setting up page" />;
   }
 
   return <div>{children}</div>;

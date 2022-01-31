@@ -8,10 +8,19 @@ import getProductStatusList from "./getProductStatusList";
 import insertProductInformation from "./insertProductInformation";
 import { updateSellerStatus } from "./updateSellerStatus";
 import { insertNewSeller } from "./insertNewSeller";
+import getVerifiedSellerIDs from "./getVerifiedSellerIDs";
+import getMerchantItems from "./getMerchantItems";
+import getItemInfo from "./getItemInfo";
+import getBrandNames from "./getBrandNames";
+import deleteImage from "./deleteImage";
+import deletePDFSpecification from "./deletePDFSpecification";
+import deleteProduct from "./deleteProduct";
+import updateProductAndDeleteCategories from "./updateProductAndDeleteCategories";
 
 // Map Queries here so the hook can import the right query
 const mapping = {
-  insertNewCategory: insertNewCategory,
+  insertNewCategory,
+  getBrandNames,
   getCategoryItems,
   getCategoryNames,
   getUserInfo,
@@ -21,6 +30,13 @@ const mapping = {
   insertProductInformation,
   updateSellerStatus,
   insertNewSeller,
+  getVerifiedSellerIDs,
+  getMerchantItems,
+  getItemInfo,
+  deleteImage,
+  deletePDFSpecification,
+  deleteProduct,
+  updateProductAndDeleteCategories,
 };
 
 export default mapping;
