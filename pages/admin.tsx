@@ -17,6 +17,7 @@ const Admin = () => {
         />
         <CategoryTable />
         <ApprovalTable />
+        <CategoryTable />
       </ShopNav>
     </ProtectedRoute>
   );

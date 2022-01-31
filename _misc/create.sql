@@ -6,15 +6,15 @@ BEGIN
   END LOOP;
 END $$;
 
--- Note: executing via Hasura console, this trigger already exists
+-- Note: executing via Hasura Cloud console, this trigger already exists
 
--- CREATE FUNCTION trigger_set_timestamp()
--- RETURNS TRIGGER AS $$
--- BEGIN
---   NEW.updated_at = now();
---   RETURN NEW;
--- END;
--- $$ language plpgsql;
+CREATE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ language plpgsql;
 
 ---------------------------------------------------------------------
 -- MODELING USERS

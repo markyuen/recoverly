@@ -1,11 +1,9 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useState } from "react";
 import FormInput from "../Form/FormInput";
-import useGraphQLQuery from "../../hooks/useQuery";
+import { makeGraphQLQuery } from "../../lib/GraphQL";
 
 const SellerSignUpForm = () => {
-  const { makeGraphQLRequest } = useGraphQLQuery();
-
   const { user } = useUser();
   const { sub, email } = user;
 
@@ -85,7 +83,7 @@ const SellerSignUpForm = () => {
                 onClick={async () => {
                   console.log(userData);
                   if (window) {
-                    await makeGraphQLRequest("insertNewSeller", userData, undefined);
+                    await makeGraphQLQuery("insertNewSeller", userData);
                     const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
                       }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
                       }&stripe_user[email]=${email

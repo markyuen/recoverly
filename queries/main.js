@@ -6,6 +6,8 @@ import getCategoryNamesAndID from "./getCategoryNameAndID";
 import insertNewProduct from "./insertNewProduct";
 import getProductStatusList from "./getProductStatusList";
 import insertProductInformation from "./insertProductInformation";
+import { updateSellerStatus } from "./updateSellerStatus";
+import { insertNewSeller } from "./insertNewSeller";
 import getVerifiedSellerIDs from "./getVerifiedSellerIDs";
 import getMerchantItems from "./getMerchantItems";
 import getItemInfo from "./getItemInfo";
@@ -26,6 +28,8 @@ const mapping = {
   insertNewProduct,
   getProductStatusList,
   insertProductInformation,
+  updateSellerStatus,
+  insertNewSeller,
   getVerifiedSellerIDs,
   getMerchantItems,
   getItemInfo,

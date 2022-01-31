@@ -1,37 +1,40 @@
 import ApprovalTableBody from "./ApprovalTableBody";
 import GenericAdminTable from "./GenericAdminTable";
+import useSWR from "swr";
+import { fetcherWithBody } from "../../lib/swr";
+import { getSellers } from "../../queries/getSellers";
 
-const sellers = [
-  {
-    name: "Burberry",
-    status: "Approved",
-    contact_number: "1234567890",
-  },
-  {
-    name: "Gucci",
-    status: "Pending",
-    contact_number: "1234567890",
-  },
-  {
-    name: "Prada",
-    status: "Pending",
-    contact_number: "1234567890",
-  },
-  {
-    name: "Louis Vuitton",
-    status: "Approved",
-    contact_number: "1234567890",
-  },
-];
+const fields = ["Business", "UEN", "Address", "Contact Name", "Contact Email", "Stripe ID", "Verified", "Update"];
 
-const fields = ["Seller Name", "Approved", "Contact Number", ""];
+const AdminTable = () => {
+  const { data, error } = useSWR(
+    [
+      "/api/graphql/getSellers",
+      {
+        query: getSellers,
+      },
+    ],
+    fetcherWithBody
+  );
 
-export default function AdminTable() {
   return (
     <div className="my-10">
       <GenericAdminTable fields={fields} title="Sellers">
-        <ApprovalTableBody sellers={sellers} />
+        <>
+          {data && data.seller &&
+            <ApprovalTableBody sellers={
+              data.seller.map(d => ({
+                ...d,
+                contact_name: d.first_name + " " + d.last_name,
+                contact_email: d.user.email,
+              }))
+            }
+            />
+          }
+        </>
       </GenericAdminTable>
     </div>
   );
 }
+
+export default AdminTable
