@@ -10,14 +10,13 @@ const StripeAuthorization = () => {
   );
 };
 
-// TODO protect this page from sellers
-// export async function getStaticProps(context) {
-//   return {
-//     props: {
-//       protected: true,
-//       userTypes: ["customer", "admin"],
-//     },
-//   };
-// }
+export async function getStaticProps(context) {
+  return {
+    props: {
+      protected: true,
+      userTypes: ["unverified-seller", "admin"],
+    },
+  };
+}
 
 export default StripeAuthorization;

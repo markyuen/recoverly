@@ -16,4 +16,13 @@ const SellerSignUp = () => {
   );
 };
 
+export async function getStaticProps(context) {
+  return {
+    props: {
+      protected: true,
+      userTypes: ["unverified-seller", "admin"],
+    },
+  };
+}
+
 export default SellerSignUp;

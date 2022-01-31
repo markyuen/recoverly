@@ -200,7 +200,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           type: SET_PRODUCT_STATUS,
           payload: normalizedProductStatus[0],
         });
-        if (role === "seller") {
+        if (role === "verified-seller") {
           dispatch({
             type: SET_SELLER_ID,
             payload: {

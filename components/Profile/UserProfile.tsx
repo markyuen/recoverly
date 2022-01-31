@@ -12,7 +12,6 @@ const UserProfile = () => {
 
   const [userData, setUserData] = useState({
     email,
-    username: nickname,
     picture,
   });
   const [profileImage, setProfileImage] = useState(null);
@@ -55,12 +54,7 @@ const UserProfile = () => {
               value={userData.email}
               onChange={(e) => updateKeyValue("email", e.target.value)}
               label="Email"
-            />
-            <FormInput
-              type="text"
-              value={userData.username}
-              onChange={(e) => updateKeyValue("username", e.target.value)}
-              label="Username"
+              disabled
             />
 
             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
@@ -100,7 +94,7 @@ const UserProfile = () => {
               <InternalLink
                 href="/seller_sign_up"
                 name="Sign Up Form"
-                styling="px-2"
+                styling="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 type="customer"
               />
             </div>
@@ -109,12 +103,12 @@ const UserProfile = () => {
 
         <div className="pt-5">
           <div className="flex justify-end">
-            <button
-              type="button"
-              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Cancel
-            </button>
+            <InternalLink
+              href="/"
+              name="Cancel"
+              styling="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              type="customer"
+            />
             <button
               type="submit"
               className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

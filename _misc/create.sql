@@ -7,7 +7,6 @@ BEGIN
 END $$;
 
 -- Note: executing via Hasura Cloud console, this trigger already exists
-
 CREATE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

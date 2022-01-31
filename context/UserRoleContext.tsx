@@ -24,14 +24,24 @@ export function UserRoleWrapper({ children }) {
       makeGraphQLQuery("getUserInfo", { user_id: sub })
         .then((res) => {
           const user_data = res.user;
-          if (user_data && user_data.length > 0 && user_data[0].admin) {
+          if (
+            user_data &&
+            user_data.length > 0 &&
+            user_data[0].admin) {
             setUserRole("admin");
           } else if (
             user_data &&
             user_data.length > 0 &&
-            user_data[0]["seller"]
+            user_data[0].seller &&
+            user_data[0].seller.verified
           ) {
-            setUserRole("seller");
+            setUserRole("verified-seller");
+          } else if (
+            user_data &&
+            user_data.length > 0 &&
+            user_data[0].seller
+          ) {
+            setUserRole("unverified-seller");
           } else {
             setUserRole("customer");
           }

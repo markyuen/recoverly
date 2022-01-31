@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://<rds-user>:<rds-password>@<rds-instance>:5432/<rds-dbname>
-      HASURA_GRAPHQL_ACCESS_KEY: mylongsecretaccesskey
+      HASURA_GRAPHQL_ADMIN_SECRET: mylongsecretaccesskey
     command:
       - graphql-engine
       - serve

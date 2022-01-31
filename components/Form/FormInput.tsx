@@ -5,9 +5,10 @@ type FormInputProps = {
   onChange: (any) => void;
   value: string;
   label: string;
+  disabled?: boolean;
 };
 
-const FormInput = ({ type, value, onChange, label }: FormInputProps) => {
+const FormInput = ({ type, value, onChange, label, disabled=false }: FormInputProps) => {
   return (
     <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start  sm:border-gray-200 sm:pt-5">
       <label
@@ -25,6 +26,7 @@ const FormInput = ({ type, value, onChange, label }: FormInputProps) => {
             id="username"
             autoComplete="username"
             className="flex-1 block w-full focus:ring-indigo-500 focus:border-indigo-500 min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+            disabled={disabled}
           />
         </div>
       </div>

@@ -23,7 +23,7 @@ const AddItem = () => {
         name="Go Back to Dashboard"
         href="/seller"
         styling="pr-2 mb-4 cursor-pointer text-blue-400 hover:underline transition duration-75"
-        type="seller"
+        type="verified-seller"
       />
       <AddItemForm
         initialState={initialStateTemplate}
@@ -45,7 +45,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       protected: true,
-      userTypes: ["seller", "admin"],
+      userTypes: ["verified-seller", "admin"],
     },
   };
 }
