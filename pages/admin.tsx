@@ -15,7 +15,6 @@ const Admin = () => {
           styling="pr-2 mb-4 cursor-pointer text-blue-400 hover:underline transition duration-75"
           type="admin"
         />
-        <CategoryTable />
         <ApprovalTable />
         <CategoryTable />
       </ShopNav>
