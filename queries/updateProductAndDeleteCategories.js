@@ -14,6 +14,9 @@ mutation updateProductAndDeleteCategories(
     delete_products_categories(where: {product_id: {_eq: $product_id}}) {
       affected_rows
     }
+    delete_variation_pair(where: {product_id: {_eq: $product_id}}) {
+      affected_rows
+    }
   }  
 `;
 

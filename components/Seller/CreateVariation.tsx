@@ -1,5 +1,6 @@
 import { Input } from "@chakra-ui/react";
 import React from "react";
+import useChakraToast from "../../hooks/useChakraToast";
 
 type CreateVariationProps = {
   handleChange: (string) => void;
@@ -7,7 +8,12 @@ type CreateVariationProps = {
 
 const CreateVariation = ({ handleChange }: CreateVariationProps) => {
   const [value, setValue] = React.useState("");
+  const { generateWarningToast } = useChakraToast();
   const onSubmit = (e) => {
+    if (value == "") {
+      generateWarningToast("Error", "Variation Category cannot be blank");
+      return;
+    }
     handleChange(value);
     setValue("");
   };
@@ -15,6 +21,7 @@ const CreateVariation = ({ handleChange }: CreateVariationProps) => {
   return (
     <div className="flex flex-col items-start">
       <Input
+        value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Enter New Variation Name"
       />

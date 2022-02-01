@@ -5,6 +5,8 @@ mutation insertProductInformation(
     # This only needs product id and url
     $images: [product_image_insert_input!]!
     $specifications:[product_specification_insert_input!]!
+    # Required Info : Variation_cat_1, variation_1, sku
+    $variations: [variation_pair_insert_input!]!
   ){
     insert_products_categories(objects: $categories) {
       returning {
@@ -20,6 +22,9 @@ mutation insertProductInformation(
       returning{
         product_specification_id
       }
+    }
+    insert_variation_pair(objects:$variations){
+      affected_rows
     }
   }  
 `;

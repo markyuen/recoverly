@@ -73,10 +73,47 @@ export const createNewProduct = (
       const categories = formState.categories.map((item) => {
         return { category_id: item.value, product_id };
       });
+
+      const getVariationSKU = (v1, v2, sku_count) => {
+        if (sku_count[v1]) {
+          return sku_count[v1][v2];
+        }
+        return sku_count[v2][v1];
+      };
+      const { variation_categories, variations, variation_sku } = formState;
+      const variation_1_category = variation_categories[0];
+      const variation_2_category = variation_categories[1];
+
+      const variation_insert_obj = variations[variation_1_category]
+        .map((variation_1) => {
+          if (variation_categories.length == 1) {
+            return {
+              product_id,
+              variation_1,
+              variation_1_category,
+              SKU: getVariationSKU(variation_1, "", variation_sku),
+            };
+          }
+          return variations[variation_2_category]
+            .map((variation_2) => {
+              return {
+                product_id,
+                variation_1,
+                variation_1_category,
+                variation_2,
+                variation_2_category,
+                SKU: getVariationSKU(variation_1, variation_2, variation_sku),
+              };
+            })
+            .flat();
+        })
+        .flat();
+
       return makeGraphQLQuery("insertProductInformation", {
         categories,
         images,
         specifications,
+        variations: variation_insert_obj,
       });
     })
     .then((res) => {
@@ -173,10 +210,47 @@ export const updateProductInformation = (
       const categories = formState.categories.map((item) => {
         return { category_id: item.value, product_id };
       });
+
+      const getVariationSKU = (v1, v2, sku_count) => {
+        if (sku_count[v1]) {
+          return sku_count[v1][v2];
+        }
+        return sku_count[v2][v1];
+      };
+      const { variation_categories, variations, variation_sku } = formState;
+      const variation_1_category = variation_categories[0];
+      const variation_2_category = variation_categories[1];
+
+      const variation_insert_obj = variations[variation_1_category]
+        .map((variation_1) => {
+          if (variation_categories.length == 1) {
+            return {
+              product_id,
+              variation_1,
+              variation_1_category,
+              SKU: getVariationSKU(variation_1, "", variation_sku),
+            };
+          }
+          return variations[variation_2_category]
+            .map((variation_2) => {
+              return {
+                product_id,
+                variation_1,
+                variation_1_category,
+                variation_2,
+                variation_2_category,
+                SKU: getVariationSKU(variation_1, variation_2, variation_sku),
+              };
+            })
+            .flat();
+        })
+        .flat();
+
       return makeGraphQLQuery("insertProductInformation", {
         categories,
         images,
         specifications,
+        variations: variation_insert_obj,
       });
     })
     .then((res) => {
@@ -203,4 +277,18 @@ export const updateProductInformation = (
 
   // 2. Update Images and Specifications
   // 3. Update Categories ( We delete everything and then just add in all the info)
+};
+
+export const determineBaseCategory = (
+  variation_categories,
+  variations,
+  variation_sku
+) => {
+  const base_options = Object.keys(variation_sku);
+
+  const base_category = variation_categories.filter((category) => {
+    base_options === variations[category];
+  });
+
+  return base_category[0];
 };

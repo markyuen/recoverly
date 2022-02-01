@@ -33,6 +33,8 @@ const EditItemPage = () => {
         if (!product || product.length == 0) {
           throw new Error("Unable to retrieve information about product");
         }
+
+        console.log(product);
         const {
           product_name,
           description,
@@ -43,7 +45,49 @@ const EditItemPage = () => {
           product_images,
           product_specifications,
           brand: { brand_name, brand_id },
+          variations: variation_pairs,
         } = product[0];
+
+        let variation_categories = [];
+        let variations = {};
+        let variation_sku = {};
+        if (variation_pairs.length > 0) {
+          variation_categories.push(variation_pairs[0].variation_1_category);
+          variations[variation_pairs[0].variation_1_category] = [];
+
+          if (variation_pairs[0].variation_2_category) {
+            variation_categories.push(variation_pairs[0].variation_2_category);
+            variations[variation_pairs[0].variation_2_category] = [];
+          }
+        }
+
+        variation_pairs.forEach(
+          ({
+            variation_1,
+            variation_1_category,
+            variation_2,
+            variation_2_category,
+            SKU,
+          }) => {
+            if (!variations[variation_1_category].includes(variation_1)) {
+              variations[variation_1_category].push(variation_1);
+            }
+            if (!variation_sku[variation_1]) {
+              variation_sku[variation_1] = {};
+            }
+
+            if (variation_2_category) {
+              if (!variations[variation_2_category].includes(variation_2)) {
+                variations[variation_2_category].push(variation_2);
+              }
+
+              variation_sku[variation_1][variation_2] = SKU;
+            } else {
+              variation_sku[variation_1][""] = SKU;
+            }
+          }
+        );
+
         const formatted_product_information: ProductFormItem = {
           product_id,
           product_name,
@@ -82,6 +126,9 @@ const EditItemPage = () => {
               specification_url: item.url,
             };
           }),
+          variation_categories,
+          variation_sku,
+          variations,
           // existing_images: product_images
         };
         setInitialState(formatted_product_information);

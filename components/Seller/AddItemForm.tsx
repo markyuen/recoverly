@@ -1,11 +1,3 @@
-import {
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Spinner,
-  toast,
-} from "@chakra-ui/react";
 import React, { useEffect, useReducer, useState } from "react";
 import {
   ADD_CATEGORY_TO_FORM,
@@ -46,6 +38,7 @@ import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import { SellerItemReducer } from "../Reducers/sellerReducer";
 import CreateVariation from "./CreateVariation";
 import VariationCategory from "./VariationCategory";
+import VariationTable from "./VariationTable";
 
 type AddItemFormProps = {
   initialState: ProductFormItem;
@@ -309,7 +302,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
         title="Variations"
         description="Tell us what different categories your products fall under"
       >
-        {Object.keys(formState.variations).length < 2 && (
+        {formState.variation_categories.length < 2 && (
           <CreateVariation
             handleChange={(variation) =>
               dispatch({
@@ -319,7 +312,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
             }
           />
         )}
-        {Object.keys(formState.variations).map((category, index) => {
+        {formState.variation_categories.map((category, index) => {
           return (
             <VariationCategory
               key={index}
@@ -330,6 +323,12 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
             />
           );
         })}
+        <VariationTable
+          variation_categories={formState.variation_categories}
+          variations={formState.variations}
+          dispatch={dispatch}
+          variation_sku={formState.variation_sku}
+        />
       </FormSegment>
       <div className="flex flex-row-reverse mt-10">
         <button

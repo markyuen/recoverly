@@ -88,3 +88,8 @@ export const productInitialState: ProductFormItem = {
   variations: {},
   variation_sku: {},
 };
+
+// TODO
+// 1. Refactor the reducer so that we always add to variation categories
+// 2. Work on logic for transitioning from 1 -> 2 categories
+// 3. Develop table which can store and query variation category pairs
