@@ -1,7 +1,10 @@
 /* This example requires Tailwind CSS v2.0+ */
 
 import { useState } from "react";
-import { UPDATE_VARIATION_SKU_COUNT } from "../../constants/seller";
+import {
+  UPDATE_VARIATION_PRICE,
+  UPDATE_VARIATION_QUANTITY,
+} from "../../constants/seller";
 
 type VariationTableProps = {
   variation_categories: string[];
@@ -36,15 +39,33 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
     ? variation_sku[variation_1][variation_2]
     : variation_sku[variation_2][variation_1];
 
-  const [storedValue, setValue] = useState(value);
+  const [quantity, price] = value;
 
-  const handleChange = (e) => {
+  const [storedQuantity, setStoredQuantity] = useState(quantity);
+  const [storedPrice, setStoredPrice] = useState(price);
+
+  const handleQuantityChange = (e) => {
     if (e.target.value === "") {
       return;
     }
-    setValue(e.target.value);
+    setStoredQuantity(e.target.value);
     dispatch({
-      type: UPDATE_VARIATION_SKU_COUNT,
+      type: UPDATE_VARIATION_QUANTITY,
+      payload: {
+        variation_id_1: variation_1,
+        variation_id_2: variation_2,
+        count: e.target.value,
+      },
+    });
+  };
+
+  const handlePriceChange = (e) => {
+    if (e.target.value === "") {
+      return;
+    }
+    setStoredPrice(e.target.value);
+    dispatch({
+      type: UPDATE_VARIATION_PRICE,
       payload: {
         variation_id_1: variation_1,
         variation_id_2: variation_2,
@@ -55,12 +76,39 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
 
   return (
     <td>
-      <input
-        className="border-none"
-        type="number"
-        value={storedValue}
-        onChange={(e) => handleChange(e)}
-      />
+      <div className="grid grid-cols-5 mb-2 ">
+        <div className="flex items-center col-span-2">
+          <label className="text-gray-500 font-bold mb-1 md:mb-0 whitespace-nowrap mr-2">
+            Price: $
+          </label>
+        </div>
+        <div className="flex items-center col-span-3">
+          <input
+            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+            id="first-name"
+            type="text"
+            value={storedPrice}
+            onChange={handlePriceChange}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-5 mb-2 ">
+        <div className="flex items-center col-span-2">
+          <label className="text-gray-500 font-bold mb-1 md:mb-0 whitespace-nowrap mr-2">
+            Quantity:
+          </label>
+        </div>
+        <div className="flex items-center col-span-3">
+          <input
+            placeholder="Quantity"
+            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+            type="number"
+            value={storedQuantity}
+            onChange={(e) => handleQuantityChange(e)}
+          />
+        </div>
+      </div>
     </td>
   );
 };

@@ -1,3 +1,5 @@
+import { FixedLengthArray } from "./generic";
+
 export type seller_category = {
   value: number;
   name: string;
@@ -63,7 +65,10 @@ export type ProductFormItem = {
   existing_specifications: database_specification[];
   variation_categories: string[];
   variations: Record<string, string[]>;
-  variation_sku: Record<string, Record<string, number>>;
+  variation_sku: Record<
+    string,
+    Record<string, FixedLengthArray<[number, number]>>
+  >;
 };
 
 export const productInitialState: ProductFormItem = {

@@ -19,7 +19,8 @@ import {
   ADD_NEW_VARIATION_TO_FORM_STATE,
   REMOVE_VARIATION_CATEGORY_FROM_FORM_STATE,
   REMOVE_VARIATION_FROM_FORM_STATE,
-  UPDATE_VARIATION_SKU_COUNT,
+  UPDATE_VARIATION_PRICE,
+  UPDATE_VARIATION_QUANTITY,
 } from "../../constants/seller";
 import { addVariationCategory } from "../../lib/addFormState";
 import { ProductFormItem } from "../../types/seller";
@@ -101,6 +102,7 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
       };
 
     case REMOVE_VARIATION_CATEGORY_FROM_FORM_STATE: {
+      // TODO: Check to ensure that all data is removed from variation sku when deleting category.`
       const newState = {
         ...state,
         variation_categories: state.variation_categories.filter(
@@ -118,7 +120,7 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
         // We only have a single category
         newState.variations[remaining_category].forEach((variation) => {
           newState.variation_sku[variation] = {
-            "": 0,
+            "": [0, 0],
           };
         });
       }
@@ -162,7 +164,7 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
         ) {
           newState.variations[altCategory].forEach((variation) => {
             newState.variation_sku[variation] = {
-              "": 0,
+              "": [0, 0],
             };
           });
         }
@@ -175,7 +177,7 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
               Object.keys(newState.variation_sku[base_variation]).length === 0
             ) {
               newState.variation_sku[base_variation] = {
-                "": 0,
+                "": [0, 0],
               };
             }
           });
@@ -215,7 +217,7 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
       }
     }
 
-    case UPDATE_VARIATION_SKU_COUNT: {
+    case UPDATE_VARIATION_QUANTITY: {
       try {
         const { variation_id_1, variation_id_2, count } = action.payload;
         const newState = {
@@ -223,10 +225,33 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
         };
 
         if (newState.variation_sku[variation_id_1]) {
-          newState.variation_sku[variation_id_1][variation_id_2] =
+          newState.variation_sku[variation_id_1][variation_id_2][0] =
             parseInt(count);
         } else {
-          newState.variation_sku[variation_id_2][variation_id_1] =
+          newState.variation_sku[variation_id_2][variation_id_1][0] =
+            parseInt(count);
+        }
+        return newState;
+      } catch (error) {
+        console.log(error);
+        return {
+          ...state,
+        };
+      }
+    }
+
+    case UPDATE_VARIATION_PRICE: {
+      try {
+        const { variation_id_1, variation_id_2, count } = action.payload;
+        const newState = {
+          ...state,
+        };
+
+        if (newState.variation_sku[variation_id_1]) {
+          newState.variation_sku[variation_id_1][variation_id_2][1] =
+            parseInt(count);
+        } else {
+          newState.variation_sku[variation_id_2][variation_id_1][1] =
             parseInt(count);
         }
         return newState;

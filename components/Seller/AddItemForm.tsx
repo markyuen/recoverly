@@ -187,6 +187,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
     return <SpinnerWithMessage label="Configuring Form" />;
   }
 
+  console.log(formState);
   return (
     <form onSubmit={addProduct}>
       <FormSegment

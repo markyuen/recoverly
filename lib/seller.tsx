@@ -74,12 +74,20 @@ export const createNewProduct = (
         return { category_id: item.value, product_id };
       });
 
-      const getVariationSKU = (v1, v2, sku_count) => {
+      const getVariationQuantity = (v1, v2, sku_count) => {
         if (sku_count[v1]) {
-          return sku_count[v1][v2];
+          return sku_count[v1][v2][0];
         }
-        return sku_count[v2][v1];
+        return sku_count[v2][v1][0];
       };
+
+      const getVariationPrice = (v1, v2, sku_count) => {
+        if (sku_count[v1]) {
+          return sku_count[v1][v2][1];
+        }
+        return sku_count[v2][v1][1];
+      };
+
       const { variation_categories, variations, variation_sku } = formState;
       const variation_1_category = variation_categories[0];
       const variation_2_category = variation_categories[1];
@@ -91,7 +99,8 @@ export const createNewProduct = (
               product_id,
               variation_1,
               variation_1_category,
-              SKU: getVariationSKU(variation_1, "", variation_sku),
+              quantity: getVariationQuantity(variation_1, "", variation_sku),
+              price: getVariationPrice(variation_1, "", variation_sku),
             };
           }
           return variations[variation_2_category]
@@ -102,7 +111,16 @@ export const createNewProduct = (
                 variation_1_category,
                 variation_2,
                 variation_2_category,
-                SKU: getVariationSKU(variation_1, variation_2, variation_sku),
+                quantity: getVariationQuantity(
+                  variation_1,
+                  variation_2,
+                  variation_sku
+                ),
+                price: getVariationPrice(
+                  variation_1,
+                  variation_2,
+                  variation_sku
+                ),
               };
             })
             .flat();
@@ -211,12 +229,20 @@ export const updateProductInformation = (
         return { category_id: item.value, product_id };
       });
 
-      const getVariationSKU = (v1, v2, sku_count) => {
+      const getVariationQuantity = (v1, v2, sku_count) => {
         if (sku_count[v1]) {
-          return sku_count[v1][v2];
+          return sku_count[v1][v2][0];
         }
-        return sku_count[v2][v1];
+        return sku_count[v2][v1][0];
       };
+
+      const getVariationPrice = (v1, v2, sku_count) => {
+        if (sku_count[v1]) {
+          return sku_count[v1][v2][1];
+        }
+        return sku_count[v2][v1][1];
+      };
+
       const { variation_categories, variations, variation_sku } = formState;
       const variation_1_category = variation_categories[0];
       const variation_2_category = variation_categories[1];
@@ -228,7 +254,8 @@ export const updateProductInformation = (
               product_id,
               variation_1,
               variation_1_category,
-              SKU: getVariationSKU(variation_1, "", variation_sku),
+              quantity: getVariationQuantity(variation_1, "", variation_sku),
+              price: getVariationPrice(variation_1, "", variation_sku),
             };
           }
           return variations[variation_2_category]
@@ -239,7 +266,16 @@ export const updateProductInformation = (
                 variation_1_category,
                 variation_2,
                 variation_2_category,
-                SKU: getVariationSKU(variation_1, variation_2, variation_sku),
+                quantity: getVariationQuantity(
+                  variation_1,
+                  variation_2,
+                  variation_sku
+                ),
+                price: getVariationPrice(
+                  variation_1,
+                  variation_2,
+                  variation_sku
+                ),
               };
             })
             .flat();
