@@ -219,12 +219,20 @@ export const updateProductInformation = (
     }
   );
 
+  console.log({
+    description,
+    product_id,
+    product_name,
+    product_status,
+  });
   Promise.all([productUploadPromise, ...promises])
     .then(([update_product, ...spread_urls]) => {
       // Cannot Upload Product
       if (!update_product || !update_product["update_product"]) {
         throw new Error("Failed to upload product. Please try again later");
       }
+
+      console.log("Obtained Product ID");
 
       const urls = spread_urls as string[];
       const images = urls

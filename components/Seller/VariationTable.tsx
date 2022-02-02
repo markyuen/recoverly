@@ -35,137 +35,193 @@ const TableHeader = ({ fields }) => {
   );
 };
 
-const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
+// const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
+//   const value = variation_sku[variation_1]
+//     ? variation_sku[variation_1][variation_2]
+//     : variation_sku[variation_2][variation_1];
+
+//   const [quantity, discounted_price, original_price] = value;
+
+//   const [storedQuantity, setStoredQuantity] = useState(quantity);
+//   const [originalPrice, setoriginalPrice] = useState(original_price);
+//   const [discountedPrice, setDiscountedPrice] = useState(discounted_price);
+
+//   const handleQuantityChange = (e) => {
+//     if (e.target.value === "") {
+//       return;
+//     }
+//     setStoredQuantity(e.target.value);
+//     dispatch({
+//       type: UPDATE_VARIATION_QUANTITY,
+//       payload: {
+//         variation_id_1: variation_1,
+//         variation_id_2: variation_2,
+//         count: e.target.value,
+//       },
+//     });
+//   };
+
+//   const handleOriginalPriceChange = (e) => {
+//     if (e.target.value === "") {
+//       return;
+//     }
+//     setoriginalPrice(e.target.value);
+//     dispatch({
+//       type: UPDATE_VARIATION_ORIGINAL_PRICE,
+//       payload: {
+//         variation_id_1: variation_1,
+//         variation_id_2: variation_2,
+//         count: e.target.value,
+//       },
+//     });
+//   };
+
+//   const handleDiscountedPriceChange = (e) => {
+//     if (e.target.value === "") {
+//       return;
+//     }
+//     setDiscountedPrice(e.target.value);
+//     dispatch({
+//       type: UPDATE_VARIATION_DISCOUNTED_PRICE,
+//       payload: {
+//         variation_id_1: variation_1,
+//         variation_id_2: variation_2,
+//         count: e.target.value,
+//       },
+//     });
+//   };
+
+//   return (
+//     <td colSpan={3}>
+//       <input
+//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+//         id="first-name"
+//         type="text"
+//         value={originalPrice}
+//         onChange={handleOriginalPriceChange}
+//       />
+
+//       <input
+//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+//         id="first-name"
+//         type="text"
+//         value={discountedPrice}
+//         onChange={handleDiscountedPriceChange}
+//       />
+
+//       <input
+//         placeholder="Quantity"
+//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+//         type="number"
+//         value={storedQuantity}
+//         onChange={(e) => handleQuantityChange(e)}
+//       />
+//     </td>
+//   );
+// };
+
+const TableCell = ({
+  variation_1,
+  variation_2,
+  variation_sku,
+  dispatch,
+  action_type,
+  ind,
+}) => {
   const value = variation_sku[variation_1]
-    ? variation_sku[variation_1][variation_2]
-    : variation_sku[variation_2][variation_1];
+    ? variation_sku[variation_1][variation_2][ind]
+    : variation_sku[variation_2][variation_1][ind];
 
-  const [quantity, discounted_price, original_price] = value;
+  const [tableCellValue, setTableCellValue] = useState(value);
 
-  const [storedQuantity, setStoredQuantity] = useState(quantity);
-  const [originalPrice, setoriginalPrice] = useState(original_price);
-  const [discountedPrice, setDiscountedPrice] = useState(discounted_price);
-
-  const handleQuantityChange = (e) => {
+  const handleChange = (e) => {
     if (e.target.value === "") {
       return;
     }
-    setStoredQuantity(e.target.value);
+    //TODO: Handle error parsing
     dispatch({
-      type: UPDATE_VARIATION_QUANTITY,
+      type: action_type,
       payload: {
         variation_id_1: variation_1,
         variation_id_2: variation_2,
         count: e.target.value,
       },
     });
-  };
-
-  const handleOriginalPriceChange = (e) => {
-    if (e.target.value === "") {
-      return;
-    }
-    setoriginalPrice(e.target.value);
-    dispatch({
-      type: UPDATE_VARIATION_ORIGINAL_PRICE,
-      payload: {
-        variation_id_1: variation_1,
-        variation_id_2: variation_2,
-        count: e.target.value,
-      },
-    });
-  };
-
-  const handleDiscountedPriceChange = (e) => {
-    if (e.target.value === "") {
-      return;
-    }
-    setDiscountedPrice(e.target.value);
-    dispatch({
-      type: UPDATE_VARIATION_DISCOUNTED_PRICE,
-      payload: {
-        variation_id_1: variation_1,
-        variation_id_2: variation_2,
-        count: e.target.value,
-      },
-    });
+    setTableCellValue(e.target.value);
   };
 
   return (
     <td>
-      <div className="grid grid-cols-5 mb-2 ">
-        <div className="flex items-center col-span-2">
-          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
-            Original Price: $
-          </label>
-        </div>
-        <div className="flex items-center col-span-3">
-          <input
-            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-            id="first-name"
-            type="text"
-            value={originalPrice}
-            onChange={handleOriginalPriceChange}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-5 mb-2 ">
-        <div className="flex items-center col-span-2">
-          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
-            Discounted Price: $
-          </label>
-        </div>
-        <div className="flex items-center col-span-3">
-          <input
-            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-            id="first-name"
-            type="text"
-            value={discountedPrice}
-            onChange={handleDiscountedPriceChange}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-5 mb-2 ">
-        <div className="flex items-center col-span-2">
-          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
-            Quantity:
-          </label>
-        </div>
-        <div className="flex items-center col-span-3">
-          <input
-            placeholder="Quantity"
-            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-            type="number"
-            value={storedQuantity}
-            onChange={(e) => handleQuantityChange(e)}
-          />
-        </div>
-      </div>
+      <input
+        className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+        id="first-name"
+        type="text"
+        value={tableCellValue}
+        onChange={handleChange}
+      />
     </td>
   );
 };
 
 const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
+  console.log(variations);
   return (
-    <tr className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-        {label}
-      </td>
-
-      {variations.map((item, index) => {
-        return (
-          <TableCell
-            key={index}
-            variation_1={label}
-            variation_2={item}
-            variation_sku={variation_sku}
-            dispatch={dispatch}
-          />
-        );
-      })}
-    </tr>
+    <>
+      <tr className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+        <td
+          rowSpan={3}
+          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+        >
+          {label}
+        </td>
+        <td>Original Price</td>
+        {variations.map((variation, index) => {
+          return (
+            <TableCell
+              key={index}
+              variation_1={label}
+              variation_2={variation}
+              variation_sku={variation_sku}
+              ind={2}
+              dispatch={dispatch}
+              action_type={UPDATE_VARIATION_ORIGINAL_PRICE}
+            />
+          );
+        })}
+      </tr>
+      <tr>
+        <td>Discounted Price</td>
+        {variations.map((variation, index) => {
+          return (
+            <TableCell
+              key={index}
+              variation_1={label}
+              variation_2={variation}
+              variation_sku={variation_sku}
+              ind={1}
+              dispatch={dispatch}
+              action_type={UPDATE_VARIATION_ORIGINAL_PRICE}
+            />
+          );
+        })}
+      </tr>
+      <tr>
+        <td>Quantity</td>
+        {variations.map((variation, index) => {
+          return (
+            <TableCell
+              key={index}
+              variation_1={label}
+              variation_2={variation}
+              variation_sku={variation_sku}
+              ind={0}
+              dispatch={dispatch}
+              action_type={UPDATE_VARIATION_ORIGINAL_PRICE}
+            />
+          );
+        })}
+      </tr>
+    </>
   );
 };
 
@@ -225,8 +281,10 @@ const VariationTable = ({
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-              <TableHeader fields={["Variation", ...variations[alt_cat]]} />
+            <table className="min-w-full divide-y divide-gray-200 table-fixed">
+              <TableHeader
+                fields={["Variation", "Quantity", ...variations[alt_cat]]}
+              />
               <tbody>
                 {variations[base_cat].map((item, index) => {
                   return (
