@@ -18,11 +18,6 @@ query getCategoryItems($category_name: String!) {
       product{
         product_id
         product_name
-        products_categories{
-          category{
-            category_name
-          }
-        }
         product_images{
           url
         }

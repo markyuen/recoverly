@@ -2,26 +2,32 @@ import React from "react";
 import Image from "next/image";
 import LinkContainer from "../Common/LinkContainer";
 import { generateItemSlugLink } from "../../lib/string";
-import { ItemProp } from "../../types/items";
+import { ItemListing } from "../../types/items";
+import ImageViewer from "../Common/ImageViewer";
 
 type ItemCardProp = {
-  item: ItemProp;
+  item: ItemListing;
 };
 
 const ItemCard = ({ item }: ItemCardProp) => {
-  const { title, price, image, id } = item;
+  console.log(item);
+  const { product_id, product_images, product_name } = item;
 
   return (
-    <LinkContainer href={`/product/${id}`}>
+    <LinkContainer href={`/product/${product_id}`}>
       <div
         id="category-item"
         className="card flex flex-col justify-center cursor-pointer px-2"
       >
         <div className="px-4 py-10 mx-auto">
-          <Image src={image} width={200} height={200} alt={title} />
+          <Image
+            src={product_images[0].url}
+            width={300}
+            height={300}
+            alt={product_name}
+          />
         </div>
-        <p className="text-md text-gray-900 font-bold">{title}</p>
-        <p className="text-sm text-left">${price}</p>
+        <p className="text-md text-gray-900 font-bold">{product_name}</p>
       </div>
     </LinkContainer>
   );
