@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   UPDATE_VARIATION_DISCOUNTED_PRICE,
   UPDATE_VARIATION_ORIGINAL_PRICE,
-  UPDATE_VARIATION_PRICE,
   UPDATE_VARIATION_QUANTITY,
 } from "../../constants/seller";
 
