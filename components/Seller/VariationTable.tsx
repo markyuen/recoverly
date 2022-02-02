@@ -155,7 +155,7 @@ const TableCell = ({
       <input
         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
         id="first-name"
-        type="text"
+        type="number"
         value={tableCellValue}
         onChange={handleChange}
       />
@@ -200,7 +200,7 @@ const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
               variation_sku={variation_sku}
               ind={1}
               dispatch={dispatch}
-              action_type={UPDATE_VARIATION_ORIGINAL_PRICE}
+              action_type={UPDATE_VARIATION_DISCOUNTED_PRICE}
             />
           );
         })}
@@ -216,7 +216,7 @@ const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
               variation_sku={variation_sku}
               ind={0}
               dispatch={dispatch}
-              action_type={UPDATE_VARIATION_ORIGINAL_PRICE}
+              action_type={UPDATE_VARIATION_QUANTITY}
             />
           );
         })}
