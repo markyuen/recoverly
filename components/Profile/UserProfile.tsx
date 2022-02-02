@@ -60,19 +60,16 @@ const UserProfile = () => {
       uploadImage();
     }
     console.log("----Submitting Information Of ----- ");
-    console.log({ ...sellerData, user_id: userData.user_id });
-    if (JSON.stringify(sellerData) === originalSellerData) {
-      // TODO: add toasts
-      console.log("Nothing changed.")
+    if (!sellerData || (JSON.stringify(sellerData) === originalSellerData)) {
+      alert("Nothing to update!");
       return;
     }
     let payload = { ...sellerData, user_id: userData.user_id };
     delete payload.verified
     makeGraphQLQuery("updateSellerInfo", payload)
       .then((res) => {
-        // TODO: add toasts
-        console.log("Success.")
-        console.log(res)
+        alert("Success updating your information!");
+        console.log(res);
         setOriginalSellerData(JSON.stringify(sellerData));
       })
       .catch((err) => console.log(err));
