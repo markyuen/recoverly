@@ -178,9 +178,19 @@ export const createNewProduct = (
             url,
           };
         });
-      const categories = formState.categories.map((item) => {
-        return { category_id: item.value, product_id };
-      });
+      const mainCategory = formState.main_category;
+
+      const categories = formState.categories
+        .map((item) => {
+          return { category_id: item.value, product_id, main_category: false };
+        })
+        .concat([
+          {
+            category_id: mainCategory.value,
+            product_id,
+            main_category: true,
+          },
+        ]);
 
       const variations = generateVariations(formState, product_id);
 

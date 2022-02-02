@@ -107,10 +107,6 @@ const EditItemPage = () => {
             };
           })[0];
 
-        console.log(
-          `Main Category is ${main_category.value} with name of ${main_category.name}`
-        );
-
         const formatted_product_information: ProductFormItem = {
           product_id,
           product_name,
