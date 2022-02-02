@@ -24,15 +24,23 @@ const SellerItemRow = ({ item, removeProduct }: SellerItemProps) => {
     brand: { brand_name },
   } = item;
 
-  const { generateSuccessToast } = useChakraToast();
+  const { generateSuccessToast, generateWarningToast } = useChakraToast();
 
   const handleDelete = (productID) => {
     makeGraphQLQuery("deleteProduct", { productID })
       .then((res) => {
+        if (res.errors) {
+          const combined_errors = res.errors
+            .map((item) => `-${item.message}`)
+            .join("\n");
+          throw new Error(combined_errors);
+        }
         removeProduct(productID);
         generateSuccessToast("Success!", `${product_name} has been deleted`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        generateWarningToast("Error", err.message);
+      });
   };
 
   return (
