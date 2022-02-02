@@ -172,6 +172,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
     });
   };
 
+  console.log(formState);
   const removeExistingImage = (image: CarousellImage) => {
     makeGraphQLQuery("deleteImage", { image_id: image.image_id })
       .then((res) => {

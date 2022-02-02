@@ -46,7 +46,6 @@ const VariationCategory = ({
   };
 
   const handleRemoveVariation = (variation_name) => {
-    console.log("-----Calling Variation Removal");
     dispatch({
       type: REMOVE_VARIATION_FROM_FORM_STATE,
       payload: {
