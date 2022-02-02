@@ -16,6 +16,7 @@ import deleteImage from "./deleteImage";
 import deletePDFSpecification from "./deletePDFSpecification";
 import deleteProduct from "./deleteProduct";
 import updateProductAndDeleteCategories from "./updateProductAndDeleteCategories";
+import getParentCategories from "./getParentCategories";
 import { getUserSellerInfo } from "./getSellerInfo";
 import { updateSellerInfo } from "./updateSellerInfo";
 
@@ -41,6 +42,7 @@ const mapping = {
   updateProductAndDeleteCategories,
   getUserSellerInfo: getUserSellerInfo,
   updateSellerInfo: updateSellerInfo,
+  getParentCategories,
 };
 
 export default mapping;

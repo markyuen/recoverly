@@ -16,6 +16,8 @@ import { fetcherWithBody } from "../../lib/swr";
 import getCategoryItems from "../../queries/getCategoryItems";
 import useSWR from "swr";
 import SkeletonGrid from "../../components/Skeleton/SkeletonGrid";
+import BreadCrumbs from "../../components/Common/BreadCrumbs";
+import SubCategoryLink from "../../components/Category/SubCategoryLink";
 
 type CategoryProps = {
   category_name: string;
@@ -45,15 +47,47 @@ const Category = ({ category_name }: CategoryProps) => {
     );
   }
 
+  const pages = data.category[0].category
+    ? [
+        {
+          name: data.category[0].category["category_name"],
+          href: "/category/[category_slug]",
+          current: false,
+        },
+      ]
+    : [];
+
+  console.log(data.category[0].category);
+
   return (
     <ShopNav>
-      <InternalLink
-        type="customer"
-        name="← View All Categories"
-        href="/"
-        styling="px-2 cursor-pointer text-blue-400 hover:underline transition duration-75"
+      <BreadCrumbs
+        pages={pages.concat([
+          {
+            name: category_name,
+            href: "/category/[category_slug]",
+            current: true,
+          },
+        ])}
       />
       <Header name={category_name} />
+      {data.category[0].categories.length > 0 && (
+        <p className="text-2xl pt-4 ml-4 lg:px-0 font-bold text-black">
+          Subcategories
+        </p>
+      )}
+      {/* {data.category.categories[0].map((item, index) => {
+        return <Link>{item.category_name}</Link>;
+      })} */}
+      <div className="flex pl-4 items-center flex-wrap">
+        {data.category[0].categories.map((item, index) => {
+          return <SubCategoryLink name={item.category_name} key={index} />;
+        })}
+      </div>
+
+      <p className="mt-10 text-2xl pt-4 ml-4 lg:px-0 font-bold text-black">
+        Browse Items
+      </p>
       <div className="grid grid-cols-3 mx-4 pt-10">
         {data &&
           data.category &&

@@ -27,7 +27,7 @@ const CategoryCard = ({ name, image_url }: CategoryCardProps) => {
       onClick={handleClick}
       className="transition ease-in-out delay-50 duration-300 cursor-pointer hover:shadow-md py-4 px-4 hover: flex flex-col items-center justify-center"
     >
-      {/* <Image src={image_url} width={100} height={100} alt={name} /> */}
+      <Image src={image_url} width={100} height={100} alt={name} />
       <p className="text-md mt-4">{capitaliseFirstLetterOfString(name)}</p>
     </div>
   );
