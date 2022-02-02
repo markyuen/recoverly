@@ -23,10 +23,10 @@ const AdminTable = () => {
         <>
           {data && data.seller &&
             <ApprovalTableBody sellers={
-              data.seller.map(d => ({
-                ...d,
-                contact_name: d.first_name + " " + d.last_name,
-                contact_email: d.user.email,
+              data.seller.map(seller => ({
+                ...seller,
+                contact_name: seller.first_name + " " + seller.last_name,
+                contact_email: seller.user.email,
               }))
             }
             />
