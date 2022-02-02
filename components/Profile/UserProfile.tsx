@@ -12,9 +12,8 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [sellerData, setSellerData] = useState(null);
+  const [originalSellerData, setOriginalSellerData] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
-
-  let originalSellerData;
 
   useEffect(() => {
     if (!user) {
@@ -29,7 +28,7 @@ const UserProfile = () => {
         })
         if (res.user_by_pk.seller) {
           setSellerData({ ...res.user_by_pk.seller });
-          originalSellerData = { ...res.user_by_pk };
+          setOriginalSellerData(JSON.stringify({ ...res.user_by_pk.seller }));
         }
         setLoading(false);
       })
@@ -61,7 +60,22 @@ const UserProfile = () => {
       uploadImage();
     }
     console.log("----Submitting Information Of ----- ");
-    console.log(sellerData);
+    console.log({ ...sellerData, user_id: userData.user_id });
+    if (JSON.stringify(sellerData) === originalSellerData) {
+      // TODO: add toasts
+      console.log("Nothing changed.")
+      return;
+    }
+    let payload = { ...sellerData, user_id: userData.user_id };
+    delete payload.verified
+    makeGraphQLQuery("updateSellerInfo", payload)
+      .then((res) => {
+        // TODO: add toasts
+        console.log("Success.")
+        console.log(res)
+        setOriginalSellerData(JSON.stringify(sellerData));
+      })
+      .catch((err) => console.log(err));
   };
 
   if (loading) {
@@ -136,7 +150,7 @@ const UserProfile = () => {
                   </label>
                   <div className="mt-1 sm:mt-0 sm:col-span-2">
                     <div className="flex items-center">
-                        <p><i>{sellerData.verified ? "Verified" : "Pending Verification"}</i></p>
+                      <p><i>{sellerData.verified ? "Verified" : "Pending Verification"}</i></p>
                     </div>
                   </div>
                 </div>

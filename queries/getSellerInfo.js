@@ -5,7 +5,6 @@ query getUserSellerInfo($user_id:String!) {
     admin
     email
     seller {
-      stripe_id
       verified
       acra_uen
       address
