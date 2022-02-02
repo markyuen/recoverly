@@ -13,7 +13,19 @@ const InternalLink = ({ name, href, styling, type }: InternalLinkProps) => {
   const { role } = useUserRole();
 
   if (type == "admin" && role != "admin") return null;
-  if (type == "seller" && role != "seller") return null;
+  if (
+    type == "verified-seller" &&
+    role != "verified-seller" &&
+    role != "admin") {
+      return null;
+  }
+  if (
+    type == "unverified-seller" &&
+    role != "unverified-seller" &&
+    role != "verified-seller" &&
+    role != "admin") {
+    return null;
+  }
 
   return (
     <div className={styling}>

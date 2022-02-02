@@ -9,6 +9,8 @@ export const makeGraphQLQuery = (operation, variables) => {
     variables,
   };
 
+  console.log(req_body);
+
   return fetcherWithBody(req_url, req_body).then((res) => {
     if (!res || res.errors) {
       const errors = "Error: " + res.errors[0].message;

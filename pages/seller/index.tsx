@@ -1,5 +1,4 @@
 import React from "react";
-import InternalLink from "../../components/Common/Link";
 import LinkContainer from "../../components/Common/LinkContainer";
 import ShopNav from "../../components/layouts/ShopNav";
 import SellerItemTable from "../../components/Seller/SellerItemTable";
@@ -26,7 +25,6 @@ const Index = () => {
           <p>Add Item</p>
         </div>
       </LinkContainer>
-
       <SellerItemTable />
     </ShopNav>
   );
@@ -36,7 +34,7 @@ export async function getStaticProps(context) {
   return {
     props: {
       protected: true,
-      userTypes: ["seller"],
+      userTypes: ["verified-seller", "unverified-seller", "admin"],
     },
   };
 }

@@ -1,11 +1,9 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useState } from "react";
 import FormInput from "../Form/FormInput";
-import useGraphQLQuery from "../../hooks/useQuery";
+import { makeGraphQLQuery } from "../../lib/GraphQL";
 
 const SellerSignUpForm = () => {
-  const { makeGraphQLRequest } = useGraphQLQuery();
-
   const { user } = useUser();
   const { sub, email } = user;
 
@@ -25,10 +23,38 @@ const SellerSignUpForm = () => {
     setUserData(newUserData);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("----Submitting Information Of ----- ");
-    console.log(user);
+    console.log(userData);
+    makeGraphQLQuery("insertNewSeller", userData)
+      .then((res) => {
+        // TODO: add toasts
+        console.log("Success.");
+        console.log(res);
+        const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
+          }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
+          }&stripe_user[email]=${email
+          }&stripe_user[first_name]=${userData.first_name
+          }&stripe_user[last_name]=${userData.last_name
+          }`;
+        window.location.href = url;
+      })
+      .catch((err) => console.log(err));
+
+    // TODO: switch to Stripe server link generation instead of
+    // manually creating link, however, will then need to properly
+    // manage user flows and what happens if user does not finish
+    // the onboarding properly, since going this route will generate
+    // the account link immediately
+
+    // const link = await fetch("/api/stripe-onboard-link", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    //   body: JSON.stringify(userData),
+    // })
   };
 
   return (
@@ -80,35 +106,10 @@ const SellerSignUpForm = () => {
                 Register with Stripe
               </label>
               <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
-                onClick={async () => {
-                  if (window) {
-                    await makeGraphQLRequest(
-                      "insertNewSeller",
-                      userData,
-                      undefined
-                    );
-                    const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT}&stripe_user[email]=${email}&stripe_user[first_name]=${userData.first_name}&stripe_user[last_name]=${userData.last_name}`;
-                    window.document.location.href = url;
-
-                    // TODO: switch to Stripe server link generation instead of
-                    // manually creating link, however, will then need to properly
-                    // manage user flows and what happens if user does not finish
-                    // the onboarding properly, since going this route will generate
-                    // the account link immediately
-
-                    // const link = await fetch("/api/stripe-onboard-link", {
-                    //   method: "POST",
-                    //   headers: {
-                    //     "Content-Type": "application/json"
-                    //   },
-                    //   body: JSON.stringify(userData),
-                    // })
-                  }
-                }}
+                type="submit"
+                className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <span>Save and Connect with Stripe</span>
+                Save and Connect with Stripe
               </button>
             </div>
           </div>
