@@ -1,3 +1,5 @@
+import { FixedLengthArray } from "./generic";
+
 export type seller_category = {
   value: number;
   name: string;
@@ -43,14 +45,15 @@ export type seller_item = {
   products_categories: database_category[];
 };
 
+type Quantity = number;
+type OriginalPrice = number;
+type DiscountedPrice = number;
+
 export type ProductFormItem = {
   product_id: string;
   product_name: string;
   brand_name: brand;
   description: string;
-  current_price: number;
-  usual_retail_price: number;
-  number_in_stock: number;
   categories: seller_category[];
   images: File[];
   specifications: File[];
@@ -61,6 +64,14 @@ export type ProductFormItem = {
   };
   existing_images: database_image[];
   existing_specifications: database_specification[];
+  main_category: seller_category | null;
+  variation_categories: string[];
+  variations: Record<string, string[]>;
+  variation_sku: Record<
+    string,
+    // String -> [Quantity,]
+    Record<string, FixedLengthArray<[Quantity, DiscountedPrice, OriginalPrice]>>
+  >;
 };
 
 export const productInitialState: ProductFormItem = {
@@ -68,9 +79,6 @@ export const productInitialState: ProductFormItem = {
   product_name: "",
   brand_name: { value: null, label: "" },
   description: "",
-  current_price: 0,
-  usual_retail_price: 0,
-  number_in_stock: 0,
   images: [],
   specifications: [],
   categories: [],
@@ -79,6 +87,15 @@ export const productInitialState: ProductFormItem = {
     value: "",
     name: "",
   },
+  main_category: null,
   existing_images: [],
   existing_specifications: [],
+  variation_categories: [],
+  variations: {},
+  variation_sku: {},
 };
+
+// TODO
+// 1. Refactor the reducer so that we always add to variation categories
+// 2. Work on logic for transitioning from 1 -> 2 categories
+// 3. Develop table which can store and query variation category pairs

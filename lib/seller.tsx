@@ -2,6 +2,84 @@ import { ProductFormItem } from "../types/seller";
 import { makeGraphQLQuery } from "./GraphQL";
 import { uploadFile } from "./s3";
 
+const generateVariations = (formState, product_id) => {
+  const getVariationQuantity = (v1, v2, sku_count) => {
+    if (sku_count[v1]) {
+      return sku_count[v1][v2][0];
+    }
+    return sku_count[v2][v1][0];
+  };
+
+  const getVariationDiscountedPrice = (v1, v2, sku_count) => {
+    if (sku_count[v1]) {
+      return sku_count[v1][v2][1];
+    }
+    return sku_count[v2][v1][1];
+  };
+
+  const getVariationOriginalPrice = (v1, v2, sku_count) => {
+    if (sku_count[v1]) {
+      return sku_count[v1][v2][2];
+    }
+    return sku_count[v2][v1][2];
+  };
+
+  const { variation_categories, variations, variation_sku } = formState;
+  const variation_1_category = variation_categories[0];
+  const variation_2_category = variation_categories[1];
+
+  const variation_insert_obj = variations[variation_1_category]
+    .map((variation_1) => {
+      if (variation_categories.length == 1) {
+        return {
+          product_id,
+          variation_1,
+          variation_1_category,
+          quantity: getVariationQuantity(variation_1, "", variation_sku),
+          original_price: getVariationOriginalPrice(
+            variation_1,
+            "",
+            variation_sku
+          ),
+          discounted_price: getVariationDiscountedPrice(
+            variation_1,
+            "",
+            variation_sku
+          ),
+        };
+      }
+      return variations[variation_2_category]
+        .map((variation_2) => {
+          return {
+            product_id,
+            variation_1,
+            variation_1_category,
+            variation_2,
+            variation_2_category,
+            quantity: getVariationQuantity(
+              variation_1,
+              variation_2,
+              variation_sku
+            ),
+            original_price: getVariationOriginalPrice(
+              variation_1,
+              variation_2,
+              variation_sku
+            ),
+            discounted_price: getVariationDiscountedPrice(
+              variation_1,
+              variation_2,
+              variation_sku
+            ),
+          };
+        })
+        .flat();
+    })
+    .flat();
+
+  return variation_insert_obj;
+};
+
 export const createNewProduct = (
   formState: ProductFormItem,
   generateWarningToast,
@@ -14,6 +92,39 @@ export const createNewProduct = (
 
   if (!formState.seller_id) {
     generateWarningToast("Error", "Each item must have an associated seller");
+    return;
+  }
+
+  if (Object.keys(formState.variation_sku).length === 0) {
+    generateWarningToast("Error", "Please add some variations to product");
+    return;
+  }
+
+  if (formState.images.length === 0 && formState.existing_images.length === 0) {
+    generateWarningToast("Error", "Please add some images for product");
+    return;
+  }
+
+  if (formState.description.length === 0) {
+    generateWarningToast("Error", "Please add a description for your product");
+    return;
+  }
+
+  if (formState.categories.length === 0) {
+    generateWarningToast(
+      "Error",
+      "Please add some categories for your product. "
+    );
+    return;
+  }
+
+  if (formState.product_name.length === 0) {
+    generateWarningToast("Error", "Please indicate a name for your product ");
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
     return;
   }
 
@@ -36,12 +147,9 @@ export const createNewProduct = (
 
   const variables = {
     brand_name: formState.brand_name.label,
-    current_price: formState.current_price,
     description: formState.description,
-    number_in_stock: formState.number_in_stock,
     product_name: formState.product_name,
     user_id: formState.seller_id.value,
-    usual_retail_price: formState.usual_retail_price,
     product_status: formState.product_status.value,
   };
 
@@ -70,13 +178,27 @@ export const createNewProduct = (
             url,
           };
         });
-      const categories = formState.categories.map((item) => {
-        return { category_id: item.value, product_id };
-      });
+      const mainCategory = formState.main_category;
+
+      const categories = formState.categories
+        .map((item) => {
+          return { category_id: item.value, product_id, main_category: false };
+        })
+        .concat([
+          {
+            category_id: mainCategory.value,
+            product_id,
+            main_category: true,
+          },
+        ]);
+
+      const variations = generateVariations(formState, product_id);
+
       return makeGraphQLQuery("insertProductInformation", {
         categories,
         images,
         specifications,
+        variations,
       });
     })
     .then((res) => {
@@ -109,13 +231,50 @@ export const updateProductInformation = (
 ) => {
   const {
     description,
-    current_price: ind_current_price,
-    number_in_stock,
-    usual_retail_price: ind_usual_retail_price,
     product_name,
     product_id,
     product_status: { value: product_status },
+    variation_sku,
   } = formState;
+
+  if (Object.keys(variation_sku).length === 0) {
+    generateWarningToast("Error", "Please add some variations to product");
+    return;
+  }
+
+  if (formState.images.length === 0 && formState.existing_images.length === 0) {
+    generateWarningToast("Error", "Please add some images for product");
+    return;
+  }
+
+  if (formState.description.length === 0) {
+    generateWarningToast("Error", "Please add a description for your product");
+    return;
+  }
+
+  if (formState.categories.length === 0) {
+    generateWarningToast(
+      "Error",
+      "Please add some categories for your product. "
+    );
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
+    return;
+  }
+
+  if (formState.product_name.length === 0) {
+    generateWarningToast("Error", "Please indicate a name for your product ");
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
+    return;
+  }
+
   // 1. Update the product information
   const imageFiles = formState.images.map((item, index) => {
     return {
@@ -137,9 +296,6 @@ export const updateProductInformation = (
     "updateProductAndDeleteCategories",
     {
       description,
-      ind_current_price,
-      ind_usual_retail_price,
-      number_in_stock,
       product_id,
       product_name,
       product_status,
@@ -152,6 +308,8 @@ export const updateProductInformation = (
       if (!update_product || !update_product["update_product"]) {
         throw new Error("Failed to upload product. Please try again later");
       }
+
+      console.log("Obtained Product ID");
 
       const urls = spread_urls as string[];
       const images = urls
@@ -170,13 +328,28 @@ export const updateProductInformation = (
             url,
           };
         });
-      const categories = formState.categories.map((item) => {
-        return { category_id: item.value, product_id };
-      });
+
+      const mainCategory = formState.main_category;
+
+      const categories = formState.categories
+        .map((item) => {
+          return { category_id: item.value, product_id, main_category: false };
+        })
+        .concat([
+          {
+            category_id: mainCategory.value,
+            product_id,
+            main_category: true,
+          },
+        ]);
+
+      const variations = generateVariations(formState, product_id);
+
       return makeGraphQLQuery("insertProductInformation", {
         categories,
         images,
         specifications,
+        variations,
       });
     })
     .then((res) => {
@@ -203,4 +376,18 @@ export const updateProductInformation = (
 
   // 2. Update Images and Specifications
   // 3. Update Categories ( We delete everything and then just add in all the info)
+};
+
+export const determineBaseCategory = (
+  variation_categories,
+  variations,
+  variation_sku
+) => {
+  const base_options = Object.keys(variation_sku);
+
+  const base_category = variation_categories.filter((category) => {
+    base_options === variations[category];
+  });
+
+  return base_category[0];
 };

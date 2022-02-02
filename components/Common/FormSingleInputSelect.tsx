@@ -27,6 +27,9 @@ const FormSingleInputSelect = ({
       </label>
       <Select
         onChange={(e) => {
+          if (e.target.value === "") {
+            return;
+          }
           dispatch({
             type: action_type,
             payload: options.filter((item) => item.value == e.target.value)[0],

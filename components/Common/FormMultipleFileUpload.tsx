@@ -1,7 +1,5 @@
-import { useToast } from "@chakra-ui/react";
 import React from "react";
 import useChakraToast from "../../hooks/useChakraToast";
-import { REMOVE_SPECIFICATIONS_FROM_FORM } from "../Seller/AddItemForm";
 
 type FormMultipleFileUploadProps = {
   label: string;
@@ -117,7 +115,6 @@ const FormMultipleFileUpload = ({
                 <p>{file.name}</p>
                 <svg
                   onClick={(e) => {
-                    console.log("----Removing index of ", index);
                     dispatch({
                       type: remove_type,
                       payload: index,

@@ -40,15 +40,7 @@ const SellerItemTable = () => {
     <>
       <GenericAdminTable
         title="Current Stock"
-        fields={[
-          "Name",
-          "Brand",
-          "Description",
-          "In Stock",
-          "Current Price",
-          "Categories",
-          "Edit",
-        ]}
+        fields={["Name", "Brand", "Description", "Categories", "Edit"]}
       >
         {items.map((item, index) => {
           return (
