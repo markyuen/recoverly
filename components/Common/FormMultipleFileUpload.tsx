@@ -115,7 +115,6 @@ const FormMultipleFileUpload = ({
                 <p>{file.name}</p>
                 <svg
                   onClick={(e) => {
-                    console.log("----Removing index of ", index);
                     dispatch({
                       type: remove_type,
                       payload: index,

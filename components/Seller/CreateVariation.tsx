@@ -4,14 +4,25 @@ import useChakraToast from "../../hooks/useChakraToast";
 
 type CreateVariationProps = {
   handleChange: (string) => void;
+  existingCategories: string[];
 };
 
-const CreateVariation = ({ handleChange }: CreateVariationProps) => {
+const CreateVariation = ({
+  handleChange,
+  existingCategories,
+}: CreateVariationProps) => {
   const [value, setValue] = React.useState("");
   const { generateWarningToast } = useChakraToast();
   const onSubmit = (e) => {
     if (value == "") {
       generateWarningToast("Error", "Variation Category cannot be blank");
+      return;
+    }
+    if (existingCategories.includes(value)) {
+      generateWarningToast(
+        "Error",
+        "Variation Categories must have a unique name"
+      );
       return;
     }
     handleChange(value);

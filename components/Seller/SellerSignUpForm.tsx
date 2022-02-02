@@ -83,15 +83,13 @@ const SellerSignUpForm = () => {
                 type="button"
                 className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm"
                 onClick={async () => {
-                  console.log(userData);
                   if (window) {
-                    await makeGraphQLRequest("insertNewSeller", userData, undefined);
-                    const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
-                      }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
-                      }&stripe_user[email]=${email
-                      }&stripe_user[first_name]=${userData.first_name
-                      }&stripe_user[last_name]=${userData.last_name
-                      }`;
+                    await makeGraphQLRequest(
+                      "insertNewSeller",
+                      userData,
+                      undefined
+                    );
+                    const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT}&stripe_user[email]=${email}&stripe_user[first_name]=${userData.first_name}&stripe_user[last_name]=${userData.last_name}`;
                     window.document.location.href = url;
 
                     // TODO: switch to Stripe server link generation instead of

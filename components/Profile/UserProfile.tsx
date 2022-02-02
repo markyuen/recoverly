@@ -41,8 +41,6 @@ const UserProfile = () => {
     if (profileImage) {
       uploadImage();
     }
-    console.log("----Submitting Information Of ----- ");
-    console.log(userData);
   };
 
   return (

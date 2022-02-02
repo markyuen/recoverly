@@ -115,11 +115,13 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
       if (newState.variation_categories.length == 1) {
         const remaining_category = newState.variation_categories[0];
         // We only have a single category
-        newState.variations[remaining_category].forEach((variation) => {
-          newState.variation_sku[variation] = {
-            "": [0, 0, 0],
-          };
-        });
+        if (newState.variations[remaining_category]) {
+          newState.variations[remaining_category].forEach((variation) => {
+            newState.variation_sku[variation] = {
+              "": [0, 0, 0],
+            };
+          });
+        }
       }
 
       return newState;

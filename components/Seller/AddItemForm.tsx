@@ -114,8 +114,6 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           }
         );
 
-        console.log(categoryNamesandId["category"]);
-
         const { brand } = brandNames;
         const normalizedBrandNames = brand
           .map((item) => {
@@ -320,6 +318,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
                 payload: variation,
               })
             }
+            existingCategories={formState.variation_categories}
           />
         )}
         {formState.variation_categories.map((category, index) => {
