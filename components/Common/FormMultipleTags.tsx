@@ -1,4 +1,4 @@
-import { Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
+import { Select, Tag, TagCloseButton, TagLabel } from "@chakra-ui/react";
 import React from "react";
 import { seller_category } from "../../types/seller";
 
@@ -43,12 +43,10 @@ const FormMultipleTags = ({
         >
           {label}
         </label>
-        <select
+        <Select
           id="location"
           name="location"
           onChange={handleChange}
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-          defaultValue="Canada"
           placeholder="Select a Category"
         >
           {valid_categories.map((item) => {
@@ -58,7 +56,7 @@ const FormMultipleTags = ({
               </option>
             );
           })}
-        </select>
+        </Select>
       </div>
       <div className="flex flex-wrap">
         {value.map((item) => (

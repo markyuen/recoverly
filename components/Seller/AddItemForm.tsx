@@ -15,6 +15,7 @@ import {
   REMOVE_SPECIFICATIONS_FROM_FORM,
   SET_PRODUCT_STATUS,
   SET_SELLER_ID,
+  UPDATE_MAIN_CATEGORY,
 } from "../../constants/seller";
 import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
@@ -50,6 +51,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
   const [categories, setCategories] = useState<seller_category[]>([]);
   const [sellers, setSellers] = useState([]);
   const [brandNames, setBrandNames] = useState<brand[]>([]);
+  const [mainCategories, setMmainCategories] = useState([]);
   const { generateSuccessToast } = useChakraToast();
 
   useEffect(() => {
@@ -77,6 +79,19 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
         setSellers(normalized_sellers);
 
         const normalized_categories = categoryNamesandId["category"]
+          .filter((item) => item["parent_category_id"])
+          .map((item) => {
+            return {
+              name: item.category_name,
+              value: item.category_id,
+            };
+          })
+          .sort((a, b) => {
+            return a.name.localeCompare(b.name);
+          });
+
+        const main_categories = categoryNamesandId["category"]
+          .filter((item) => !item["parent_category_id"])
           .map((item) => {
             return {
               name: item.category_name,
@@ -88,6 +103,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           });
 
         setCategories(normalized_categories);
+        setMmainCategories(main_categories);
 
         const normalizedProductStatus = productStatusList["product_status"].map(
           (item) => {
@@ -97,6 +113,8 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
             };
           }
         );
+
+        console.log(categoryNamesandId["category"]);
 
         const { brand } = brandNames;
         const normalizedBrandNames = brand
@@ -128,6 +146,13 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           dispatch({
             type: SET_SELLER_ID,
             payload: normalized_sellers[0],
+          });
+        }
+        if (!formState.main_category) {
+          console.log("------No Main Category");
+          dispatch({
+            type: UPDATE_MAIN_CATEGORY,
+            payload: main_categories[0],
           });
         }
 
@@ -183,7 +208,6 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
     return <SpinnerWithMessage label="Configuring Form" />;
   }
 
-  console.log(formState);
   return (
     <form onSubmit={addProduct}>
       <FormSegment
@@ -227,6 +251,14 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           dispatch={dispatch}
           value={formState.description}
           action_type={MODIFY_PRODUCT_DESCRIPTION}
+        />
+
+        <FormSingleInputSelect
+          label="Main Category"
+          value={formState.main_category}
+          options={mainCategories}
+          dispatch={dispatch}
+          action_type={UPDATE_MAIN_CATEGORY}
         />
 
         <FormMultipleTags

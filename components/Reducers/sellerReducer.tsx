@@ -19,12 +19,12 @@ import {
   UPDATE_VARIATION_QUANTITY,
   UPDATE_VARIATION_ORIGINAL_PRICE,
   UPDATE_VARIATION_DISCOUNTED_PRICE,
+  UPDATE_MAIN_CATEGORY,
 } from "../../constants/seller";
 import { addVariationCategory } from "../../lib/addFormState";
 import { ProductFormItem } from "../../types/seller";
 
 export const SellerItemReducer = (state: ProductFormItem, action) => {
-  console.log(action.type, state);
   switch (action.type) {
     case MODIFY_PRODUCT_NAME:
       return { ...state, product_name: action.payload };
@@ -72,6 +72,11 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
       return {
         ...state,
         seller_id: action.payload,
+      };
+    case UPDATE_MAIN_CATEGORY:
+      return {
+        ...state,
+        main_category: action.payload,
       };
     case REMOVE_EXISTING_IMAGE_FROM_FORM_STATE:
       return {

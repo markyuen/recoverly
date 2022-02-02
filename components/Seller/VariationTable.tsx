@@ -164,7 +164,6 @@ const TableCell = ({
 };
 
 const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
-  console.log(variations);
   return (
     <>
       <tr className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>

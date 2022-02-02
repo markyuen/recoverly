@@ -22,6 +22,7 @@ query getItemInfo($seller_id: String!, $product_id: Int!) {
         category_id
         category_name
       }
+      main_category
     }
     variations {
       variation_1

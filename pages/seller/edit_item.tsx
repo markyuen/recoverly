@@ -25,6 +25,7 @@ const EditItemPage = () => {
     if (!product_id || !userId) {
       return;
     }
+
     makeGraphQLQuery("getItemInfo", {
       seller_id: userId,
       product_id,
@@ -95,6 +96,21 @@ const EditItemPage = () => {
           }
         );
 
+        // const main_category = product_categories.filter(item => item.)
+
+        const main_category = products_categories
+          .filter((item) => item.main_category)
+          .map(({ category: { category_id, category_name } }) => {
+            return {
+              value: category_id,
+              name: category_name,
+            };
+          })[0];
+
+        console.log(
+          `Main Category is ${main_category.value} with name of ${main_category.name}`
+        );
+
         const formatted_product_information: ProductFormItem = {
           product_id,
           product_name,
@@ -133,7 +149,7 @@ const EditItemPage = () => {
           variation_categories,
           variation_sku,
           variations,
-          // existing_images: product_images
+          main_category,
         };
         setInitialState(formatted_product_information);
         setLoading(false);
