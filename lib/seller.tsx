@@ -95,6 +95,39 @@ export const createNewProduct = (
     return;
   }
 
+  if (Object.keys(formState.variation_sku).length === 0) {
+    generateWarningToast("Error", "Please add some variations to product");
+    return;
+  }
+
+  if (formState.images.length === 0 && formState.existing_images.length === 0) {
+    generateWarningToast("Error", "Please add some images for product");
+    return;
+  }
+
+  if (formState.description.length === 0) {
+    generateWarningToast("Error", "Please add a description for your product");
+    return;
+  }
+
+  if (formState.categories.length === 0) {
+    generateWarningToast(
+      "Error",
+      "Please add some categories for your product. "
+    );
+    return;
+  }
+
+  if (formState.product_name.length === 0) {
+    generateWarningToast("Error", "Please indicate a name for your product ");
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
+    return;
+  }
+
   const imageFiles = formState.images.map((item, index) => {
     return {
       file: item,
@@ -191,7 +224,47 @@ export const updateProductInformation = (
     product_name,
     product_id,
     product_status: { value: product_status },
+    variation_sku,
   } = formState;
+
+  if (Object.keys(variation_sku).length === 0) {
+    generateWarningToast("Error", "Please add some variations to product");
+    return;
+  }
+
+  if (formState.images.length === 0 && formState.existing_images.length === 0) {
+    generateWarningToast("Error", "Please add some images for product");
+    return;
+  }
+
+  if (formState.description.length === 0) {
+    generateWarningToast("Error", "Please add a description for your product");
+    return;
+  }
+
+  if (formState.categories.length === 0) {
+    generateWarningToast(
+      "Error",
+      "Please add some categories for your product. "
+    );
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
+    return;
+  }
+
+  if (formState.product_name.length === 0) {
+    generateWarningToast("Error", "Please indicate a name for your product ");
+    return;
+  }
+
+  if (formState.brand_name.label.length === 0) {
+    generateWarningToast("Error", "Please add a brand name for your product");
+    return;
+  }
+
   // 1. Update the product information
   const imageFiles = formState.images.map((item, index) => {
     return {
@@ -219,12 +292,6 @@ export const updateProductInformation = (
     }
   );
 
-  console.log({
-    description,
-    product_id,
-    product_name,
-    product_status,
-  });
   Promise.all([productUploadPromise, ...promises])
     .then(([update_product, ...spread_urls]) => {
       // Cannot Upload Product
