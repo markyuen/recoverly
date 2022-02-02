@@ -32,7 +32,8 @@ query getItemInfo($seller_id: String!, $product_id: Int!) {
       variation_2
       variation_2_category
       quantity
-      price
+      original_price
+      discounted_price
     }
   }
 }

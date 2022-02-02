@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import {
+  UPDATE_VARIATION_DISCOUNTED_PRICE,
+  UPDATE_VARIATION_ORIGINAL_PRICE,
   UPDATE_VARIATION_PRICE,
   UPDATE_VARIATION_QUANTITY,
 } from "../../constants/seller";
@@ -39,10 +41,11 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
     ? variation_sku[variation_1][variation_2]
     : variation_sku[variation_2][variation_1];
 
-  const [quantity, price] = value;
+  const [quantity, discounted_price, original_price] = value;
 
   const [storedQuantity, setStoredQuantity] = useState(quantity);
-  const [storedPrice, setStoredPrice] = useState(price);
+  const [originalPrice, setoriginalPrice] = useState(original_price);
+  const [discountedPrice, setDiscountedPrice] = useState(discounted_price);
 
   const handleQuantityChange = (e) => {
     if (e.target.value === "") {
@@ -59,13 +62,28 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
     });
   };
 
-  const handlePriceChange = (e) => {
+  const handleOriginalPriceChange = (e) => {
     if (e.target.value === "") {
       return;
     }
-    setStoredPrice(e.target.value);
+    setoriginalPrice(e.target.value);
     dispatch({
-      type: UPDATE_VARIATION_PRICE,
+      type: UPDATE_VARIATION_ORIGINAL_PRICE,
+      payload: {
+        variation_id_1: variation_1,
+        variation_id_2: variation_2,
+        count: e.target.value,
+      },
+    });
+  };
+
+  const handleDiscountedPriceChange = (e) => {
+    if (e.target.value === "") {
+      return;
+    }
+    setDiscountedPrice(e.target.value);
+    dispatch({
+      type: UPDATE_VARIATION_DISCOUNTED_PRICE,
       payload: {
         variation_id_1: variation_1,
         variation_id_2: variation_2,
@@ -78,8 +96,8 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
     <td>
       <div className="grid grid-cols-5 mb-2 ">
         <div className="flex items-center col-span-2">
-          <label className="text-gray-500 font-bold mb-1 md:mb-0 whitespace-nowrap mr-2">
-            Price: $
+          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
+            Original Price: $
           </label>
         </div>
         <div className="flex items-center col-span-3">
@@ -87,15 +105,32 @@ const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
             className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
             id="first-name"
             type="text"
-            value={storedPrice}
-            onChange={handlePriceChange}
+            value={originalPrice}
+            onChange={handleOriginalPriceChange}
           />
         </div>
       </div>
 
       <div className="grid grid-cols-5 mb-2 ">
         <div className="flex items-center col-span-2">
-          <label className="text-gray-500 font-bold mb-1 md:mb-0 whitespace-nowrap mr-2">
+          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
+            Discounted Price: $
+          </label>
+        </div>
+        <div className="flex items-center col-span-3">
+          <input
+            className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+            id="first-name"
+            type="text"
+            value={discountedPrice}
+            onChange={handleDiscountedPriceChange}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-5 mb-2 ">
+        <div className="flex items-center col-span-2">
+          <label className="text-gray-500 font-bold mb-1 md:mb-0 my-2 mr-2">
             Quantity:
           </label>
         </div>

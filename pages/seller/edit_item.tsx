@@ -68,7 +68,8 @@ const EditItemPage = () => {
             variation_2,
             variation_2_category,
             quantity,
-            price,
+            original_price,
+            discounted_price,
           }) => {
             if (!variations[variation_1_category].includes(variation_1)) {
               variations[variation_1_category].push(variation_1);
@@ -82,9 +83,17 @@ const EditItemPage = () => {
                 variations[variation_2_category].push(variation_2);
               }
 
-              variation_sku[variation_1][variation_2] = [quantity, price];
+              variation_sku[variation_1][variation_2] = [
+                quantity,
+                discounted_price,
+                original_price,
+              ];
             } else {
-              variation_sku[variation_1][""] = [quantity, price];
+              variation_sku[variation_1][""] = [
+                quantity,
+                discounted_price,
+                original_price,
+              ];
             }
           }
         );

@@ -10,7 +10,7 @@ export const addVariationCategory = (
   // Case 1: There is nothing in the variation_sku
   if (base_options.length == 0) {
     variation_sku[variation_name] = {
-      "": [0, 0],
+      "": [0, 0, 0],
     };
     return variation_sku;
   }
@@ -19,7 +19,7 @@ export const addVariationCategory = (
     return {
       ...variation_sku,
       [variation_name]: {
-        "": [0, 0],
+        "": [0, 0, 0],
       },
     };
   }
@@ -47,11 +47,11 @@ export const addVariationCategory = (
         variations[secondary_category].length > 0
       ) {
         variations[secondary_category].forEach((item) => {
-          new_sku[item] = [0, 0];
+          new_sku[item] = [0, 0, 0];
         });
       } else {
         new_sku[variation_category] = {
-          "": [0, 0],
+          "": [0, 0, 0],
         };
       }
 
@@ -72,7 +72,7 @@ export const addVariationCategory = (
       // We have two categories but nothing has been added yet
       if (Object.keys(variation_sku_copy).length == 0) {
         variation_sku_copy[variation_name] = {
-          "": [0, 0],
+          "": [0, 0, 0],
         };
       } else {
         if (variations[secondary_category]) {
@@ -80,7 +80,7 @@ export const addVariationCategory = (
             if (variation_sku_copy[item].hasOwnProperty("")) {
               delete variation_sku_copy[item][""];
             }
-            variation_sku_copy[item][variation_name] = [0, 0];
+            variation_sku_copy[item][variation_name] = [0, 0, 0];
           });
         }
       }

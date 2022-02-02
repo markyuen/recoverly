@@ -45,6 +45,10 @@ export type seller_item = {
   products_categories: database_category[];
 };
 
+type Quantity = number;
+type OriginalPrice = number;
+type DiscountedPrice = number;
+
 export type ProductFormItem = {
   product_id: string;
   product_name: string;
@@ -67,7 +71,8 @@ export type ProductFormItem = {
   variations: Record<string, string[]>;
   variation_sku: Record<
     string,
-    Record<string, FixedLengthArray<[number, number]>>
+    // String -> [Quantity,]
+    Record<string, FixedLengthArray<[Quantity, DiscountedPrice, OriginalPrice]>>
   >;
 };
 
