@@ -38,9 +38,6 @@ const EditItemPage = () => {
         const {
           product_name,
           description,
-          ind_usual_retail_price: usual_retail_price,
-          ind_current_price: current_price,
-          number_in_stock,
           products_categories,
           product_images,
           product_specifications,
@@ -106,9 +103,6 @@ const EditItemPage = () => {
             value: brand_id,
             label: brand_name,
           },
-          usual_retail_price,
-          current_price,
-          number_in_stock,
           categories: products_categories.map(
             ({ category: { category_id, category_name } }) => {
               return {

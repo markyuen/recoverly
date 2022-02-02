@@ -35,12 +35,6 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
       return { ...state, brand_name: action.payload };
     case MODIFY_PRODUCT_DESCRIPTION:
       return { ...state, description: action.payload };
-    case MODIFY_USUAL_RETAIL_PRICE:
-      return { ...state, usual_retail_price: action.payload };
-    case MODIFY_CURRENT_PRICE:
-      return { ...state, current_price: action.payload };
-    case MODIFY_NUMBER_IN_STOCK:
-      return { ...state, number_in_stock: action.payload };
     case ADD_IMAGES_TO_FORM:
       return { ...state, images: state.images.concat(action.payload) };
     case REMOVE_IMAGES_FROM_FORM:

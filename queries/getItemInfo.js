@@ -3,9 +3,6 @@ query getItemInfo($seller_id: String!, $product_id: Int!) {
   product(where: {seller_id: {_eq: $seller_id}, product_id: {_eq: $product_id}}) {
     product_id
     description
-    ind_current_price
-    ind_usual_retail_price
-    number_in_stock
     product_name
     product_status
     brand {

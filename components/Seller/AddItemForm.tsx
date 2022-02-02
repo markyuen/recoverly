@@ -6,11 +6,8 @@ import {
   ADD_NEW_VARIATION_TO_FORM_STATE,
   ADD_SPECIFICATIONS_TO_FORM,
   MODIFY_BRAND_NAME,
-  MODIFY_CURRENT_PRICE,
-  MODIFY_NUMBER_IN_STOCK,
   MODIFY_PRODUCT_DESCRIPTION,
   MODIFY_PRODUCT_NAME,
-  MODIFY_USUAL_RETAIL_PRICE,
   REMOVE_CATEGORY_FROM_FORM,
   REMOVE_EXISTING_IMAGE_FROM_FORM_STATE,
   REMOVE_EXISTING_SPECIFICATION_FROM_FORM_STATE,
@@ -31,7 +28,6 @@ import FormSelectCreatable from "../Common/FormSelectCreatable";
 import FormSingleInput from "../Common/FormSingleInput";
 import FormSingleInputSelect from "../Common/FormSingleInputSelect";
 import FormTextArea from "../Common/FormTextArea";
-import FormTwoInputFields from "../Common/FormTwoInputFields";
 import ImageCarousell, { CarousellImage } from "../Common/ImageCarousell";
 import PDFCarousell, { CarousellPDF } from "../Common/PDFCarousell";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
@@ -187,7 +183,6 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
     return <SpinnerWithMessage label="Configuring Form" />;
   }
 
-  console.log(formState);
   return (
     <form onSubmit={addProduct}>
       <FormSegment
@@ -232,26 +227,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
           value={formState.description}
           action_type={MODIFY_PRODUCT_DESCRIPTION}
         />
-        <FormTwoInputFields
-          first_label="Usual Retail Price"
-          first_placeholder="0.00"
-          first_type="number"
-          first_action_type={MODIFY_USUAL_RETAIL_PRICE}
-          first_value={formState.usual_retail_price}
-          second_label="Current Price"
-          second_placeholder="0.00"
-          second_type="number"
-          second_action_type={MODIFY_CURRENT_PRICE}
-          second_value={formState.current_price}
-          dispatch={dispatch}
-        />
-        <FormSingleInput
-          type="number"
-          label="Total Number In Stock"
-          value={formState.number_in_stock}
-          dispatch={dispatch}
-          action_type={MODIFY_NUMBER_IN_STOCK}
-        />
+
         <FormMultipleTags
           categories={categories}
           value={formState.categories}

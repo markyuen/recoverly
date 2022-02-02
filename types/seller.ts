@@ -54,9 +54,6 @@ export type ProductFormItem = {
   product_name: string;
   brand_name: brand;
   description: string;
-  current_price: number;
-  usual_retail_price: number;
-  number_in_stock: number;
   categories: seller_category[];
   images: File[];
   specifications: File[];
@@ -81,9 +78,6 @@ export const productInitialState: ProductFormItem = {
   product_name: "",
   brand_name: { value: null, label: "" },
   description: "",
-  current_price: 0,
-  usual_retail_price: 0,
-  number_in_stock: 0,
   images: [],
   specifications: [],
   categories: [],

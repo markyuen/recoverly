@@ -114,12 +114,9 @@ export const createNewProduct = (
 
   const variables = {
     brand_name: formState.brand_name.label,
-    current_price: formState.current_price,
     description: formState.description,
-    number_in_stock: formState.number_in_stock,
     product_name: formState.product_name,
     user_id: formState.seller_id.value,
-    usual_retail_price: formState.usual_retail_price,
     product_status: formState.product_status.value,
   };
 
@@ -191,9 +188,6 @@ export const updateProductInformation = (
 ) => {
   const {
     description,
-    current_price: ind_current_price,
-    number_in_stock,
-    usual_retail_price: ind_usual_retail_price,
     product_name,
     product_id,
     product_status: { value: product_status },
@@ -219,9 +213,6 @@ export const updateProductInformation = (
     "updateProductAndDeleteCategories",
     {
       description,
-      ind_current_price,
-      ind_usual_retail_price,
-      number_in_stock,
       product_id,
       product_name,
       product_status,

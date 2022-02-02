@@ -52,8 +52,6 @@ const SellerItemRow = ({ item, removeProduct }: SellerItemProps) => {
           ? description
           : description.slice(0, 100) + "..."}
       </td>
-      <td className="py-4 whitespace-nowrap">{number_in_stock}</td>
-      <td className="py-4 whitespace-nowrap">{ind_current_price}</td>
       <td className="py-4 whitespace-nowrap">
         {products_categories &&
           products_categories.map(({ category }, index) => {
