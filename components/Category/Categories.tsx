@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import Header from "../Common/Header";
 import CategoryCard from "./CategoryCard";
-import { getCategories } from "../../queries/getCategories";
+import getParentCategories from "../../queries/getParentCategories";
 import { Skeleton } from "@chakra-ui/react";
 import SkeletonGrid from "../Skeleton/SkeletonGrid";
 
@@ -15,9 +15,9 @@ type CategoryData = {
 const Categories = () => {
   const { data, error } = useSWR(
     [
-      "/api/graphql/getCategories",
+      "/api/graphql/getParentCategories",
       {
-        query: getCategories,
+        query: getParentCategories,
       },
     ],
     fetcherWithBody
@@ -34,6 +34,7 @@ const Categories = () => {
     );
   }
 
+  console.log(data);
   return (
     <div>
       <Header name="Categories" />

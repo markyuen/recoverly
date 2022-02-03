@@ -16,8 +16,11 @@ import deleteImage from "./deleteImage";
 import deletePDFSpecification from "./deletePDFSpecification";
 import deleteProduct from "./deleteProduct";
 import updateProductAndDeleteCategories from "./updateProductAndDeleteCategories";
+import getParentCategories from "./getParentCategories";
 import { getUserSellerInfo } from "./getSellerInfo";
 import { updateSellerInfo } from "./updateSellerInfo";
+import getProductIDs from "./getProductIDs";
+import getProductInformation from "./getProductInformation";
 
 // Map Queries here so the hook can import the right query
 const mapping = {
@@ -41,6 +44,9 @@ const mapping = {
   updateProductAndDeleteCategories,
   getUserSellerInfo: getUserSellerInfo,
   updateSellerInfo: updateSellerInfo,
+  getParentCategories,
+  getProductIDs,
+  getProductInformation,
 };
 
 export default mapping;

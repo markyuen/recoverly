@@ -4,15 +4,20 @@ query getCategoryItems($category_name: String!) {
     category_id
     category_name
     image_url
+    categories {
+      image_url
+      category_name
+      parent_category_id
+    }
+    category {
+      category_name
+      image_url
+      parent_category_id
+    }
     products_categories{
       product{
         product_id
         product_name
-        products_categories{
-          category{
-            category_name
-          }
-        }
         product_images{
           url
         }
