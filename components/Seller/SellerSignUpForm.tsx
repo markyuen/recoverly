@@ -32,8 +32,7 @@ const SellerSignUpForm = () => {
         // TODO: add toasts
         console.log("Success.");
         console.log(res);
-        const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
-          }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
+        const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_VERCEL_URL}/stripe_authorization&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
           }&stripe_user[email]=${email
           }&stripe_user[first_name]=${userData.first_name
           }&stripe_user[last_name]=${userData.last_name
