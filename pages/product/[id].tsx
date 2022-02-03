@@ -1,27 +1,46 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ItemPageData, ItemProp } from "../../types/items";
-import { getItem } from "../api/get-item";
-import Image from "next/image";
-import InternalLink from "../../components/Common/Link";
 import ShopNav from "../../components/layouts/ShopNav";
-import QuantityButton from "../../components/Product/QuantityButton";
-import { makeGraphQLQuery, serverSideHasura } from "../../lib/GraphQL";
+import { serverSideHasura } from "../../lib/GraphQL";
 import ImageViewer from "../../components/Common/ImageViewer";
-import { Tag } from "@chakra-ui/react";
+import { Button, Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
-import ItemDescription from "../../components/Item/ItemDescription";
 import PDFViewer from "../../components/Common/PDFViewer";
+import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
+import QuantityButton from "../../components/Product/QuantityButton";
 
 type ProductPageProp = {
   data: ItemPageData;
 };
 
+type ProductVariation = {
+  variation_1: string;
+  variation_2: string;
+  price: number;
+  quantity: number;
+};
+
 const Product = ({ data }: ProductPageProp) => {
   const router = useRouter();
+  const { cartItems, getProductCount } = useCart();
+
   const [currPrice, setCurrPrice] = useState(null);
   const [currQty, setCurrQty] = useState(null);
+  const [currVariation, setCurrVariation] = useState<ProductVariation>(null);
+  const [currCount, setCurrCount] = useState(null);
+
+  // TODO: Fix Dependency Array using get Callback
+  useEffect(() => {
+    if (!currVariation || !data) {
+      return;
+    }
+    const { variation_1, variation_2 } = currVariation;
+    const { product_id } = data;
+    setCurrCount(getProductCount(product_id, variation_1, variation_2));
+  }, [currVariation, data]);
+  console.log(cartItems);
 
   // Refactor to use useSWR, ISG might not be the best
 
@@ -40,7 +59,6 @@ const Product = ({ data }: ProductPageProp) => {
     variations,
   } = data;
 
-  console.log(data);
   return (
     <ShopNav>
       <div className="w-full max-w-4xl rounded   mx-auto text-gray-800 relative md:text-left">
@@ -57,16 +75,27 @@ const Product = ({ data }: ProductPageProp) => {
           <div className="w-full md:w-1/2 px-10">
             <h1 className="text-xl font-bold">{product_name}</h1>
             <p className="text-gray-700 text-sm">{brand_name}</p>
-            {currPrice && (
-              <p className="text-gray-700 text-sm">
-                ${currPrice} with {currQty} remaining
-              </p>
+            {currPrice !== null && (
+              <>
+                <p className="text-gray-700 text-sm">
+                  ${currPrice} with {currQty} remaining
+                </p>
+                <QuantityButton
+                  data={data}
+                  currCount={currCount}
+                  currPrice={currPrice}
+                  product_id={product_id}
+                  product_name={product_name}
+                  variation_1={currVariation.variation_1}
+                  variation_2={currVariation.variation_2}
+                  limit={currQty}
+                />
+              </>
             )}
             <p className="mt-4">Tagged Categories: </p>
             {products_categories &&
               products_categories.map(
                 ({ category: { category_name } }, index) => {
-                  console.log(category_name);
                   return (
                     <Tag
                       variant="solid"
@@ -90,31 +119,36 @@ const Product = ({ data }: ProductPageProp) => {
               )}
             <p>Variations:</p>
             <div className="grid mt-2 grid-cols-3 gap-y-2">
-              {variations.map(
-                (
-                  { variation_1, variation_2, discounted_price, quantity },
-                  index
-                ) => {
-                  return (
-                    <Tag
-                      onClick={() => {
-                        setCurrPrice(discounted_price);
-                        setCurrQty(quantity);
-                      }}
-                      className="cursor-pointer mr-2 mb-2 col-span-1"
-                      key={index}
-                    >
-                      <p>
-                        {variation_1}/{variation_1}
-                      </p>
-                    </Tag>
-                  );
-                }
-              )}
-            </div>
+              {variations.map((variation, index) => {
+                const { variation_1, variation_2, discounted_price, quantity } =
+                  variation;
+                const extraProps =
+                  currVariation &&
+                  currVariation.variation_1 === variation_1 &&
+                  currVariation.variation_2 === variation_2
+                    ? "bg-red-400"
+                    : "";
 
-            {/* <p className="text-sm">SGD$ {price}</p> */}
-            {/* <QuantityButton data={data} /> */}
+                return (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setCurrPrice(discounted_price);
+                      setCurrQty(quantity);
+                      setCurrVariation({
+                        variation_1,
+                        variation_2,
+                        price: discounted_price,
+                        quantity,
+                      });
+                    }}
+                    className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
+                  >
+                    {variation_1}, {variation_2}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
         <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
@@ -129,10 +163,6 @@ const Product = ({ data }: ProductPageProp) => {
           </p>
           <PDFViewer pdfs={product_specifications} />
         </div>
-        {/* <ItemDescription
-          Tabs={["Description", "Specifications", "Merchant Info", "Reviews"]}
-          description={description}
-        /> */}
       </div>
     </ShopNav>
   );
