@@ -18,7 +18,7 @@ const CartContext = createContext<CartContext>(null!);
 export const UPDATE_ITEM_COUNT = "UPDATE_ITEM_COUNT";
 export const REMOVE_ITEM_VARIATION = "REMOVE_ITEM_VARIATION";
 
-const CartReducer = (state: CartItem[], action) => {
+const CartReducer = (state: CartItem[], action): CartItem[] => {
   switch (action.type) {
     case UPDATE_ITEM_COUNT: {
       console.log(action);
