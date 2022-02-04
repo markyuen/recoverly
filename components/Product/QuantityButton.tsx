@@ -78,6 +78,8 @@ const QuantityButton = ({
     });
   };
 
+  console.log(getProductCount(product_id, variation_1, variation_2));
+
   // How to save cart data in between refreshes
   const removeOne = () => {
     if (!checkForUser()) {

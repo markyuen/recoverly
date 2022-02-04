@@ -19,8 +19,8 @@ const ShoppingCartItem = ({
         <div>
           {variation.map(({ variation_1, variation_2, quantity }, index) => {
             return (
-              <p key={index}>
-                {variation_1}/{variation_2} x {quantity}
+              <p className="ml-2" key={index}>
+                - {variation_1}/{variation_2} x {quantity}
               </p>
             );
           })}
@@ -33,8 +33,7 @@ const ShoppingCartItem = ({
             ) => {
               return (
                 <p key={index}>
-                  {" "}
-                  $
+                  {""}$
                   {Math.round(
                     (quantity * discounted_price + Number.EPSILON) * 100
                   ) / 100}

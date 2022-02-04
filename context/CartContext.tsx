@@ -112,9 +112,10 @@ export function CartWrapper({ children }) {
     ) {
       return 0;
     }
+    console.log(`Getting Count for ${variation_1}/${variation_2}`);
     if (
       cartItems
-        .filter((item) => item.product_id)[0]
+        .filter((item) => item.product_id === product_id)[0]
         .variation.filter(
           (item) =>
             item.variation_1 === variation_1 && item.variation_2 === variation_2
@@ -122,8 +123,9 @@ export function CartWrapper({ children }) {
     ) {
       return 0;
     }
+
     return cartItems
-      .filter((item) => item.product_id)[0]
+      .filter((item) => item.product_id === product_id)[0]
       .variation.filter(
         (item) =>
           item.variation_1 === variation_1 && item.variation_2 === variation_2

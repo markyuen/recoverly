@@ -41,6 +41,9 @@ export default function ShoppingCartIcon() {
         </div>
       </MenuButton>
       <MenuList>
+        {cartItems.length == 0 ? null : (
+          <p className="ml-2 font-extrabold text-lg">Your Current Items</p>
+        )}
         {cartItems.map((item, index) => {
           return <ShoppingCartItem key={index} item={item} />;
         })}
@@ -49,8 +52,13 @@ export default function ShoppingCartIcon() {
         )}
         {cartItems.length == 0 ? null : (
           <LinkContainer href="/cart">
-            <div className="flex items-end w-full px-2 cursor-pointer">
-              <p className="text-extrabold text-md ">Checkout Items</p>
+            <div className="ml-4 mt-4 mb-4 mr-4 flex flex-row-reverse">
+              <button
+                type="button"
+                className="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Checkout Items
+              </button>
             </div>
           </LinkContainer>
         )}
