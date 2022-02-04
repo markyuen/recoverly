@@ -11,10 +11,6 @@ export type ItemProp = {
   };
 };
 
-export interface CartItem extends ItemProp {
-  quantity: number;
-}
-
 export type ItemListing = {
   product_id: number;
   product_images: { url: string }[];
@@ -41,6 +37,17 @@ export type ItemPageData = {
     variation_2: string;
     quantity: number;
     original_price: number;
+    discounted_price: number;
+  }[];
+};
+
+export type CartItem = {
+  product_id: number;
+  product_name: string;
+  variation: {
+    variation_1: string;
+    variation_2: string;
+    quantity: number;
     discounted_price: number;
   }[];
 };

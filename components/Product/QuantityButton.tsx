@@ -1,9 +1,14 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import { Router, useRouter } from "next/router";
 import React from "react";
-import { useCart } from "../../context/CartContext";
+import {
+  REMOVE_ITEM_VARIATION,
+  UPDATE_ITEM_COUNT,
+  useCart,
+} from "../../context/CartContext";
 import { ItemProp } from "../../types/items";
 import { useToast } from "@chakra-ui/react";
+import useChakraToast from "../../hooks/useChakraToast";
 
 type QuantityButtonProps = {
   data: ItemProp;
@@ -14,11 +19,22 @@ const iconSize = {
   medium: "h-8 w-8 cursor-pointer",
 };
 
-const QuantityButton = ({ data, size = "medium" }) => {
-  const { addToCart, getCurrentCount, removeFromCart } = useCart();
+const QuantityButton = ({
+  product_id,
+  variation_1,
+  variation_2,
+  limit,
+  product_name,
+  currPrice,
+  size = "medium",
+}) => {
   const { user } = useUser();
+  const { dispatch, getProductCount } = useCart();
+  const { generateWarningToast } = useChakraToast();
   const router = useRouter();
   const toast = useToast();
+
+  console.log(limit);
 
   const checkForUser = () => {
     if (!user) {
@@ -38,11 +54,29 @@ const QuantityButton = ({ data, size = "medium" }) => {
   };
 
   const addOne = () => {
+    console.log(`---AddOne triggered for ${variation_1},${variation_2}`);
     if (!checkForUser()) {
       return;
     }
+    if (getProductCount(product_id, variation_1, variation_2) + 1 > limit) {
+      generateWarningToast(
+        "Item Limit Reached",
+        `You can only add ${limit} items of this type`
+      );
+      return;
+    }
 
-    addToCart(data, 1);
+    dispatch({
+      type: UPDATE_ITEM_COUNT,
+      payload: {
+        product_id,
+        variation_1,
+        variation_2,
+        quantity_to_add: 1,
+        product_name,
+        price: currPrice,
+      },
+    });
   };
 
   // How to save cart data in between refreshes
@@ -50,14 +84,29 @@ const QuantityButton = ({ data, size = "medium" }) => {
     if (!checkForUser()) {
       return;
     }
-    switch (getCurrentCount(data.id)) {
+    switch (getProductCount(product_id, variation_1, variation_2)) {
       case 0:
         return;
       case 1:
-        removeFromCart(data);
+        dispatch({
+          type: REMOVE_ITEM_VARIATION,
+          payload: {
+            product_id,
+            variation_1,
+            variation_2,
+          },
+        });
         break;
       default:
-        addToCart(data, -1);
+        dispatch({
+          type: UPDATE_ITEM_COUNT,
+          payload: {
+            product_id,
+            variation_1,
+            variation_2,
+            quantity_to_add: -1,
+          },
+        });
         break;
     }
   };
@@ -69,7 +118,7 @@ const QuantityButton = ({ data, size = "medium" }) => {
         className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
-        onClick={removeOne}
+        onClick={() => removeOne()}
       >
         <path
           fillRule="evenodd"
@@ -77,13 +126,15 @@ const QuantityButton = ({ data, size = "medium" }) => {
           clipRule="evenodd"
         />
       </svg>
-      <p className="px-2 text-md">{getCurrentCount(data.id)}</p>
+      <p className="px-2 text-md">
+        {getProductCount(product_id, variation_1, variation_2)}
+      </p>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
-        onClick={addOne}
+        onClick={() => addOne()}
       >
         <path
           fillRule="evenodd"

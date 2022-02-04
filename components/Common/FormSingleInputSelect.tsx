@@ -35,7 +35,7 @@ const FormSingleInputSelect = ({
             payload: options.filter((item) => item.value == e.target.value)[0],
           });
         }}
-        value={value}
+        value={value.value}
         placeholder="Select Parent Category"
       >
         {options.map((item, index) => (

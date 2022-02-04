@@ -1,65 +1,156 @@
 import { useUser } from "@auth0/nextjs-auth0";
-import { createContext, useContext, useState } from "react";
+import { Item } from "framer-motion/types/components/Reorder/Item";
+import { createContext, useContext, useReducer, useState } from "react";
 import { ItemProp, CartItem } from "../types/items";
 
 type CartContext = {
   cartItems: CartItem[];
-  addToCart: (item: ItemProp, quantity: number) => void;
-  removeFromCart: (id: number) => void;
-  getCurrentCount: (id: number) => number;
+  dispatch: any;
+  getProductCount: (
+    product_id: number,
+    variation_1: string,
+    variation_2: string
+  ) => number;
 };
 
 const CartContext = createContext<CartContext>(null!);
 
-export function CartWrapper({ children }) {
-  const [cartItems, setCartItems] = useState([]);
-  const [existingCartIds, setExistingCardIds] = useState({});
+export const UPDATE_ITEM_COUNT = "UPDATE_ITEM_COUNT";
+export const REMOVE_ITEM_VARIATION = "REMOVE_ITEM_VARIATION";
 
-  const addToCart = (item, quantity) => {
-    //  Exists in Cart
-    if (existingCartIds[item.id]) {
-      setCartItems((cartItems) =>
-        cartItems.map((prevItem) => {
-          if (prevItem.id === item.id) {
-            return { ...item, quantity: prevItem.quantity + quantity };
-          }
-          return item;
-        })
+const CartReducer = (state: CartItem[], action): CartItem[] => {
+  switch (action.type) {
+    case UPDATE_ITEM_COUNT: {
+      console.log(action);
+      const {
+        product_id,
+        product_name,
+        variation_1,
+        variation_2,
+        price,
+        quantity_to_add,
+      } = action.payload;
+      const newState = [...state];
+
+      const itemIndex = newState.findIndex(
+        (item) => item.product_id === product_id
       );
-    } else {
-      console.log({ ...item, quantity: 1 });
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
 
-      const existingIds = { ...existingCartIds };
-      existingIds[item.id] = true;
-      setExistingCardIds(existingIds);
-    }
-  };
+      if (itemIndex === -1) {
+        console.log("->Couldn't Find Index, added a new item");
+        return [
+          ...newState,
+          {
+            product_id,
+            product_name,
+            variation: [
+              {
+                variation_1,
+                variation_2,
+                quantity: 1,
+                discounted_price: price,
+              },
+            ],
+          },
+        ];
+      }
 
-  const removeFromCart = (item) => {
-    const currQuantity = cartItems.find(
-      (cartItem) => cartItem.id === item.id
-    ).quantity;
-    if (currQuantity == 1) {
-      delete existingCartIds[item.id];
-    }
-    setCartItems((cartItems) =>
-      cartItems.filter((cartItem) => cartItem.id !== item.id)
-    );
-  };
+      const variationIndex = newState[itemIndex].variation.findIndex((item) => {
+        return (
+          item.variation_1 === variation_1 && item.variation_2 === variation_2
+        );
+      });
 
-  const getCurrentCount = (id: number) => {
-    if (existingCartIds[id]) {
-      return cartItems.find((cartItem) => cartItem.id === id).quantity;
+      if (variationIndex === -1) {
+        const newItemWithVariation = {
+          ...newState[itemIndex],
+          variation: [
+            ...newState[itemIndex].variation,
+            {
+              variation_1,
+              variation_2,
+              quantity: 1,
+              discounted_price: price,
+            },
+          ],
+        };
+        newState[itemIndex] = newItemWithVariation;
+        return newState;
+      }
+
+      return newState.map((item, index) => {
+        if (index !== itemIndex) {
+          return item;
+        }
+        return {
+          ...newState[itemIndex],
+          variation: newState[itemIndex].variation.map((variation, index) => {
+            if (index !== variationIndex) {
+              return variation;
+            }
+            return {
+              ...variation,
+              quantity: variation.quantity + quantity_to_add,
+            };
+          }),
+        };
+      });
     }
-    return 0;
+
+    case REMOVE_ITEM_VARIATION: {
+      const { product_id, variation_1, variation_2 } = action.payload;
+
+      return state.map((item) => {
+        if (item.product_id !== product_id) {
+          return item;
+        }
+
+        return {
+          ...item,
+          variation: item.variation.filter(
+            (item) =>
+              item.variation_1 !== variation_1 &&
+              item.variation_2 !== variation_2
+          ),
+        };
+      });
+    }
+  }
+};
+
+export function CartWrapper({ children }) {
+  const [cartItems, dispatch] = useReducer(CartReducer, []);
+
+  const getProductCount = (product_id, variation_1, variation_2) => {
+    if (
+      cartItems.filter((item) => item.product_id === product_id).length == 0
+    ) {
+      return 0;
+    }
+
+    if (
+      cartItems
+        .filter((item) => item.product_id === product_id)[0]
+        .variation.filter(
+          (item) =>
+            item.variation_1 === variation_1 && item.variation_2 === variation_2
+        ).length == 0
+    ) {
+      return 0;
+    }
+
+    return cartItems
+      .filter((item) => item.product_id === product_id)[0]
+      .variation.filter(
+        (item) =>
+          item.variation_1 === variation_1 && item.variation_2 === variation_2
+      )[0].quantity;
   };
 
   let sharedState = {
     cartItems,
-    addToCart,
-    removeFromCart,
-    getCurrentCount,
+    dispatch,
+    getProductCount,
   };
 
   return (

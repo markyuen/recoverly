@@ -7,24 +7,43 @@ type ShoppingCartItemProp = {
   item: CartItem;
 };
 
-const ShoppingCartItem = ({ item }) => {
+const ShoppingCartItem = ({
+  item: { product_name, variation },
+}: ShoppingCartItemProp) => {
   return (
-    <MenuItem as={Box} _hover={{}} _focus={{}} _active={{}}>
-      <div className="flex items-start my-2">
-        <div className="flex flex-col items-start pr-10">
-          <span className="text-md font-bold">{item.title}</span>
-
-          <p className="mb-2">
-            ${" "}
-            {Math.round((item.quantity * item.price + Number.EPSILON) * 100) /
-              100}
-          </p>
+    <div className="px-4 py-2">
+      <div>
+        <p className="text-md font-bold">{product_name}</p>
+      </div>
+      <div className="flex justify-between">
+        <div>
+          {variation.map(({ variation_1, variation_2, quantity }, index) => {
+            return (
+              <p className="ml-2" key={index}>
+                - {variation_1}/{variation_2} x {quantity}
+              </p>
+            );
+          })}
         </div>
-        <div className="">
-          <QuantityButton size={"small"} data={item} />
+        <div>
+          {variation.map(
+            (
+              { variation_1, variation_2, discounted_price, quantity },
+              index
+            ) => {
+              return (
+                <p key={index}>
+                  {""}$
+                  {Math.round(
+                    (quantity * discounted_price + Number.EPSILON) * 100
+                  ) / 100}
+                </p>
+              );
+            }
+          )}
         </div>
       </div>
-    </MenuItem>
+    </div>
   );
 };
 

@@ -1,9 +1,61 @@
+import Link from "next/link";
 import React from "react";
+import { useCart } from "../../context/CartContext";
+import ShoppingCartItem from "../nav/ShoppingCartItem";
+import CartItemVariation from "./CartItemVariation";
 
-const ShoppingCart = () => {
+type Props = {
+  limits: any;
+};
+
+const ShoppingCart = ({ limits }) => {
+  const { cartItems } = useCart();
   return (
     <div className="col-span-4">
-      <div className="grid space-y-4 grid-cols-1">items</div>
+      <div className="grid space-y-4 grid-cols-1">
+        {cartItems.map(({ product_name, variation, product_id }, index) => {
+          return (
+            <div key={index} className="px-4 py-2">
+              <div>
+                <Link href={`/product/${product_id}`} passHref>
+                  <p className="text-md font-bold cursor-pointer hover:text-blue-400">
+                    {product_name}
+                  </p>
+                </Link>
+              </div>
+              <div className="flex justify-between">
+                <div>
+                  {variation.map(
+                    (
+                      { variation_1, variation_2, quantity, discounted_price },
+                      index
+                    ) => {
+                      return (
+                        <CartItemVariation
+                          product_id={product_id}
+                          product_name={product_name}
+                          key={index}
+                          variation_1={variation_1}
+                          variation_2={variation_2}
+                          quantity={quantity}
+                          discounted_price={discounted_price}
+                          limit={limits}
+                        />
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+              <p>
+                Total:${" "}
+                {variation.reduce((acc, { quantity, discounted_price }) => {
+                  return acc + quantity * discounted_price;
+                }, 0)}
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
