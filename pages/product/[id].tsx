@@ -81,8 +81,6 @@ const Product = ({ data }: ProductPageProp) => {
                   ${currPrice} with {currQty} remaining
                 </p>
                 <QuantityButton
-                  data={data}
-                  currCount={currCount}
                   currPrice={currPrice}
                   product_id={product_id}
                   product_name={product_name}

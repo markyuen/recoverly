@@ -2,8 +2,13 @@ import Link from "next/link";
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import ShoppingCartItem from "../nav/ShoppingCartItem";
+import CartItemVariation from "./CartItemVariation";
 
-const ShoppingCart = () => {
+type Props = {
+  limits: any;
+};
+
+const ShoppingCart = ({ limits }) => {
   const { cartItems } = useCart();
   return (
     <div className="col-span-4">
@@ -26,13 +31,16 @@ const ShoppingCart = () => {
                       index
                     ) => {
                       return (
-                        <p className="ml-2" key={index}>
-                          - {variation_1}/{variation_2} x {quantity} ( {""}$
-                          {Math.round(
-                            (quantity * discounted_price + Number.EPSILON) * 100
-                          ) / 100}
-                          )
-                        </p>
+                        <CartItemVariation
+                          product_id={product_id}
+                          product_name={product_name}
+                          key={index}
+                          variation_1={variation_1}
+                          variation_2={variation_2}
+                          quantity={quantity}
+                          discounted_price={discounted_price}
+                          limit={limits}
+                        />
                       );
                     }
                   )}

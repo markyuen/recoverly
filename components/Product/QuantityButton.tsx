@@ -20,8 +20,6 @@ const iconSize = {
 };
 
 const QuantityButton = ({
-  data,
-  currCount,
   product_id,
   variation_1,
   variation_2,
@@ -35,6 +33,8 @@ const QuantityButton = ({
   const { generateWarningToast } = useChakraToast();
   const router = useRouter();
   const toast = useToast();
+
+  console.log(limit);
 
   const checkForUser = () => {
     if (!user) {
@@ -54,6 +54,7 @@ const QuantityButton = ({
   };
 
   const addOne = () => {
+    console.log(`---AddOne triggered for ${variation_1},${variation_2}`);
     if (!checkForUser()) {
       return;
     }
@@ -71,14 +72,12 @@ const QuantityButton = ({
         product_id,
         variation_1,
         variation_2,
-        quantity: 1,
+        quantity_to_add: 1,
         product_name,
         price: currPrice,
       },
     });
   };
-
-  console.log(getProductCount(product_id, variation_1, variation_2));
 
   // How to save cart data in between refreshes
   const removeOne = () => {
@@ -105,7 +104,7 @@ const QuantityButton = ({
             product_id,
             variation_1,
             variation_2,
-            quantity: -1,
+            quantity_to_add: -1,
           },
         });
         break;
@@ -119,7 +118,7 @@ const QuantityButton = ({
         className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
-        onClick={removeOne}
+        onClick={() => removeOne()}
       >
         <path
           fillRule="evenodd"
@@ -135,7 +134,7 @@ const QuantityButton = ({
         className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
-        onClick={addOne}
+        onClick={() => addOne()}
       >
         <path
           fillRule="evenodd"

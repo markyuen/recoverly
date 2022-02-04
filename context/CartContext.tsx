@@ -21,18 +21,25 @@ export const REMOVE_ITEM_VARIATION = "REMOVE_ITEM_VARIATION";
 const CartReducer = (state: CartItem[], action) => {
   switch (action.type) {
     case UPDATE_ITEM_COUNT: {
+      console.log(action);
       const {
         product_id,
         product_name,
         variation_1,
         variation_2,
         price,
-        quantity,
+        quantity_to_add,
       } = action.payload;
+      const newState = [...state];
 
-      if (state.filter((item) => item.product_id === product_id).length === 0) {
+      const itemIndex = newState.findIndex(
+        (item) => item.product_id === product_id
+      );
+
+      if (itemIndex === -1) {
+        console.log("->Couldn't Find Index, added a new item");
         return [
-          ...state,
+          ...newState,
           {
             product_id,
             product_name,
@@ -48,57 +55,65 @@ const CartReducer = (state: CartItem[], action) => {
         ];
       }
 
-      const stateWithoutItem = state.filter(
-        (item) => item.product_id !== product_id
-      );
-      const item = state.filter((item) => item.product_id === product_id)[0];
+      const variationIndex = newState[itemIndex].variation.findIndex((item) => {
+        return (
+          item.variation_1 === variation_1 && item.variation_2 === variation_2
+        );
+      });
 
-      // Product Exists, check if variation exists
-      if (
-        item.variation.filter(
-          (item) =>
-            item.variation_1 === variation_1 && item.variation_2 === variation_2
-        ).length == 1
-      ) {
-        const variation = item.variation.filter(
-          (item) =>
-            item.variation_1 === variation_1 && item.variation_2 === variation_2
-        )[0];
-
-        variation.quantity += quantity;
-
-        return [...stateWithoutItem, item];
-      } else {
-        const itemVariations = item.variation.concat([
-          {
-            variation_1,
-            variation_2,
-            quantity: 1,
-            discounted_price: price,
-          },
-        ]);
-        item["variation"] = itemVariations;
-        return [...stateWithoutItem, item];
+      if (variationIndex === -1) {
+        const newItemWithVariation = {
+          ...newState[itemIndex],
+          variation: [
+            ...newState[itemIndex].variation,
+            {
+              variation_1,
+              variation_2,
+              quantity: 1,
+              discounted_price: price,
+            },
+          ],
+        };
+        newState[itemIndex] = newItemWithVariation;
+        return newState;
       }
+
+      return newState.map((item, index) => {
+        if (index !== itemIndex) {
+          return item;
+        }
+        return {
+          ...newState[itemIndex],
+          variation: newState[itemIndex].variation.map((variation, index) => {
+            if (index !== variationIndex) {
+              return variation;
+            }
+            return {
+              ...variation,
+              quantity: variation.quantity + quantity_to_add,
+            };
+          }),
+        };
+      });
     }
+
     case REMOVE_ITEM_VARIATION: {
       const { product_id, variation_1, variation_2 } = action.payload;
 
-      const stateWithoutItem = state.filter(
-        (item) => item.product_id !== product_id
-      );
-      const item = state.filter((item) => item.product_id === product_id)[0];
-      item["variation"] = item.variation.filter(
-        (variation) =>
-          variation.variation_1 !== variation_1 &&
-          variation.variation_2 !== variation_2
-      );
+      return state.map((item) => {
+        if (item.product_id !== product_id) {
+          return item;
+        }
 
-      if (item.variation.length === 0) {
-        return stateWithoutItem;
-      }
-
-      return [...stateWithoutItem, item];
+        return {
+          ...item,
+          variation: item.variation.filter(
+            (item) =>
+              item.variation_1 !== variation_1 &&
+              item.variation_2 !== variation_2
+          ),
+        };
+      });
     }
   }
 };
@@ -112,7 +127,7 @@ export function CartWrapper({ children }) {
     ) {
       return 0;
     }
-    console.log(`Getting Count for ${variation_1}/${variation_2}`);
+
     if (
       cartItems
         .filter((item) => item.product_id === product_id)[0]
