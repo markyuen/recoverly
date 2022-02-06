@@ -8,7 +8,7 @@ import { Button, Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
-import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import QuantityButton from "../../components/Product/QuantityButton";
 
 type ProductPageProp = {
@@ -153,7 +153,7 @@ const Product = ({ data }: ProductPageProp) => {
           <p className="my-8 text-xl text-gray-500 leading-8">
             About the Product
           </p>
-          <p>{description}</p>
+          <p className="whitespace-pre-wrap">{description}</p>
         </div>
         <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
           <p className="my-8 text-xl text-gray-500 leading-8">
