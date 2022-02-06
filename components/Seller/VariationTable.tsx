@@ -53,7 +53,6 @@ const TableCell = ({
     if (e.target.value === "") {
       return;
     }
-    console.log(e.target.value);
     //TODO: Handle error parsing
     dispatch({
       type: action_type,
