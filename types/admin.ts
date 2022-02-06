@@ -1,4 +1,5 @@
 export type seller = {
+  user_id: string;
   company_name: string;
   acra_uen: string;
   address: string;

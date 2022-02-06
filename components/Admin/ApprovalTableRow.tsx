@@ -1,6 +1,5 @@
 import { Switch } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0";
 
 import { seller } from "../../types/admin";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
@@ -10,23 +9,22 @@ type ApprovalTableRowProps = {
 };
 
 const ApprovalTableRow = ({ seller }: ApprovalTableRowProps) => {
-  const { company_name, acra_uen, address, contact_name, contact_email, stripe_id, verified, } = seller;
+  const { user_id, company_name, acra_uen, address, contact_name, contact_email, stripe_id, verified, } = seller;
   const [prevStatus, setPrevStatus] = useState(verified);
   const [currStatus, setCurrStatus] = useState(verified);
-  const { user } = useUser();
-  const { sub } = user;
 
   const handleChange = () => {
-    setPrevStatus(currStatus)
-    setCurrStatus(!currStatus)
+    setPrevStatus(currStatus);
+    setCurrStatus(!currStatus);
   };
 
   const confirmUpdate = async () => {
     if (prevStatus == currStatus) {
-      alert("No changes made. Please select a new status.");
+      alert(`No changes made for ${company_name}. Please select a new status.`);
       return;
     }
-    await makeGraphQLQuery("updateSellerStatus", { "user_id": sub, "verified": currStatus, });
+    setPrevStatus(currStatus);
+    await makeGraphQLQuery("updateSellerStatus", { "user_id": user_id, "verified": currStatus, });
     alert(`${company_name} status updated.`);
   };
 

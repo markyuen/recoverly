@@ -34,6 +34,7 @@ const AdminTable = () => {
             <ApprovalTableBody
               sellers={data.seller.map((seller) => ({
                 ...seller,
+                user_id: seller.user.user_id,
                 contact_name: seller.first_name + " " + seller.last_name,
                 contact_email: seller.user.email,
               }))}

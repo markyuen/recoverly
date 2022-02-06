@@ -8,6 +8,7 @@ query getSellers {
     last_name
     stripe_id
     user {
+      user_id
       email
     }
     verified
