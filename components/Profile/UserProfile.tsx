@@ -26,15 +26,17 @@ const UserProfile = () => {
     makeGraphQLQuery("getUserSellerInfo", { user_id: user.sub })
       .then((res) => {
         const data = res.user_by_pk;
-        data.seller.flat_shipping_fee = data.seller.flat_shipping_fee / 100;
-        data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100;
+        if (data.seller) {
+          data.seller.flat_shipping_fee = data.seller.flat_shipping_fee / 100;
+          data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100;
+        }
         setUserData({
           ...data,
           email: user.email,
           nickname: user.nickname,
           picture: user.picture,
         })
-        if (res.user_by_pk.seller) {
+        if (data.seller) {
           setSellerData({ ...data.seller });
           setOriginalSellerData(JSON.stringify({ ...data.seller }));
         }
