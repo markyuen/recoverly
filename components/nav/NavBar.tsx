@@ -49,7 +49,7 @@ const NavBar = () => {
                     href="/seller"
                     name="Seller Dashboard"
                     styling="px-2"
-                    type="unverified-seller"
+                    type="verified-seller"
                   />
                   <InternalLink
                     href="/account"
