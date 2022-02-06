@@ -17,7 +17,7 @@ import deletePDFSpecification from "./deletePDFSpecification";
 import deleteProduct from "./deleteProduct";
 import updateProductAndDeleteCategories from "./updateProductAndDeleteCategories";
 import getParentCategories from "./getParentCategories";
-import { getUserSellerInfo } from "./getSellerInfo";
+import { getUserSellerInfo } from "./getUserSellerInfo";
 import { updateSellerInfo } from "./updateSellerInfo";
 import getProductIDs from "./getProductIDs";
 import getProductInformation from "./getProductInformation";

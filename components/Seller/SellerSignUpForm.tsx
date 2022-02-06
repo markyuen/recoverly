@@ -1,7 +1,10 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useState } from "react";
+
 import FormInput from "../Form/FormInput";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
+import validateUEN from "../../lib/validateUEN";
+import genStripeOnboardingLink from "../../lib/genStripeOnboardingLink";
 
 const SellerSignUpForm = () => {
   const { user } = useUser();
@@ -27,17 +30,32 @@ const SellerSignUpForm = () => {
     e.preventDefault();
     console.log("----Submitting Information Of ----- ");
     console.log(userData);
+    // Input validation
+    if (userData.company_name === "") {
+      alert("Company Name cannot be empty.");
+      return;
+    }
+    if (userData.address === "") {
+      alert("Address cannot be empty.");
+      return;
+    }
+    if (!validateUEN(userData.acra_uen)) {
+      alert("Invalid UEN format.")
+      return;
+    }
+    if (userData.first_name === "") {
+      alert("First Name cannot be empty.");
+      return;
+    }
+    if (userData.last_name === "") {
+      alert("Last Name cannot be empty.");
+      return;
+    }
+    // Insert new seller
     makeGraphQLQuery("insertNewSeller", userData)
       .then((res) => {
-        // TODO: add toasts
         console.log(res);
-        const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
-          }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
-          }&stripe_user[email]=${email
-          }&stripe_user[first_name]=${userData.first_name
-          }&stripe_user[last_name]=${userData.last_name
-          }`;
-        window.location.href = url;
+        window.location.href = genStripeOnboardingLink(email, userData.first_name, userData.last_name);
       })
       .catch((err) => console.log(err));
 
