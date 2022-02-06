@@ -29,7 +29,7 @@ const QuantityButtonWithAddToCart = ({
 }: QuantityButtonWithAddToCartProps) => {
   const { user } = useUser();
   const { dispatch, getProductCount } = useCart();
-  const { generateWarningToast } = useChakraToast();
+  const { generateWarningToast, generateSuccessToast } = useChakraToast();
   const router = useRouter();
   const size = "medium";
 
@@ -53,7 +53,10 @@ const QuantityButtonWithAddToCart = ({
   };
 
   const addOne = () => {
-    if (count + 1 > limit) {
+    if (
+      count + getProductCount(product_id, variation_1, variation_2) >=
+      limit
+    ) {
       generateWarningToast("Error", "You can't add more than the limit");
       return;
     }
@@ -71,6 +74,7 @@ const QuantityButtonWithAddToCart = ({
     if (!checkForUser()) {
       return;
     }
+
     dispatch({
       type: UPDATE_ITEM_COUNT,
       payload: {
@@ -82,6 +86,8 @@ const QuantityButtonWithAddToCart = ({
         price: currPrice,
       },
     });
+    generateSuccessToast("Added to Cart", "Item added to cart");
+    setProductCount(0);
   };
 
   return (
