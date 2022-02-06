@@ -247,10 +247,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][0] =
-            round(count);
+            parseInt(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][0] =
-            round(count);
+            parseInt(count);
         }
         return newState;
       } catch (error) {
