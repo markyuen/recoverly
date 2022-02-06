@@ -15,6 +15,10 @@ export type ItemListing = {
   product_id: number;
   product_images: { url: string }[];
   product_name: string;
+  variations: {
+    discounted_price: number;
+    original_price: number;
+  }[];
 };
 
 export type ItemPageData = {

@@ -30,16 +30,14 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         price,
         quantity_to_add,
       } = action.payload;
-      const newState = [...state];
 
-      const itemIndex = newState.findIndex(
+      const itemIndex = state.findIndex(
         (item) => item.product_id === product_id
       );
 
       if (itemIndex === -1) {
-        console.log("->Couldn't Find Index, added a new item");
-        return [
-          ...newState,
+        console.log("----adding Item");
+        return state.concat([
           {
             product_id,
             product_name,
@@ -47,44 +45,47 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
               {
                 variation_1,
                 variation_2,
-                quantity: 1,
+                quantity: quantity_to_add,
                 discounted_price: price,
               },
             ],
           },
-        ];
+        ]);
       }
 
-      const variationIndex = newState[itemIndex].variation.findIndex((item) => {
+      const variationIndex = state[itemIndex].variation.findIndex((item) => {
         return (
           item.variation_1 === variation_1 && item.variation_2 === variation_2
         );
       });
 
       if (variationIndex === -1) {
-        const newItemWithVariation = {
-          ...newState[itemIndex],
-          variation: [
-            ...newState[itemIndex].variation,
-            {
-              variation_1,
-              variation_2,
-              quantity: 1,
-              discounted_price: price,
-            },
-          ],
-        };
-        newState[itemIndex] = newItemWithVariation;
-        return newState;
+        return state.map((item) => {
+          if (item.product_id !== product_id) {
+            return item;
+          }
+          return {
+            ...item,
+            variation: [
+              ...item.variation,
+              {
+                variation_1,
+                variation_2,
+                quantity: quantity_to_add,
+                discounted_price: price,
+              },
+            ],
+          };
+        });
       }
 
-      return newState.map((item, index) => {
+      return state.map((item, index) => {
         if (index !== itemIndex) {
           return item;
         }
         return {
-          ...newState[itemIndex],
-          variation: newState[itemIndex].variation.map((variation, index) => {
+          ...state[itemIndex],
+          variation: state[itemIndex].variation.map((variation, index) => {
             if (index !== variationIndex) {
               return variation;
             }

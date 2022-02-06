@@ -11,7 +11,13 @@ type ItemCardProp = {
 
 const ItemCard = ({ item }: ItemCardProp) => {
   console.log(item);
-  const { product_id, product_images, product_name } = item;
+  const { product_id, product_images, product_name, variations } = item;
+
+  const calculateDiscount = (original_price, discounted_price) => {
+    return parseFloat(
+      ((100 * (original_price - discounted_price)) / original_price).toFixed(2)
+    );
+  };
 
   return (
     <LinkContainer href={`/product/${product_id}`}>
@@ -28,6 +34,28 @@ const ItemCard = ({ item }: ItemCardProp) => {
           />
         </div>
         <p className="text-md text-gray-900 font-bold">{product_name}</p>
+        <p>
+          $
+          {variations.reduce(
+            (acc, item) => Math.min(acc, item.discounted_price),
+            Number.POSITIVE_INFINITY
+          )}
+          - $
+          {variations.reduce(
+            (acc, item) => Math.max(acc, item.discounted_price),
+            0
+          )}{" "}
+          (Up to{" "}
+          {variations.reduce(
+            (acc, item) =>
+              Math.max(
+                acc,
+                calculateDiscount(item.original_price, item.discounted_price)
+              ),
+            0
+          )}
+          % discount!)
+        </p>
       </div>
     </LinkContainer>
   );

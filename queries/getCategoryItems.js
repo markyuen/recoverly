@@ -21,7 +21,12 @@ query getCategoryItems($category_name: String!) {
         product_images{
           url
         }
+        variations{
+          discounted_price
+          original_price
+        }
       }
+      
     }
   }
 }

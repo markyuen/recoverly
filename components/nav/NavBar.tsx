@@ -65,7 +65,9 @@ const NavBar = () => {
                   />
                 </>
               )}
-              <ShoppingCartIcon />
+              <div className="cursor-pointer">
+                <ShoppingCartIcon />
+              </div>
             </div>
           </div>
           <div className="flex items-center py-4">
