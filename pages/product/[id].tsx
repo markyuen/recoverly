@@ -117,35 +117,43 @@ const Product = ({ data }: ProductPageProp) => {
               )}
             <p>Variations:</p>
             <div className="grid mt-2 grid-cols-3 gap-y-2">
-              {variations.map((variation, index) => {
-                const { variation_1, variation_2, discounted_price, quantity } =
-                  variation;
-                const extraProps =
-                  currVariation &&
-                  currVariation.variation_1 === variation_1 &&
-                  currVariation.variation_2 === variation_2
-                    ? "bg-red-400"
-                    : "";
+              {variations
+                .filter(({ quantity }) => quantity > 0)
+                .map((variation, index) => {
+                  const {
+                    variation_1,
+                    variation_2,
+                    discounted_price,
+                    quantity,
+                  } = variation;
+                  const extraProps =
+                    currVariation &&
+                    currVariation.variation_1 === variation_1 &&
+                    currVariation.variation_2 === variation_2
+                      ? "bg-red-400"
+                      : "";
 
-                return (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setCurrPrice(discounted_price);
-                      setCurrQty(quantity);
-                      setCurrVariation({
-                        variation_1,
-                        variation_2,
-                        price: discounted_price,
-                        quantity,
-                      });
-                    }}
-                    className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
-                  >
-                    {variation_1}, {variation_2}
-                  </div>
-                );
-              })}
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setCurrPrice(discounted_price);
+                        setCurrQty(quantity);
+                        setCurrVariation({
+                          variation_1,
+                          variation_2,
+                          price: discounted_price,
+                          quantity,
+                        });
+                      }}
+                      className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
+                    >
+                      {variation_2
+                        ? `${variation_1}, ${variation_2}`
+                        : variation_1}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
