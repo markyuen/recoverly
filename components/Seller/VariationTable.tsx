@@ -35,91 +35,6 @@ const TableHeader = ({ fields }) => {
   );
 };
 
-// const TableCell = ({ variation_1, variation_2, variation_sku, dispatch }) => {
-//   const value = variation_sku[variation_1]
-//     ? variation_sku[variation_1][variation_2]
-//     : variation_sku[variation_2][variation_1];
-
-//   const [quantity, discounted_price, original_price] = value;
-
-//   const [storedQuantity, setStoredQuantity] = useState(quantity);
-//   const [originalPrice, setoriginalPrice] = useState(original_price);
-//   const [discountedPrice, setDiscountedPrice] = useState(discounted_price);
-
-//   const handleQuantityChange = (e) => {
-//     if (e.target.value === "") {
-//       return;
-//     }
-//     setStoredQuantity(e.target.value);
-//     dispatch({
-//       type: UPDATE_VARIATION_QUANTITY,
-//       payload: {
-//         variation_id_1: variation_1,
-//         variation_id_2: variation_2,
-//         count: e.target.value,
-//       },
-//     });
-//   };
-
-//   const handleOriginalPriceChange = (e) => {
-//     if (e.target.value === "") {
-//       return;
-//     }
-//     setoriginalPrice(e.target.value);
-//     dispatch({
-//       type: UPDATE_VARIATION_ORIGINAL_PRICE,
-//       payload: {
-//         variation_id_1: variation_1,
-//         variation_id_2: variation_2,
-//         count: e.target.value,
-//       },
-//     });
-//   };
-
-//   const handleDiscountedPriceChange = (e) => {
-//     if (e.target.value === "") {
-//       return;
-//     }
-//     setDiscountedPrice(e.target.value);
-//     dispatch({
-//       type: UPDATE_VARIATION_DISCOUNTED_PRICE,
-//       payload: {
-//         variation_id_1: variation_1,
-//         variation_id_2: variation_2,
-//         count: e.target.value,
-//       },
-//     });
-//   };
-
-//   return (
-//     <td colSpan={3}>
-//       <input
-//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-//         id="first-name"
-//         type="text"
-//         value={originalPrice}
-//         onChange={handleOriginalPriceChange}
-//       />
-
-//       <input
-//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-//         id="first-name"
-//         type="text"
-//         value={discountedPrice}
-//         onChange={handleDiscountedPriceChange}
-//       />
-
-//       <input
-//         placeholder="Quantity"
-//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
-//         type="number"
-//         value={storedQuantity}
-//         onChange={(e) => handleQuantityChange(e)}
-//       />
-//     </td>
-//   );
-// };
-
 const TableCell = ({
   variation_1,
   variation_2,
@@ -138,6 +53,7 @@ const TableCell = ({
     if (e.target.value === "") {
       return;
     }
+    console.log(e.target.value);
     //TODO: Handle error parsing
     dispatch({
       type: action_type,
@@ -158,6 +74,7 @@ const TableCell = ({
         type="number"
         value={tableCellValue}
         onChange={handleChange}
+        step="0.01"
       />
     </td>
   );

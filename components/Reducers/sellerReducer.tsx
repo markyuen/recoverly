@@ -243,10 +243,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][0] =
-            parseInt(count);
+            parseFloat(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][0] =
-            parseInt(count);
+            parseFloat(count);
         }
         return newState;
       } catch (error) {
@@ -266,10 +266,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][1] =
-            parseInt(count);
+            parseFloat(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][1] =
-            parseInt(count);
+            parseFloat(count);
         }
         return newState;
       } catch (error) {
@@ -289,10 +289,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][2] =
-            parseInt(count);
+            parseFloat(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][2] =
-            parseInt(count);
+            parseFloat(count);
         }
         return newState;
       } catch (error) {
