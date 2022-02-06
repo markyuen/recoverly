@@ -203,7 +203,6 @@ export async function getStaticProps({ params }) {
   const data = await serverSideHasura("getProductInformation", {
     product_id: id,
   });
-  console.log(data["product"]);
 
   return {
     props: {
