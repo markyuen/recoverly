@@ -9,6 +9,7 @@ import { makeGraphQLQuery } from "../../lib/GraphQL";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import validateUEN from "../../lib/validateUEN";
 import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum";
+import genStripeOnboardingLink from "../../lib/genStripeOnboardingLink";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -29,6 +30,7 @@ const UserProfile = () => {
         data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100;
         setUserData({
           ...data,
+          email: user.email,
           nickname: user.nickname,
           picture: user.picture,
         })
@@ -103,7 +105,8 @@ const UserProfile = () => {
     let payload = { ...sellerData, user_id: userData.user_id };
     payload.flat_shipping_fee = payload.flat_shipping_fee * 100;
     payload.product_total_free_delivery = payload.product_total_free_delivery * 100;
-    delete payload.verified
+    delete payload.stripe_id;
+    delete payload.verified;
     makeGraphQLQuery("updateSellerInfo", payload)
       .then((res) => {
         setOriginalSellerData(JSON.stringify(sellerData));
@@ -170,7 +173,8 @@ const UserProfile = () => {
                   styling="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   type="customer"
                 />
-              </div>}
+              </div>
+            }
 
             {sellerData &&
               <div>
@@ -183,11 +187,26 @@ const UserProfile = () => {
                   >
                     Merchant Status (You may upload products once you are verified.)
                   </label>
-                  <div className="mt-1 sm:mt-0 sm:col-span-2">
-                    <div className="flex items-center">
-                      <p><i>{sellerData.verified ? "Verified" : "Pending Verification"}</i></p>
+                  {sellerData.stripe_id &&
+                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                      <div className="flex items-center">
+                        <p><i>{sellerData.verified ? "Verified" : "Pending Verification"}</i></p>
+                      </div>
                     </div>
-                  </div>
+                  }
+                  {!sellerData.stripe_id &&
+                    <div className="mt-1 sm:mt-0 sm:col-span-2">
+                      <button
+                        type="button"
+                        className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        onClick={() => {
+                          window.location.href = genStripeOnboardingLink(userData.email, sellerData.first_name, sellerData.last_name);
+                        }}
+                      >
+                        Connect your account with Stripe
+                      </button>
+                    </div>
+                  }
                 </div>
 
                 <FormInput
