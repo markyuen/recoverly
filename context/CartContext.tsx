@@ -51,22 +51,6 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
             ],
           },
         ]);
-        return state.map((item) => {
-          if (item.product_id !== product_id) {
-            return item;
-          }
-          return {
-            ...item,
-            variation: [
-              {
-                variation_1,
-                variation_2,
-                quantity: quantity_to_add,
-                discounted_price: price,
-              },
-            ],
-          };
-        });
       }
 
       const variationIndex = state[itemIndex].variation.findIndex((item) => {
