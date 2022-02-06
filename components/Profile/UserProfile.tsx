@@ -1,11 +1,14 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+
 import FormInput from "../Form/FormInput";
 import { updateImage } from "../../lib/s3";
 import InternalLink from "../Common/Link";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
+import validateUEN from "../../lib/validateUEN";
+import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum";
 
 const UserProfile = () => {
   const { user } = useUser();
@@ -21,21 +24,24 @@ const UserProfile = () => {
     }
     makeGraphQLQuery("getUserSellerInfo", { user_id: user.sub })
       .then((res) => {
+        const data = res.user_by_pk;
+        data.seller.flat_shipping_fee = data.seller.flat_shipping_fee / 100;
+        data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100;
         setUserData({
-          ...res.user_by_pk,
+          ...data,
           nickname: user.nickname,
           picture: user.picture,
         })
         if (res.user_by_pk.seller) {
-          setSellerData({ ...res.user_by_pk.seller });
-          setOriginalSellerData(JSON.stringify({ ...res.user_by_pk.seller }));
+          setSellerData({ ...data.seller });
+          setOriginalSellerData(JSON.stringify({ ...data.seller }));
         }
         setLoading(false);
       })
       .catch((err) => console.log(err));
   }, [user]);
 
-  const updateKeyValue = (key: string, value: any) => {
+  const updateSellerData = (key: string, value: any) => {
     const newSellerData = { ...sellerData };
     newSellerData[key] = value;
     setSellerData(newSellerData);
@@ -64,13 +70,45 @@ const UserProfile = () => {
       alert("Nothing to update!");
       return;
     }
+    // Input validation
+    if (sellerData.company_name === "") {
+      alert("Company Name cannot be empty.");
+      return;
+    }
+    if (sellerData.address === "") {
+      alert("Address cannot be empty.");
+      return;
+    }
+    if (!validateUEN(sellerData.acra_uen)) {
+      alert("Invalid UEN format.")
+      return;
+    }
+    if (sellerData.first_name === "") {
+      alert("First Name cannot be empty.");
+      return;
+    }
+    if (sellerData.last_name === "") {
+      alert("Last Name cannot be empty.");
+      return;
+    }
+    if (!validateTwoDecimalNum(sellerData.flat_shipping_fee)) {
+      alert("Flat Shipping Fee must be a number with at most two decimal places.");
+      return;
+    }
+    if (!validateTwoDecimalNum(sellerData.product_total_free_delivery)) {
+      alert("Free Delivery Threshold must be a number with at most two decimal places.");
+      return;
+    }
+    // Update info
     let payload = { ...sellerData, user_id: userData.user_id };
+    payload.flat_shipping_fee = payload.flat_shipping_fee * 100;
+    payload.product_total_free_delivery = payload.product_total_free_delivery * 100;
     delete payload.verified
     makeGraphQLQuery("updateSellerInfo", payload)
       .then((res) => {
+        setOriginalSellerData(JSON.stringify(sellerData));
         alert("Success updating your information!");
         console.log(res);
-        setOriginalSellerData(JSON.stringify(sellerData));
       })
       .catch((err) => console.log(err));
   };
@@ -155,49 +193,49 @@ const UserProfile = () => {
                 <FormInput
                   type="text"
                   value={sellerData.company_name}
-                  onChange={(e) => updateKeyValue("company_name", e.target.value)}
+                  onChange={(e) => updateSellerData("company_name", e.target.value)}
                   label="Company Name"
                 />
                 <FormInput
                   type="text"
                   value={sellerData.address}
-                  onChange={(e) => updateKeyValue("address", e.target.value)}
+                  onChange={(e) => updateSellerData("address", e.target.value)}
                   label="Address"
                 />
                 <FormInput
                   type="text"
                   value={sellerData.office_number}
-                  onChange={(e) => updateKeyValue("office_number", e.target.value)}
-                  label="Office Number"
+                  onChange={(e) => updateSellerData("office_number", e.target.value)}
+                  label="Office Number (optional)"
                 />
                 <FormInput
                   type="text"
                   value={sellerData.acra_uen}
-                  onChange={(e) => updateKeyValue("acra_uen", e.target.value)}
+                  onChange={(e) => updateSellerData("acra_uen", e.target.value)}
                   label="ACRA UEN"
                 />
                 <FormInput
                   type="text"
                   value={sellerData.first_name}
-                  onChange={(e) => updateKeyValue("first_name", e.target.value)}
+                  onChange={(e) => updateSellerData("first_name", e.target.value)}
                   label="First Name"
                 />
                 <FormInput
                   type="text"
                   value={sellerData.last_name}
-                  onChange={(e) => updateKeyValue("last_name", e.target.value)}
+                  onChange={(e) => updateSellerData("last_name", e.target.value)}
                   label="Last Name"
                 />
                 <FormInput
                   type="number"
                   value={sellerData.flat_shipping_fee}
-                  onChange={(e) => updateKeyValue("flat_shipping_fee", e.target.value)}
+                  onChange={(e) => updateSellerData("flat_shipping_fee", e.target.value)}
                   label="Flat Shipping Fee (You must handle delivery. This delivery fee will be applied regardless of the order amount. Platform fee computation does not include this amount.)"
                 />
                 <FormInput
                   type="number"
                   value={sellerData.product_total_free_delivery}
-                  onChange={(e) => updateKeyValue("product_total_free_delivery", e.target.value)}
+                  onChange={(e) => updateSellerData("product_total_free_delivery", e.target.value)}
                   label="Free Delivery Threshold (At what total order cost are you willing to offer free delivery?)"
                 />
               </div>

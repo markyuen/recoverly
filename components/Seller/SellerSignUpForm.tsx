@@ -1,7 +1,9 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useState } from "react";
+
 import FormInput from "../Form/FormInput";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
+import validateUEN from "../../lib/validateUEN";
 
 const SellerSignUpForm = () => {
   const { user } = useUser();
@@ -27,6 +29,28 @@ const SellerSignUpForm = () => {
     e.preventDefault();
     console.log("----Submitting Information Of ----- ");
     console.log(userData);
+    // Input validation
+    if (userData.company_name === "") {
+      alert("Company Name cannot be empty.");
+      return;
+    }
+    if (userData.address === "") {
+      alert("Address cannot be empty.");
+      return;
+    }
+    if (!validateUEN(userData.acra_uen)) {
+      alert("Invalid UEN format.")
+      return;
+    }
+    if (userData.first_name === "") {
+      alert("First Name cannot be empty.");
+      return;
+    }
+    if (userData.last_name === "") {
+      alert("Last Name cannot be empty.");
+      return;
+    }
+    // Insert new seller
     makeGraphQLQuery("insertNewSeller", userData)
       .then((res) => {
         // TODO: add toasts
