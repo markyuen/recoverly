@@ -14,7 +14,6 @@ type QuantityButtonWithAddToCartProps = {
   product_id: number;
   variation_1: string;
   variation_2: string;
-  size: string;
   limit: number;
   product_name;
   currPrice: number;
@@ -27,12 +26,12 @@ const QuantityButtonWithAddToCart = ({
   currPrice,
   product_name,
   limit,
-  size = "medium",
 }: QuantityButtonWithAddToCartProps) => {
   const { user } = useUser();
   const { dispatch, getProductCount } = useCart();
   const { generateWarningToast } = useChakraToast();
   const router = useRouter();
+  const size = "medium";
 
   const [count, setProductCount] = React.useState(0);
 
@@ -89,7 +88,7 @@ const QuantityButtonWithAddToCart = ({
     <div className="flex items-center my-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={iconSize[size]}
+        className={iconSize[""]}
         viewBox="0 0 20 20"
         fill="currentColor"
         onClick={() => removeOne()}
