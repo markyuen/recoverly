@@ -88,7 +88,7 @@ const QuantityButtonWithAddToCart = ({
     <div className="flex items-center my-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className={iconSize[""]}
+        className={iconSize[size]}
         viewBox="0 0 20 20"
         fill="currentColor"
         onClick={() => removeOne()}
