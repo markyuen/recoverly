@@ -10,6 +10,7 @@ import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
 import { useCart } from "../../context/CartContext";
 import QuantityButton from "../../components/Product/QuantityButton";
+import QuantityButtonWithAddToCart from "../../components/Product/QuantityButtonWithDispatch";
 
 type ProductPageProp = {
   data: ItemPageData;
@@ -83,7 +84,7 @@ const Product = ({ data }: ProductPageProp) => {
                   </span>
                   ${currPrice} with {currQty} remaining
                 </p>
-                <QuantityButton
+                <QuantityButtonWithAddToCart
                   currPrice={currPrice}
                   product_id={product_id}
                   product_name={product_name}
