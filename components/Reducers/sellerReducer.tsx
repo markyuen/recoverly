@@ -24,8 +24,12 @@ import {
 import { addVariationCategory } from "../../lib/addFormState";
 import { ProductFormItem } from "../../types/seller";
 
+function round(num) {
+  var m = Number((Math.abs(num) * 100).toPrecision(15));
+  return (Math.round(m) / 100) * Math.sign(num);
+}
+
 export const SellerItemReducer = (state: ProductFormItem, action) => {
-  console.log(state, action);
   switch (action.type) {
     case MODIFY_PRODUCT_NAME:
       return { ...state, product_name: action.payload };
@@ -266,10 +270,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][1] =
-            parseInt(count);
+            round(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][1] =
-            parseInt(count);
+            round(count);
         }
         return newState;
       } catch (error) {
@@ -289,10 +293,10 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
 
         if (newState.variation_sku[variation_id_1]) {
           newState.variation_sku[variation_id_1][variation_id_2][2] =
-            parseInt(count);
+            round(count);
         } else {
           newState.variation_sku[variation_id_2][variation_id_1][2] =
-            parseInt(count);
+            round(count);
         }
         return newState;
       } catch (error) {

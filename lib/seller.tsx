@@ -77,6 +77,8 @@ const generateVariations = (formState, product_id) => {
     })
     .flat();
 
+  console.log(variation_insert_obj);
+
   return variation_insert_obj;
 };
 
