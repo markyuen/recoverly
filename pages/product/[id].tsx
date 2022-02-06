@@ -8,7 +8,7 @@ import { Button, Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
-import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartContext";
 import QuantityButton from "../../components/Product/QuantityButton";
 
 type ProductPageProp = {
@@ -30,6 +30,7 @@ const Product = ({ data }: ProductPageProp) => {
   const [currQty, setCurrQty] = useState(null);
   const [currVariation, setCurrVariation] = useState<ProductVariation>(null);
   const [currCount, setCurrCount] = useState(null);
+  const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
   // TODO: Fix Dependency Array using get Callback
   useEffect(() => {
@@ -40,7 +41,6 @@ const Product = ({ data }: ProductPageProp) => {
     const { product_id } = data;
     setCurrCount(getProductCount(product_id, variation_1, variation_2));
   }, [currVariation, data]);
-  console.log(cartItems);
 
   // Refactor to use useSWR, ISG might not be the best
 
@@ -78,6 +78,9 @@ const Product = ({ data }: ProductPageProp) => {
             {currPrice !== null && (
               <>
                 <p className="text-gray-700 text-sm">
+                  <span className="line-through	text-red-600 mr-2">
+                    ${currPrevPrice}
+                  </span>
                   ${currPrice} with {currQty} remaining
                 </p>
                 <QuantityButton
@@ -117,35 +120,45 @@ const Product = ({ data }: ProductPageProp) => {
               )}
             <p>Variations:</p>
             <div className="grid mt-2 grid-cols-3 gap-y-2">
-              {variations.map((variation, index) => {
-                const { variation_1, variation_2, discounted_price, quantity } =
-                  variation;
-                const extraProps =
-                  currVariation &&
-                  currVariation.variation_1 === variation_1 &&
-                  currVariation.variation_2 === variation_2
-                    ? "bg-red-400"
-                    : "";
+              {variations
+                .filter(({ quantity }) => quantity > 0)
+                .map((variation, index) => {
+                  const {
+                    variation_1,
+                    variation_2,
+                    discounted_price,
+                    original_price,
+                    quantity,
+                  } = variation;
+                  const extraProps =
+                    currVariation &&
+                    currVariation.variation_1 === variation_1 &&
+                    currVariation.variation_2 === variation_2
+                      ? "bg-red-400"
+                      : "";
 
-                return (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      setCurrPrice(discounted_price);
-                      setCurrQty(quantity);
-                      setCurrVariation({
-                        variation_1,
-                        variation_2,
-                        price: discounted_price,
-                        quantity,
-                      });
-                    }}
-                    className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
-                  >
-                    {variation_1}, {variation_2}
-                  </div>
-                );
-              })}
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        setCurrPrice(discounted_price);
+                        setCurrQty(quantity);
+                        setCurrVariation({
+                          variation_1,
+                          variation_2,
+                          price: discounted_price,
+                          quantity,
+                        });
+                        setCurrPrevPrice(original_price);
+                      }}
+                      className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
+                    >
+                      {variation_2
+                        ? `${variation_1}, ${variation_2}`
+                        : variation_1}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
@@ -153,14 +166,16 @@ const Product = ({ data }: ProductPageProp) => {
           <p className="my-8 text-xl text-gray-500 leading-8">
             About the Product
           </p>
-          <p>{description}</p>
+          <p className="whitespace-pre-wrap">{description}</p>
         </div>
-        <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
-          <p className="my-8 text-xl text-gray-500 leading-8">
-            Product Specifications
-          </p>
-          <PDFViewer pdfs={product_specifications} />
-        </div>
+        {product_specifications.length > 0 && (
+          <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
+            <p className="my-8 text-xl text-gray-500 leading-8">
+              Product Specifications
+            </p>
+            <PDFViewer pdfs={product_specifications} />
+          </div>
+        )}
       </div>
     </ShopNav>
   );
@@ -187,7 +202,6 @@ export async function getStaticProps({ params }) {
   const data = await serverSideHasura("getProductInformation", {
     product_id: id,
   });
-  console.log(data["product"]);
 
   return {
     props: {
