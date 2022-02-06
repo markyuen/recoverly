@@ -169,7 +169,7 @@ const Product = ({ data }: ProductPageProp) => {
           </p>
           <p className="whitespace-pre-wrap">{description}</p>
         </div>
-        {product_specifications && (
+        {product_specifications.length > 0 && (
           <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
             <p className="my-8 text-xl text-gray-500 leading-8">
               Product Specifications
