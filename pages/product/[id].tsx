@@ -30,6 +30,7 @@ const Product = ({ data }: ProductPageProp) => {
   const [currQty, setCurrQty] = useState(null);
   const [currVariation, setCurrVariation] = useState<ProductVariation>(null);
   const [currCount, setCurrCount] = useState(null);
+  const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
   // TODO: Fix Dependency Array using get Callback
   useEffect(() => {
@@ -78,6 +79,9 @@ const Product = ({ data }: ProductPageProp) => {
             {currPrice !== null && (
               <>
                 <p className="text-gray-700 text-sm">
+                  <span className="line-through	text-red-600 mr-2">
+                    ${currPrevPrice}
+                  </span>
                   ${currPrice} with {currQty} remaining
                 </p>
                 <QuantityButton
@@ -124,6 +128,7 @@ const Product = ({ data }: ProductPageProp) => {
                     variation_1,
                     variation_2,
                     discounted_price,
+                    original_price,
                     quantity,
                   } = variation;
                   const extraProps =
@@ -145,6 +150,7 @@ const Product = ({ data }: ProductPageProp) => {
                           price: discounted_price,
                           quantity,
                         });
+                        setCurrPrevPrice(original_price);
                       }}
                       className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
                     >
@@ -163,12 +169,14 @@ const Product = ({ data }: ProductPageProp) => {
           </p>
           <p className="whitespace-pre-wrap">{description}</p>
         </div>
-        <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
-          <p className="my-8 text-xl text-gray-500 leading-8">
-            Product Specifications
-          </p>
-          <PDFViewer pdfs={product_specifications} />
-        </div>
+        {product_specifications && (
+          <div className="my-6 prose max-w-lg prose-indigo prose-lg text-gray-500 mx-auto">
+            <p className="my-8 text-xl text-gray-500 leading-8">
+              Product Specifications
+            </p>
+            <PDFViewer pdfs={product_specifications} />
+          </div>
+        )}
       </div>
     </ShopNav>
   );
