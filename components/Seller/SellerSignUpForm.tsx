@@ -30,11 +30,10 @@ const SellerSignUpForm = () => {
     makeGraphQLQuery("insertNewSeller", userData)
       .then((res) => {
         // TODO: add toasts
-        console.log("Success.");
         console.log(res);
         const url = `https://connect.stripe.com/express/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_STRIPE_CLIENT_ID
-          }&redirect_uri=https://${process.env.NEXT_PUBLIC_SITE_URL
-          }/stripe_authorization&stripe_user[email]=${email
+          }&redirect_uri=${process.env.NEXT_PUBLIC_STRIPE_REDIRECT
+          }&stripe_user[email]=${email
           }&stripe_user[first_name]=${userData.first_name
           }&stripe_user[last_name]=${userData.last_name
           }`;
