@@ -41,7 +41,6 @@ const Product = ({ data }: ProductPageProp) => {
     const { product_id } = data;
     setCurrCount(getProductCount(product_id, variation_1, variation_2));
   }, [currVariation, data]);
-  console.log(cartItems);
 
   // Refactor to use useSWR, ISG might not be the best
 
