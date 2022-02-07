@@ -10,8 +10,9 @@ export default async function handler(req, res) {
     variables
   );
 
+  console.log(operation);
   console.log(data);
-  console.log(errors);
+  if (errors) console.log(errors);
 
   if (errors) {
     res.status(400).json({ message: "Error Encountered", error: errors });
