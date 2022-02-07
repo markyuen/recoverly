@@ -51,7 +51,7 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
   const [categories, setCategories] = useState<seller_category[]>([]);
   const [sellers, setSellers] = useState([]);
   const [brandNames, setBrandNames] = useState<brand[]>([]);
-  const [mainCategories, setMmainCategories] = useState([]);
+  const [mainCategories, setMainCategories] = useState([]);
   const { generateSuccessToast } = useChakraToast();
 
   useEffect(() => {
@@ -102,8 +102,10 @@ const AddItemForm = ({ initialState, handleSubmit }: AddItemFormProps) => {
             return a.name.localeCompare(b.name);
           });
 
+        console.log(main_categories);
+        console.log(normalized_categories);
         setCategories(normalized_categories);
-        setMmainCategories(main_categories);
+        setMainCategories(main_categories);
 
         const normalizedProductStatus = productStatusList["product_status"].map(
           (item) => {

@@ -115,14 +115,14 @@ const EditItemPage = () => {
             value: brand_id,
             label: brand_name,
           },
-          categories: products_categories.map(
-            ({ category: { category_id, category_name } }) => {
+          categories: products_categories
+            .filter((item) => !item.main_category)
+            .map(({ category: { category_id, category_name } }) => {
               return {
                 value: category_id,
                 name: category_name,
               };
-            }
-          ),
+            }),
           images: [],
           specifications: [],
           product_status: { value: 1, name: "ACTIVE" },
