@@ -25,7 +25,7 @@ export default async function handler(
         mode: "payment",
         payment_method_types: ["card", "grabpay"],
         line_items: items,
-        success_url: `${req.headers.origin}/result?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${req.headers.origin}/checkout_success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/cart`,
         shipping_address_collection: {
           allowed_countries: ["SG"]

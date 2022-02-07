@@ -32,7 +32,7 @@ const StripeAuthorize = () => {
     router.push("/");
   }, [user, data]);
 
-  return <SpinnerWithMessage label="Finalizing authorization with Stripe..." />;
+  return <SpinnerWithMessage label="Finalizing authorization with Stripe" />;
 };
 
 export default StripeAuthorize;
