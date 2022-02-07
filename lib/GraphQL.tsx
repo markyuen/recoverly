@@ -9,7 +9,7 @@ export const makeGraphQLQuery = (operation, variables) => {
     variables,
   };
 
-  console.log(req_body);
+  // console.log(req_body);
 
   return fetcherWithBody(req_url, req_body).then((res) => {
     if (!res || res.errors) {

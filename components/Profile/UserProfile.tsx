@@ -113,7 +113,6 @@ const UserProfile = () => {
       .then((res) => {
         setOriginalSellerData(JSON.stringify(sellerData));
         alert("Success updating your information!");
-        console.log(res);
       })
       .catch((err) => console.log(err));
   };
