@@ -44,6 +44,8 @@ const OrderSummary = () => {
       return
     }
 
+    // TODO: write order to DB and store the data.id as the stripe_checkout field
+
     // Redirect to Checkout.
     const stripe = await getStripe()
     const { error } = await stripe!.redirectToCheckout({

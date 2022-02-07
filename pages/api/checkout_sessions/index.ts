@@ -23,12 +23,22 @@ export default async function handler(
       // Create Checkout Sessions from body params.
       const params: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
-        payment_method_types: ["card", "grabpay"],
+        payment_method_types: ["card"],
         line_items: items,
+        customer_creation: "always", // KIV, can potentially tie customer to user in future
+        // customer_email: "", // Put in user email
         success_url: `${req.headers.origin}/checkout_success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${req.headers.origin}/cart`,
         shipping_address_collection: {
           allowed_countries: ["SG"]
+        },
+        payment_intent_data: {
+          capture_method: "manual",
+          // TODO: implement
+          receipt_email: "",
+        },
+        metadata: {
+          user_id: "" // Add user id
         },
       }
       const checkoutSession: Stripe.Checkout.Session =
