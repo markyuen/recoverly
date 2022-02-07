@@ -14,6 +14,7 @@ import QuantityButtonWithAddToCart from "../../components/Product/QuantityButton
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import getProductInformation from "../../queries/getProductInformation";
+import SpinnerWithMessage from "../../components/Common/SpinnerWithMessage";
 
 type ProductPageProp = {
   initialData: ItemPageData;
@@ -42,15 +43,13 @@ const Product = ({ initialData }: ProductPageProp) => {
       {
         query: getProductInformation,
         variables: {
-          product_id: initialData.product_id,
+          product_id: router.query.id,
         },
       },
     ],
     fetcherWithBody,
     {
-      fallbackData: {
-        product: [initialData],
-      },
+      fallbackData: initialData,
       revalidateOnMount: true,
     }
   );
@@ -65,7 +64,13 @@ const Product = ({ initialData }: ProductPageProp) => {
     setCurrCount(getProductCount(product_id, variation_1, variation_2));
   }, [currVariation, data, getProductCount]);
 
-  // Refactor to use useSWR, ISG might not be the best
+  if (!data) {
+    return (
+      <ShopNav>
+        <SpinnerWithMessage label="Downloading Product Information" />
+      </ShopNav>
+    );
+  }
 
   const {
     product_id,
@@ -224,7 +229,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      initialData: data["product"].length > 0 ? data["product"][0] : [],
+      initialData: data["product"].length > 0 ? data : null,
     },
   };
 }
