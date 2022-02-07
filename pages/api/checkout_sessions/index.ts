@@ -35,7 +35,7 @@ export default async function handler(
         payment_intent_data: {
           capture_method: "manual",
           // TODO: implement
-          receipt_email: "",
+          // receipt_email: "",
         },
         metadata: {
           user_id: "" // Add user id
