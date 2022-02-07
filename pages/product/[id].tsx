@@ -11,9 +11,12 @@ import PDFViewer from "../../components/Common/PDFViewer";
 import { useCart } from "../../context/CartContext";
 import QuantityButton from "../../components/Product/QuantityButton";
 import QuantityButtonWithAddToCart from "../../components/Product/QuantityButtonWithDispatch";
+import useSWR from "swr";
+import { fetcherWithBody } from "../../lib/swr";
+import getProductInformation from "../../queries/getProductInformation";
 
 type ProductPageProp = {
-  data: ItemPageData;
+  initialData: ItemPageData;
 };
 
 type ProductVariation = {
@@ -23,7 +26,7 @@ type ProductVariation = {
   quantity: number;
 };
 
-const Product = ({ data }: ProductPageProp) => {
+const Product = ({ initialData }: ProductPageProp) => {
   const router = useRouter();
   const { cartItems, getProductCount } = useCart();
 
@@ -33,6 +36,25 @@ const Product = ({ data }: ProductPageProp) => {
   const [currCount, setCurrCount] = useState(null);
   const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
+  const { data, error } = useSWR(
+    [
+      "/api/graphql/getProductInformation",
+      {
+        query: getProductInformation,
+        variables: {
+          product_id: initialData.product_id,
+        },
+      },
+    ],
+    fetcherWithBody,
+    {
+      fallbackData: {
+        product: [initialData],
+      },
+      revalidateOnMount: true,
+    }
+  );
+
   // TODO: Fix Dependency Array using get Callback
   useEffect(() => {
     if (!currVariation || !data) {
@@ -41,13 +63,9 @@ const Product = ({ data }: ProductPageProp) => {
     const { variation_1, variation_2 } = currVariation;
     const { product_id } = data;
     setCurrCount(getProductCount(product_id, variation_1, variation_2));
-  }, [currVariation, data]);
+  }, [currVariation, data, getProductCount]);
 
   // Refactor to use useSWR, ISG might not be the best
-
-  if (!data) {
-    return <div>loading....</div>;
-  }
 
   const {
     product_id,
@@ -58,7 +76,7 @@ const Product = ({ data }: ProductPageProp) => {
     description,
     products_categories,
     variations,
-  } = data;
+  } = data["product"][0];
 
   return (
     <ShopNav>
@@ -206,7 +224,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      data: data["product"].length > 0 ? data["product"][0] : [],
+      initialData: data["product"].length > 0 ? data["product"][0] : [],
     },
   };
 }
