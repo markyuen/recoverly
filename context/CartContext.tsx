@@ -111,7 +111,7 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
           variation: item.variation.filter(
             (item) =>
               item.variation_1 !== variation_1 &&
-              item.variation_2 !== variation_2
+              (!item.variation_2 || item.variation_2 !== variation_2)
           ),
         };
       });
