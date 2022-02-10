@@ -6,7 +6,14 @@ module.exports = {
     "./components/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: { 
+        'light-green-recoverly': '#ABE362',
+        'light-green-matching-1' : '#e3db62',
+        'light-green-matching-2' : '#6be362',
+        'tint-background': '#263b0b',
+      }
+    },
   },
   plugins: [require("@tailwindcss/forms")],
 };
