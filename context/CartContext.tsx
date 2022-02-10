@@ -101,20 +101,22 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
     case REMOVE_ITEM_VARIATION: {
       const { product_id, variation_1, variation_2 } = action.payload;
 
-      return state.map((item) => {
-        if (item.product_id !== product_id) {
-          return item;
-        }
+      return state
+        .map((item) => {
+          if (item.product_id !== product_id) {
+            return item;
+          }
 
-        return {
-          ...item,
-          variation: item.variation.filter(
-            (item) =>
-              item.variation_1 !== variation_1 &&
-              item.variation_2 !== variation_2
-          ),
-        };
-      });
+          return {
+            ...item,
+            variation: item.variation.filter(
+              (item) =>
+                item.variation_1 !== variation_1 &&
+                (!item.variation_2 || item.variation_2 !== variation_2)
+            ),
+          };
+        })
+        .filter((item) => item.variation.length > 0);
     }
   }
 };
