@@ -29,7 +29,7 @@ type ProductVariation = {
 
 const Product = ({ initialData }: ProductPageProp) => {
   const router = useRouter();
-  const { cartItems, getProductCount } = useCart();
+  const { getProductCount } = useCart();
 
   const [currPrice, setCurrPrice] = useState(null);
   const [currQty, setCurrQty] = useState(null);
@@ -37,7 +37,7 @@ const Product = ({ initialData }: ProductPageProp) => {
   const [currCount, setCurrCount] = useState(null);
   const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
-  const { data, error } = useSWR(
+  const { data } = useSWR(
     [
       "/api/graphql/getProductInformation",
       {

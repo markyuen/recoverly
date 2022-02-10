@@ -1,6 +1,7 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import { Item } from "framer-motion/types/components/Reorder/Item";
 import { createContext, useContext, useReducer, useState } from "react";
+import { makeGraphQLQuery } from "../lib/GraphQL";
 import { ItemProp, CartItem } from "../types/items";
 
 type CartContext = {
@@ -11,6 +12,23 @@ type CartContext = {
     variation_1: string,
     variation_2: string
   ) => number;
+  verifyProductExistsInCart: (number) => boolean;
+  addProductToDatabase: (
+    product_id: number,
+    variation_1: string,
+    variation_2: string,
+    quantity: number,
+    price: number,
+    user_id: string
+  ) => void;
+  updateCartProductVariation: (
+    product_id: number,
+    user_id: string,
+    order_variation_1: string,
+    order_variation_2: string,
+    price: number,
+    quantity: number
+  ) => void;
 };
 
 const CartContext = createContext<CartContext>(null!);
@@ -122,6 +140,60 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
 export function CartWrapper({ children }) {
   const [cartItems, dispatch] = useReducer(CartReducer, []);
 
+  const updateCartProductVariation = (
+    product_id: number,
+    user_id: string,
+    order_variation_1: string,
+    order_variation_2: string,
+    price: number,
+    quantity: number
+  ) => {
+    const variables = {
+      product_id,
+      user_id,
+      order_variation_1,
+      order_variation_2,
+      price,
+      quantity,
+    };
+
+    makeGraphQLQuery("updateCartProductVariation", variables)
+      .then((res) => {
+        console.log(res);
+        console.log("----Succesfully added to database");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const addProductToDatabase = (
+    product_id: number,
+    variation_1: string,
+    variation_2: string,
+    quantity: number,
+    price: number,
+    user_id: string
+  ) => {
+    const variables = {
+      product_id,
+      order_variation_1: variation_1,
+      order_variation_2: variation_2,
+      quantity,
+      price,
+      user_id,
+    };
+
+    makeGraphQLQuery("insertNewCartProduct", variables)
+      .then((res) => {
+        console.log(res);
+        console.log("Succesfully added new cart product to database");
+      })
+      .catch((err) => console.log("Error Encountered of ", err));
+  };
+
+  const verifyProductExistsInCart = (product_id: number) => {
+    return cartItems.findIndex((item) => item.product_id === product_id) !== -1;
+  };
+
   const getProductCount = (product_id, variation_1, variation_2) => {
     if (
       cartItems.filter((item) => item.product_id === product_id).length == 0
@@ -152,6 +224,9 @@ export function CartWrapper({ children }) {
     cartItems,
     dispatch,
     getProductCount,
+    addProductToDatabase,
+    verifyProductExistsInCart,
+    updateCartProductVariation,
   };
 
   return (

@@ -3,6 +3,7 @@ import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
+import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
 
 const iconSize = {
@@ -28,7 +29,14 @@ const QuantityButtonWithAddToCart = ({
   limit,
 }: QuantityButtonWithAddToCartProps) => {
   const { user } = useUser();
-  const { dispatch, getProductCount } = useCart();
+  const { userId } = useUserRole();
+  const {
+    dispatch,
+    getProductCount,
+    verifyProductExistsInCart,
+    addProductToDatabase,
+    updateCartProductVariation,
+  } = useCart();
   const { generateWarningToast, generateSuccessToast } = useChakraToast();
   const router = useRouter();
   const size = "medium";
@@ -60,6 +68,7 @@ const QuantityButtonWithAddToCart = ({
       generateWarningToast("Error", "You can't add more than the limit");
       return;
     }
+
     setProductCount(count + 1);
   };
 
@@ -73,6 +82,29 @@ const QuantityButtonWithAddToCart = ({
   const handleAddToCart = () => {
     if (!checkForUser()) {
       return;
+    }
+
+    if (!verifyProductExistsInCart(product_id)) {
+      console.log("----Product does not exist in Cart");
+
+      addProductToDatabase(
+        product_id,
+        variation_1,
+        variation_2,
+        count,
+        currPrice,
+        userId
+      );
+    } else {
+      console.log("----Product exists in cart");
+      updateCartProductVariation(
+        product_id,
+        userId,
+        variation_1,
+        variation_2,
+        currPrice,
+        count
+      );
     }
 
     dispatch({
