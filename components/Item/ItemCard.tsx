@@ -4,6 +4,7 @@ import LinkContainer from "../Common/LinkContainer";
 import { generateItemSlugLink } from "../../lib/string";
 import { ItemListing } from "../../types/items";
 import ImageViewer from "../Common/ImageViewer";
+import { Tag } from "@chakra-ui/react";
 
 type ItemCardProp = {
   item: ItemListing;
@@ -40,7 +41,14 @@ const ItemCard = ({ item }: ItemCardProp) => {
         id="category-item"
         className="card flex flex-col justify-center cursor-pointer px-2"
       >
-        <div
+        <Image
+          src={product_images[0].url}
+          width={300}
+          height={300}
+          alt={"Fake news"}
+        />
+
+        {/* <div
           style={{
             backgroundImage: `url(${product_images[0].url})`,
             width: "300px",
@@ -53,14 +61,14 @@ const ItemCard = ({ item }: ItemCardProp) => {
         >
           <p
             style={{
-              // backgroundColor: "#002570",
+              backgroundColor: "#002570",
               maxWidth: "100px",
             }}
-            className="text-white px-2 py-2 leading-loose rounded-sm bg-red-800 text-center"
+            className="text-white px-2 py-2 leading-loose rounded-sm  text-center"
           >
             {getMaxDiscountPercentage()}% Off
           </p>
-        </div>
+        </div> */}
         <p className="text-md text-gray-900 font-bold">{product_name}</p>
         <p>
           $
@@ -73,6 +81,14 @@ const ItemCard = ({ item }: ItemCardProp) => {
             (acc, item) => Math.max(acc, item.discounted_price),
             0
           )}{" "}
+          <Tag
+            style={{
+              backgroundColor: "#002570",
+              color: "white",
+            }}
+          >
+            {getMaxDiscountPercentage()}% Off
+          </Tag>
         </p>
       </div>
     </LinkContainer>
