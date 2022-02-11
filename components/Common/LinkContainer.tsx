@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
 import React from "react";
 
+type href_link = string | { pathname: string; query: Record<string, any> };
+
 type LinkContainerProps = {
-  href: string;
+  href: href_link;
   children: any;
 };
 

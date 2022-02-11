@@ -74,6 +74,10 @@ const QuantityButtonWithAddToCart = ({
     if (!checkForUser()) {
       return;
     }
+    if (count == 0) {
+      generateWarningToast("Error", "Item quantity must be greater than one");
+      return;
+    }
 
     dispatch({
       type: UPDATE_ITEM_COUNT,
