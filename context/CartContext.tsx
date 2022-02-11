@@ -23,7 +23,6 @@ export const REMOVE_ITEM = "REMOVE_ITEM";
 export const REMOVE_ID = -69;
 
 const CartReducer = (state: CartItem[], action): CartItem[] => {
-  console.log(action);
   switch (action.type) {
     case SET_INIT_STATE: {
       return action.payload;
@@ -36,8 +35,8 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         product_name,
         variation_1,
         variation_2,
-        price,
         quantity,
+        price,
         limit,
       } = action.payload;
       const itemIndex = state.findIndex(

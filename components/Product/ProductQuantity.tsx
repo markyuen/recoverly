@@ -13,16 +13,20 @@ const iconSize = {
 type ProductQuantityProps = {
   product_id: number;
   variation_pair_id: number;
+  product_name: string;
   variation_1: string;
   variation_2: string;
+  price: number;
   limit: number;
 };
 
 const ProductQuantity = ({
   product_id,
   variation_pair_id,
+  product_name,
   variation_1,
   variation_2,
+  price,
   limit,
 }: ProductQuantityProps) => {
   const { user } = useUser();
@@ -83,9 +87,12 @@ const ProductQuantity = ({
       payload: {
         product_id,
         variation_pair_id,
+        product_name,
         variation_1,
         variation_2,
         quantity: count,
+        price,
+        limit,
       },
     });
     generateSuccessToast("Added to Cart", "Item added to cart");

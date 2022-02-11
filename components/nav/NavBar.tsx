@@ -3,6 +3,7 @@ import InternalLink from "../Common/Link";
 import SearchBar from "./SearchBar";
 import { useUser } from "@auth0/nextjs-auth0";
 import ShoppingCartIcon from "./ShoppingCartIcon";
+import Image from "next/image";
 
 const NavBar = () => {
   const { user } = useUser();
@@ -72,15 +73,19 @@ const NavBar = () => {
           </div>
           <div className="flex items-center py-4">
             <div className="pr-4 text-2xl text-black">
-              <Link href={"/"}>Recoverly</Link>
+              <Link href={"/"} passHref>
+                <div className="flex items-center cursor-pointer">
+                  <Image src="/logo.png" width={150} height={150} alt="logo" />
+                </div>
+              </Link>
             </div>
 
             <SearchBar />
           </div>
-          <div className="text-md text-gray-600">
+          {/* <div className="text-md text-gray-600">
             <span className="pr-5">Categories</span>
             <span className="">Brands</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

@@ -5,6 +5,7 @@ import { CartItem } from "../../types/items";
 const CartItemDisplay = ({
   product_id,
   variation_pair_id,
+  product_name,
   variation_1,
   variation_2,
   quantity,
@@ -19,8 +20,10 @@ const CartItemDisplay = ({
       <ProductQuantity
         product_id={product_id}
         variation_pair_id={variation_pair_id}
+        product_name={product_name}
         variation_1={variation_1}
         variation_2={variation_2}
+        price={discounted_price}
         limit={limit}
       />
     </div>

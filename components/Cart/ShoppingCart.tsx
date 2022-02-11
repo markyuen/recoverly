@@ -5,6 +5,7 @@ import CartItemDisplay from "./CartItemDisplay";
 
 const ShoppingCart = () => {
   const { cartItems } = useCart();
+  
   return (
     <div className="col-span-4">
       <div className="grid space-y-4 grid-cols-1">
@@ -13,7 +14,7 @@ const ShoppingCart = () => {
             return (
               <div key={index} className="px-4 py-2">
                 <div>
-                  <Link href={`/product/${item.product_id}`} passHref>
+                  <Link href={`/product?product_id=${item.product_id}`} passHref>
                     <p className="text-md font-bold cursor-pointer hover:text-blue-400">
                       {item.product_name}
                     </p>
