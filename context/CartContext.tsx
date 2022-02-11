@@ -19,7 +19,8 @@ const CartContext = createContext<CartContext>(null!);
 
 const SET_INIT_STATE = "SET_INIT_STATE";
 export const UPDATE_ITEM_COUNT = "UPDATE_ITEM_COUNT";
-export const REMOVE_ITEM_VARIATION = "REMOVE_ITEM_VARIATION";
+export const REMOVE_ITEM = "REMOVE_ITEM";
+export const REMOVE_ID = -69;
 
 const CartReducer = (state: CartItem[], action): CartItem[] => {
   console.log(action);
@@ -67,8 +68,8 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
       }
     }
 
-    case REMOVE_ITEM_VARIATION: {
-      const { variation_pair_id } = action.payload;
+    case REMOVE_ITEM: {
+      const variation_pair_id = action.payload;
       return state.filter((item) => item.variation_pair_id !== variation_pair_id);
     }
   }
@@ -117,6 +118,19 @@ export function CartWrapper({ children }) {
     variation_pair_id: number,
     quantity: number
   ) => {
+    if (quantity === REMOVE_ID) {
+      makeGraphQLQuery("deleteCartProduct", {
+        user_id: user_id,
+        variation_pair_id: variation_pair_id,
+      })
+        .then((res) => {
+          console.log(res);
+          console.log("Succesfully removed product");
+        })
+        .catch((err) => console.log(err));
+      return;
+    }
+    // ^^ Exit early if removing item
     const payload = {
       user_id: user_id,
       variation_pair_id: variation_pair_id,

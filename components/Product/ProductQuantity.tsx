@@ -1,7 +1,7 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
+import { UPDATE_ITEM_COUNT, REMOVE_ITEM, REMOVE_ID, useCart } from "../../context/CartContext";
 import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
 
@@ -29,6 +29,7 @@ const ProductQuantity = ({
   const { userId } = useUserRole();
   const {
     dispatch,
+    productExistsInCart,
     getProductCount,
     updateCartProduct,
   } = useCart();
@@ -90,6 +91,19 @@ const ProductQuantity = ({
     generateSuccessToast("Added to Cart", "Item added to cart");
   };
 
+  const handleRemoveFromCart = () => {
+    if (!checkForUser()) {
+      return;
+    }
+    updateCartProduct(userId, variation_pair_id, REMOVE_ID);
+    dispatch({
+      type: REMOVE_ITEM,
+      payload: variation_pair_id,
+    });
+    setProductCount(0);
+    generateSuccessToast("Removed from Cart", "Item removed from cart");
+  }
+
   return (
     <div className="flex items-center my-4">
       <svg
@@ -123,8 +137,17 @@ const ProductQuantity = ({
         className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         onClick={() => handleUpdateCart()}
       >
-        Update Cart
+        {productExistsInCart(variation_pair_id) ? "Update Cart" : "Add to Cart"}
       </div>
+      {
+        productExistsInCart(variation_pair_id) &&
+        <div
+          className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          onClick={() => handleRemoveFromCart()}
+        >
+          Remove
+        </div>
+      }
     </div>
   );
 };

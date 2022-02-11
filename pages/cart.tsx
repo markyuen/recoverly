@@ -9,7 +9,7 @@ import { useCart } from "../context/CartContext";
 const Cart = () => {
   const { cartItems } = useCart();
 
-  if (!cartItems || cartItems.length === 0) {
+  if (!cartItems) {
     return (
       <ProtectedRoute>
         <ShopNav>
