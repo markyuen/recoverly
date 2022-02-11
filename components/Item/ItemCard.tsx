@@ -45,12 +45,12 @@ const ItemCard = ({ item }: ItemCardProp) => {
         id="category-item"
         className="card flex flex-col justify-center cursor-pointer px-2"
       >
-        {/* <Image
+        <Image
           src={product_images[0].url}
           width={300}
           height={300}
           alt={"Fake news"}
-        /> */}
+        />
         <p className="text-md text-gray-900 font-bold">{product_name}</p>
         <p>
           $
