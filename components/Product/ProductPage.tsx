@@ -1,5 +1,4 @@
 import React from "react";
-import { hashValue, unhashValue } from "../../lib/cryptographic";
 import { ProductInformation } from "../../types/product";
 import ProductCategories from "./ProductCategories";
 import ProductImages from "./ProductImages";

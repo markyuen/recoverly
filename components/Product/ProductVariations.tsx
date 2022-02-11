@@ -8,10 +8,14 @@ import QuantityButtonWithAddToCart from "./QuantityButtonWithDispatch";
 type ProductVariationsProps = {
   product_id: number;
   product_name: string;
-  variations: product_page_variation;
+  variations: product_page_variation[];
 };
 
-const ProductVariations = ({ product_id, product_name, variations }) => {
+const ProductVariations = ({
+  product_id,
+  product_name,
+  variations,
+}: ProductVariationsProps) => {
   const [currPrice, setCurrPrice] = useState(null);
   const [currQty, setCurrQty] = useState(null);
   const [currVariation, setCurrVariation] =
