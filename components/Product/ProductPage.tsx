@@ -1,4 +1,5 @@
 import React from "react";
+import { hashValue, unhashValue } from "../../lib/cryptographic";
 import { ProductInformation } from "../../types/product";
 import ProductCategories from "./ProductCategories";
 import ProductImages from "./ProductImages";
@@ -8,6 +9,10 @@ import ProductVariations from "./ProductVariations";
 type ProductPageProps = {
   product: ProductInformation;
 };
+
+// TODO:
+// 1. Change product_id to a hashed base64value
+// 2. add discount tag
 
 const ProductPage = ({ product }: ProductPageProps) => {
   const {
