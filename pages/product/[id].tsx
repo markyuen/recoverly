@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ItemPageData } from "../../types/items";
 import ShopNav from "../../components/layouts/ShopNav";
 import { serverSideHasura } from "../../lib/GraphQL";
@@ -8,7 +8,6 @@ import { Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
-import { useCart } from "../../context/CartContext";
 import QuantityButtonWithAddToCart from "../../components/Product/QuantityButtonWithDispatch";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";

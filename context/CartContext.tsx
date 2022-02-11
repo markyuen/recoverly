@@ -1,31 +1,16 @@
 import { useUser } from "@auth0/nextjs-auth0";
-import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { makeGraphQLQuery } from "../lib/GraphQL";
 import { CartItem } from "../types/items";
 
 type CartContext = {
   cartItems: CartItem[];
   dispatch: any;
-  getProductCount: (
-    variation_paid_id: number,
-  ) => number;
-  verifyProductExistsInCart: (number) => boolean;
-  addProductToDatabase: (
-    product_id: number,
-    variation_pair_id: number,
-    variation_1: string,
-    variation_2: string,
-    quantity: number,
-    price: number,
-    user_id: string
-  ) => void;
-  updateCartProductVariation: (
-    product_id: number,
+  getProductCount: (variation_pair_id: number) => number;
+  productExistsInCart: (variation_pair_id: number) => boolean;
+  updateCartProduct: (
     user_id: string,
     variation_pair_id: number,
-    order_variation_1: string,
-    order_variation_2: string,
-    price: number,
     quantity: number
   ) => void;
 };
@@ -53,11 +38,9 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         price,
         quantity,
       } = action.payload;
-
       const itemIndex = state.findIndex(
         (item) => item.variation_pair_id === variation_pair_id
       );
-
       if (itemIndex === -1) {
         console.log("----adding Item");
         return state.concat([
@@ -114,48 +97,8 @@ export function CartWrapper({ children }) {
       .catch((err) => console.log("Error Encountered of ", err));
   }, [user])
 
-  const updateCartProductVariation = (
-    product_id: number,
-    user_id: string,
-    variation_pair_id: number,
-    order_variation_1: string,
-    order_variation_2: string,
-    price: number,
-    quantity: number
-  ) => {
-    const payload = {
-      user_id: user_id,
-      variation_pair_id: variation_pair_id,
-      quantity: quantity,
-    }
-    makeGraphQLQuery("updateCartProduct", payload)
-      .then((res) => {
-        console.log(res);
-        console.log("Succesfully updated product quantity");
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const addProductToDatabase = (
-    product_id: number,
-    variation_pair_id: number,
-    variation_1: string,
-    variation_2: string,
-    quantity: number,
-    price: number,
-    user_id: string
-  ) => {
-    const payload = {
-      user_id: user_id,
-      variation_pair_id: variation_pair_id,
-      quantity: quantity,
-    }
-    makeGraphQLQuery("insertNewCartProduct", payload)
-      .then((res) => {
-        console.log(res);
-        console.log("Succesfully added new cart product to database");
-      })
-      .catch((err) => console.log("Error Encountered of ", err));
+  const productExistsInCart = (variation_pair_id: number) => {
+    return cartItems.findIndex((item) => item.variation_pair_id === variation_pair_id) !== -1;
   };
 
   const getProductCount = (variation_pair_id: number) => {
@@ -167,17 +110,39 @@ export function CartWrapper({ children }) {
     return cartItems[idx].quantity;
   };
 
-  const verifyProductExistsInCart = (variation_pair_id: number) => {
-    return cartItems.findIndex((item) => item.variation_pair_id === variation_pair_id) !== -1;
+  const updateCartProduct = (
+    user_id: string,
+    variation_pair_id: number,
+    quantity: number
+  ) => {
+    const payload = {
+      user_id: user_id,
+      variation_pair_id: variation_pair_id,
+      quantity: quantity,
+    }
+    if (productExistsInCart(variation_pair_id)) {
+      makeGraphQLQuery("updateCartProduct", payload)
+        .then((res) => {
+          console.log(res);
+          console.log("Succesfully updated product quantity");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      makeGraphQLQuery("insertNewCartProduct", payload)
+        .then((res) => {
+          console.log(res);
+          console.log("Succesfully added new cart product to database");
+        })
+        .catch((err) => console.log("Error Encountered of ", err));
+    }
   };
 
   let sharedState = {
     cartItems,
     dispatch,
     getProductCount,
-    addProductToDatabase,
-    verifyProductExistsInCart,
-    updateCartProductVariation,
+    productExistsInCart,
+    updateCartProduct,
   };
 
   return (

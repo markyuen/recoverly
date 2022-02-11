@@ -16,7 +16,6 @@ type QuantityButtonWithAddToCartProps = {
   variation_1: string;
   variation_2: string;
   limit: number;
-  currPrice: number;
 };
 
 const QuantityButtonWithAddToCart = ({
@@ -24,7 +23,6 @@ const QuantityButtonWithAddToCart = ({
   variation_pair_id,
   variation_1,
   variation_2,
-  currPrice,
   limit,
 }: QuantityButtonWithAddToCartProps) => {
   const { user } = useUser();
@@ -32,9 +30,7 @@ const QuantityButtonWithAddToCart = ({
   const {
     dispatch,
     getProductCount,
-    verifyProductExistsInCart,
-    addProductToDatabase,
-    updateCartProductVariation,
+    updateCartProduct,
   } = useCart();
   const { generateWarningToast, generateSuccessToast } = useChakraToast();
   const router = useRouter();
@@ -77,31 +73,10 @@ const QuantityButtonWithAddToCart = ({
     if (!checkForUser()) {
       return;
     }
-
-    if (verifyProductExistsInCart(variation_pair_id)) {
-      console.log("----Product exists in cart");
-      updateCartProductVariation(
-        product_id,
-        userId,
-        variation_pair_id,
-        variation_1,
-        variation_2,
-        currPrice,
-        count
-      );
-    } else {
-      console.log("----Product does not exist in Cart");
-      addProductToDatabase(
-        product_id,
-        variation_pair_id,
-        variation_1,
-        variation_2,
-        count,
-        currPrice,
-        userId
-      );
+    if (count <= 0) {
+      return generateWarningToast("Error", "Quantity must be greater than 0");
     }
-
+    updateCartProduct(userId, variation_pair_id, count);
     dispatch({
       type: UPDATE_ITEM_COUNT,
       payload: {
@@ -112,7 +87,6 @@ const QuantityButtonWithAddToCart = ({
         quantity: count,
       },
     });
-
     generateSuccessToast("Added to Cart", "Item added to cart");
   };
 

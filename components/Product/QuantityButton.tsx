@@ -1,18 +1,13 @@
 import { useUser } from "@auth0/nextjs-auth0";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React from "react";
 import {
   REMOVE_ITEM_VARIATION,
   UPDATE_ITEM_COUNT,
   useCart,
 } from "../../context/CartContext";
-import { ItemProp } from "../../types/items";
 import { useToast } from "@chakra-ui/react";
 import useChakraToast from "../../hooks/useChakraToast";
-
-type QuantityButtonProps = {
-  data: ItemProp;
-};
 
 const iconSize = {
   small: "h-6 w-6 cursor-pointer",
@@ -80,7 +75,6 @@ const QuantityButton = ({
     });
   };
 
-  // How to save cart data in between refreshes
   const removeOne = () => {
     if (!checkForUser()) {
       return;
