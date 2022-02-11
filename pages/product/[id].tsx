@@ -1,15 +1,14 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { ItemPageData, ItemProp } from "../../types/items";
+import { ItemPageData } from "../../types/items";
 import ShopNav from "../../components/layouts/ShopNav";
 import { serverSideHasura } from "../../lib/GraphQL";
 import ImageViewer from "../../components/Common/ImageViewer";
-import { Button, Tag } from "@chakra-ui/react";
+import { Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
 import { useCart } from "../../context/CartContext";
-import QuantityButton from "../../components/Product/QuantityButton";
 import QuantityButtonWithAddToCart from "../../components/Product/QuantityButtonWithDispatch";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
@@ -21,6 +20,7 @@ type ProductPageProp = {
 };
 
 type ProductVariation = {
+  variation_pair_id: number;
   variation_1: string;
   variation_2: string;
   price: number;
@@ -29,12 +29,10 @@ type ProductVariation = {
 
 const Product = ({ initialData }: ProductPageProp) => {
   const router = useRouter();
-  const { getProductCount } = useCart();
 
   const [currPrice, setCurrPrice] = useState(null);
   const [currQty, setCurrQty] = useState(null);
   const [currVariation, setCurrVariation] = useState<ProductVariation>(null);
-  const [currCount, setCurrCount] = useState(null);
   const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
   const { data } = useSWR(
@@ -54,16 +52,6 @@ const Product = ({ initialData }: ProductPageProp) => {
     }
   );
 
-  // TODO: Fix Dependency Array using get Callback
-  useEffect(() => {
-    if (!currVariation || !data) {
-      return;
-    }
-    const { variation_1, variation_2 } = currVariation;
-    const { product_id } = data;
-    setCurrCount(getProductCount(product_id, variation_1, variation_2));
-  }, [currVariation, data, getProductCount]);
-
   if (!data) {
     return (
       <ShopNav>
@@ -81,7 +69,7 @@ const Product = ({ initialData }: ProductPageProp) => {
     description,
     products_categories,
     variations,
-  } = data["product"][0];
+  } = data.product_by_pk;
 
   return (
     <ShopNav>
@@ -108,12 +96,12 @@ const Product = ({ initialData }: ProductPageProp) => {
                   ${currPrice} with {currQty} remaining
                 </p>
                 <QuantityButtonWithAddToCart
-                  currPrice={currPrice}
                   product_id={product_id}
-                  product_name={product_name}
+                  variation_pair_id={currVariation.variation_pair_id}
                   variation_1={currVariation.variation_1}
                   variation_2={currVariation.variation_2}
                   limit={currQty}
+                  currPrice={currPrice}
                 />
               </>
             )}
@@ -153,11 +141,12 @@ const Product = ({ initialData }: ProductPageProp) => {
                     discounted_price,
                     original_price,
                     quantity,
+                    variation_pair_id,
                   } = variation;
                   const extraProps =
                     currVariation &&
-                    currVariation.variation_1 === variation_1 &&
-                    currVariation.variation_2 === variation_2
+                      currVariation.variation_1 === variation_1 &&
+                      currVariation.variation_2 === variation_2
                       ? "bg-red-400"
                       : "";
 
@@ -172,6 +161,7 @@ const Product = ({ initialData }: ProductPageProp) => {
                           variation_2,
                           price: discounted_price,
                           quantity,
+                          variation_pair_id,
                         });
                         setCurrPrevPrice(original_price);
                       }}
@@ -229,7 +219,7 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      initialData: data["product"].length > 0 ? data : null,
+      initialData: data.product_by_pk.length > 0 ? data : null,
     },
   };
 }

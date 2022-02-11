@@ -21,6 +21,7 @@ const iconSize = {
 
 const QuantityButton = ({
   product_id,
+  variation_pair_id,
   variation_1,
   variation_2,
   limit,
@@ -58,7 +59,7 @@ const QuantityButton = ({
     if (!checkForUser()) {
       return;
     }
-    if (getProductCount(product_id, variation_1, variation_2) + 1 > limit) {
+    if (getProductCount(variation_pair_id) + 1 > limit) {
       generateWarningToast(
         "Item Limit Reached",
         `You can only add ${limit} items of this type`
@@ -84,7 +85,7 @@ const QuantityButton = ({
     if (!checkForUser()) {
       return;
     }
-    switch (getProductCount(product_id, variation_1, variation_2)) {
+    switch (getProductCount(variation_pair_id)) {
       case 0:
         return;
       case 1:
@@ -127,7 +128,7 @@ const QuantityButton = ({
         />
       </svg>
       <p className="px-2 text-md">
-        {getProductCount(product_id, variation_1, variation_2)}
+        {getProductCount(variation_pair_id)}
       </p>
       <svg
         xmlns="http://www.w3.org/2000/svg"

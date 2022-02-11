@@ -46,12 +46,11 @@ export type ItemPageData = {
 };
 
 export type CartItem = {
+  variation_pair_id: number;
   product_id: number;
   product_name: string;
-  variation: {
-    variation_1: string;
-    variation_2: string;
-    quantity: number;
-    discounted_price: number;
-  }[];
+  variation_1: string;
+  variation_2: string;
+  quantity: number;
+  discounted_price: number;
 };

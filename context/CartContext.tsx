@@ -1,20 +1,18 @@
 import { useUser } from "@auth0/nextjs-auth0";
-import { Item } from "framer-motion/types/components/Reorder/Item";
-import { createContext, useContext, useReducer, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { makeGraphQLQuery } from "../lib/GraphQL";
-import { ItemProp, CartItem } from "../types/items";
+import { CartItem } from "../types/items";
 
 type CartContext = {
   cartItems: CartItem[];
   dispatch: any;
   getProductCount: (
-    product_id: number,
-    variation_1: string,
-    variation_2: string
+    variation_paid_id: number,
   ) => number;
   verifyProductExistsInCart: (number) => boolean;
   addProductToDatabase: (
     product_id: number,
+    variation_pair_id: number,
     variation_1: string,
     variation_2: string,
     quantity: number,
@@ -24,6 +22,7 @@ type CartContext = {
   updateCartProductVariation: (
     product_id: number,
     user_id: string,
+    variation_pair_id: number,
     order_variation_1: string,
     order_variation_2: string,
     price: number,
@@ -33,24 +32,30 @@ type CartContext = {
 
 const CartContext = createContext<CartContext>(null!);
 
+const SET_INIT_STATE = "SET_INIT_STATE";
 export const UPDATE_ITEM_COUNT = "UPDATE_ITEM_COUNT";
 export const REMOVE_ITEM_VARIATION = "REMOVE_ITEM_VARIATION";
 
 const CartReducer = (state: CartItem[], action): CartItem[] => {
+  console.log(action);
   switch (action.type) {
+    case SET_INIT_STATE: {
+      return action.payload;
+    }
+
     case UPDATE_ITEM_COUNT: {
-      console.log(action);
       const {
         product_id,
+        variation_pair_id,
         product_name,
         variation_1,
         variation_2,
         price,
-        quantity_to_add,
+        quantity,
       } = action.payload;
 
       const itemIndex = state.findIndex(
-        (item) => item.product_id === product_id
+        (item) => item.variation_pair_id === variation_pair_id
       );
 
       if (itemIndex === -1) {
@@ -58,131 +63,94 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         return state.concat([
           {
             product_id,
+            variation_pair_id,
             product_name,
-            variation: [
-              {
-                variation_1,
-                variation_2,
-                quantity: quantity_to_add,
-                discounted_price: price,
-              },
-            ],
+            variation_1,
+            variation_2,
+            quantity,
+            discounted_price: price,
           },
         ]);
-      }
-
-      const variationIndex = state[itemIndex].variation.findIndex((item) => {
-        return (
-          item.variation_1 === variation_1 && item.variation_2 === variation_2
-        );
-      });
-
-      if (variationIndex === -1) {
-        return state.map((item) => {
-          if (item.product_id !== product_id) {
-            return item;
+      } else {
+        console.log("----adjusting Item Count");
+        return state.map((item, index) => {
+          if (index === itemIndex) {
+            item.quantity = quantity;
           }
-          return {
-            ...item,
-            variation: [
-              ...item.variation,
-              {
-                variation_1,
-                variation_2,
-                quantity: quantity_to_add,
-                discounted_price: price,
-              },
-            ],
-          };
+          return item;
         });
       }
-
-      return state.map((item, index) => {
-        if (index !== itemIndex) {
-          return item;
-        }
-        return {
-          ...state[itemIndex],
-          variation: state[itemIndex].variation.map((variation, index) => {
-            if (index !== variationIndex) {
-              return variation;
-            }
-            return {
-              ...variation,
-              quantity: variation.quantity + quantity_to_add,
-            };
-          }),
-        };
-      });
     }
 
     case REMOVE_ITEM_VARIATION: {
-      const { product_id, variation_1, variation_2 } = action.payload;
-
-      return state.map((item) => {
-        if (item.product_id !== product_id) {
-          return item;
-        }
-
-        return {
-          ...item,
-          variation: item.variation.filter(
-            (item) =>
-              item.variation_1 !== variation_1 &&
-              item.variation_2 !== variation_2
-          ),
-        };
-      });
+      const { variation_pair_id } = action.payload;
+      return state.filter((item) => item.variation_pair_id !== variation_pair_id);
     }
   }
 };
 
 export function CartWrapper({ children }) {
+  const { user } = useUser();
   const [cartItems, dispatch] = useReducer(CartReducer, []);
+
+  useEffect(() => {
+    if (!user) return;
+    makeGraphQLQuery("getUserCartProducts", { user_id: user.sub })
+      .then((res) => {
+        console.log(res);
+        const payload = res.cart_product.map((item) => {
+          return {
+            variation_pair_id: item.variation_pair_id,
+            product_id: item.variation_pair.product.product_id,
+            product_name: item.variation_pair.product.product_name,
+            variation_1: item.variation_pair.variation_1,
+            variation_2: item.variation_pair.variation_2,
+            quantity: item.quantity,
+            discounted_price: item.variation_pair.discounted_price,
+          }
+        })
+        dispatch({ type: SET_INIT_STATE, payload: payload });
+      })
+      .catch((err) => console.log("Error Encountered of ", err));
+  }, [user])
 
   const updateCartProductVariation = (
     product_id: number,
     user_id: string,
+    variation_pair_id: number,
     order_variation_1: string,
     order_variation_2: string,
     price: number,
     quantity: number
   ) => {
-    const variables = {
-      product_id,
-      user_id,
-      order_variation_1,
-      order_variation_2,
-      price,
-      quantity,
-    };
-
-    makeGraphQLQuery("updateCartProductVariation", variables)
+    const payload = {
+      user_id: user_id,
+      variation_pair_id: variation_pair_id,
+      quantity: quantity,
+    }
+    makeGraphQLQuery("updateCartProduct", payload)
       .then((res) => {
         console.log(res);
-        console.log("----Succesfully added to database");
+        console.log("Succesfully updated product quantity");
       })
       .catch((err) => console.log(err));
   };
 
   const addProductToDatabase = (
     product_id: number,
+    variation_pair_id: number,
     variation_1: string,
     variation_2: string,
     quantity: number,
     price: number,
     user_id: string
   ) => {
-    const variables = {
-      product_id,
-      order_variation_1: variation_1,
-      order_variation_2: variation_2,
-      quantity,
-      price,
-      user_id,
-    };
-
-    makeGraphQLQuery("insertNewCartProduct", variables)
+    const payload = {
+      user_id: user_id,
+      variation_pair_id: variation_pair_id,
+      quantity: quantity,
+    }
+    makeGraphQLQuery("insertNewCartProduct", payload)
       .then((res) => {
         console.log(res);
         console.log("Succesfully added new cart product to database");
@@ -190,34 +158,17 @@ export function CartWrapper({ children }) {
       .catch((err) => console.log("Error Encountered of ", err));
   };
 
-  const verifyProductExistsInCart = (product_id: number) => {
-    return cartItems.findIndex((item) => item.product_id === product_id) !== -1;
+  const getProductCount = (variation_pair_id: number) => {
+    const idx = cartItems.findIndex((item) => item.variation_pair_id === variation_pair_id);
+    console.log(cartItems)
+    if (idx === -1) {
+      return 0;
+    }
+    return cartItems[idx].quantity;
   };
 
-  const getProductCount = (product_id, variation_1, variation_2) => {
-    if (
-      cartItems.filter((item) => item.product_id === product_id).length == 0
-    ) {
-      return 0;
-    }
-
-    if (
-      cartItems
-        .filter((item) => item.product_id === product_id)[0]
-        .variation.filter(
-          (item) =>
-            item.variation_1 === variation_1 && item.variation_2 === variation_2
-        ).length == 0
-    ) {
-      return 0;
-    }
-
-    return cartItems
-      .filter((item) => item.product_id === product_id)[0]
-      .variation.filter(
-        (item) =>
-          item.variation_1 === variation_1 && item.variation_2 === variation_2
-      )[0].quantity;
+  const verifyProductExistsInCart = (variation_pair_id: number) => {
+    return cartItems.findIndex((item) => item.variation_pair_id === variation_pair_id) !== -1;
   };
 
   let sharedState = {

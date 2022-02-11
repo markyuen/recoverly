@@ -1,7 +1,6 @@
 import { useUser } from "@auth0/nextjs-auth0";
-
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { UPDATE_ITEM_COUNT, useCart } from "../../context/CartContext";
 import { useUserRole } from "../../context/UserRoleContext";
 import useChakraToast from "../../hooks/useChakraToast";
@@ -13,19 +12,19 @@ const iconSize = {
 
 type QuantityButtonWithAddToCartProps = {
   product_id: number;
+  variation_pair_id: number;
   variation_1: string;
   variation_2: string;
   limit: number;
-  product_name;
   currPrice: number;
 };
 
 const QuantityButtonWithAddToCart = ({
   product_id,
+  variation_pair_id,
   variation_1,
   variation_2,
   currPrice,
-  product_name,
   limit,
 }: QuantityButtonWithAddToCartProps) => {
   const { user } = useUser();
@@ -41,11 +40,11 @@ const QuantityButtonWithAddToCart = ({
   const router = useRouter();
   const size = "medium";
 
-  const [count, setProductCount] = React.useState(0);
+  const [count, setProductCount] = useState(0);
 
   useEffect(() => {
-    setProductCount(0);
-  }, [variation_1, variation_2]);
+    setProductCount(getProductCount(variation_pair_id));
+  }, [variation_pair_id]);
 
   const checkForUser = () => {
     if (!user) {
@@ -53,7 +52,6 @@ const QuantityButtonWithAddToCart = ({
         "Authorization Error",
         "Please login to add items to cart, redirecting to login now."
       );
-
       router.push("/api/auth/login");
       return false;
     }
@@ -61,14 +59,10 @@ const QuantityButtonWithAddToCart = ({
   };
 
   const addOne = () => {
-    if (
-      count + getProductCount(product_id, variation_1, variation_2) >=
-      limit
-    ) {
+    if (count + getProductCount(variation_pair_id) >= limit) {
       generateWarningToast("Error", "You can't add more than the limit");
       return;
     }
-
     setProductCount(count + 1);
   };
 
@@ -84,26 +78,27 @@ const QuantityButtonWithAddToCart = ({
       return;
     }
 
-    if (!verifyProductExistsInCart(product_id)) {
+    if (verifyProductExistsInCart(variation_pair_id)) {
+      console.log("----Product exists in cart");
+      updateCartProductVariation(
+        product_id,
+        userId,
+        variation_pair_id,
+        variation_1,
+        variation_2,
+        currPrice,
+        count
+      );
+    } else {
       console.log("----Product does not exist in Cart");
-
       addProductToDatabase(
         product_id,
+        variation_pair_id,
         variation_1,
         variation_2,
         count,
         currPrice,
         userId
-      );
-    } else {
-      console.log("----Product exists in cart");
-      updateCartProductVariation(
-        product_id,
-        userId,
-        variation_1,
-        variation_2,
-        currPrice,
-        count
       );
     }
 
@@ -111,15 +106,14 @@ const QuantityButtonWithAddToCart = ({
       type: UPDATE_ITEM_COUNT,
       payload: {
         product_id,
+        variation_pair_id,
         variation_1,
         variation_2,
-        quantity_to_add: count,
-        product_name,
-        price: currPrice,
+        quantity: count,
       },
     });
+
     generateSuccessToast("Added to Cart", "Item added to cart");
-    setProductCount(0);
   };
 
   return (

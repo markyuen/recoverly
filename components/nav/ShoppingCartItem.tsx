@@ -8,7 +8,7 @@ type ShoppingCartItemProp = {
 };
 
 const ShoppingCartItem = ({
-  item: { product_name, variation },
+  item: { product_name, variation_1, variation_2, quantity, discounted_price },
 }: ShoppingCartItemProp) => {
   return (
     <div className="px-4 py-2">
@@ -17,16 +17,26 @@ const ShoppingCartItem = ({
       </div>
       <div className="flex justify-between">
         <div>
-          {variation.map(({ variation_1, variation_2, quantity }, index) => {
+          {
+            <p className="ml-2">
+              - {variation_1}/{variation_2} x {quantity}
+            </p>
+          }
+          {/* {variation.map(({ variation_1, variation_2, quantity }, index) => {
             return (
-              <p className="ml-2" key={index}>
-                - {variation_1}/{variation_2} x {quantity}
-              </p>
             );
-          })}
+          })} */}
         </div>
         <div>
-          {variation.map(
+          {
+            <p>
+              {""}$
+              {Math.round(
+                (quantity * discounted_price + Number.EPSILON) * 100
+              ) / 100}
+            </p>
+          }
+          {/* {variation.map(
             (
               { variation_1, variation_2, discounted_price, quantity },
               index
@@ -40,7 +50,7 @@ const ShoppingCartItem = ({
                 </p>
               );
             }
-          )}
+          )} */}
         </div>
       </div>
     </div>
