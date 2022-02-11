@@ -20,7 +20,12 @@ const ItemCard = ({ item }: ItemCardProp) => {
   };
 
   return (
-    <LinkContainer href={`/product/${product_id}`}>
+    <LinkContainer
+      href={{
+        pathname: "/product",
+        query: { product_id: product_id.toString() },
+      }}
+    >
       <div
         id="category-item"
         className="card flex flex-col justify-center cursor-pointer px-2"
