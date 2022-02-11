@@ -20,15 +20,15 @@ const About = () => {
                 <h1 className="font-bold text-2xl">THE PROBLEM</h1>
               </div>
               <div className="flip-back">
-              <p>
-                SMEs face an issue with monetary and resource capital locked up in
-                inventory due to:{" "}
-              </p>
-              <br />
-              <ul className="list-disc ml-4">
-                <li> Product returns from eCommerce transactions </li>
-                <li> Excess inventory </li>
-              </ul>
+                <p>
+                  SMEs face an issue with monetary and resource capital locked
+                  up in inventory due to:{" "}
+                </p>
+                <br />
+                <ul className="list-disc ml-4">
+                  <li> Product returns from eCommerce transactions </li>
+                  <li> Excess inventory </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -36,21 +36,23 @@ const About = () => {
           <div className="flip border-4 border-black mt-20 text-center p-6">
             <div className="flip-content">
               <div className="flip-front">
-                <h1 className="font-bold text-2xl">ECOMMERCE'S GROWING PAINS</h1>
+                <h1 className="font-bold text-2xl">
+                  ECOMMERCE&apos;S GROWING PAINS
+                </h1>
               </div>
               <div className="flip-back">
-              <p>
-              While 5 - 10% of brick-and-mortar transactions are returned, due
-              to practices such as bracketing, eCommerce transactions have a
-              higher return rate of 15 - 40%.{" "}
-            </p>
-            <br></br>
-            <p>
-              This is not only environmentally inefficient, with returns
-              estimated to contribute 5bn pounds of waste in the U.S. alone, but
-              also capital inefficient as 75% of these products are not properly
-              liquidated
-            </p>
+                <p>
+                  While 5 - 10% of brick-and-mortar transactions are returned,
+                  due to practices such as bracketing, eCommerce transactions
+                  have a higher return rate of 15 - 40%.{" "}
+                </p>
+                <br></br>
+                <p>
+                  This is not only environmentally inefficient, with returns
+                  estimated to contribute 5bn pounds of waste in the U.S. alone,
+                  but also capital inefficient as 75% of these products are not
+                  properly liquidated
+                </p>
               </div>
             </div>
           </div>
@@ -61,27 +63,23 @@ const About = () => {
                 <h1 className="font-bold text-2xl">EXCESS INVENTORY</h1>
               </div>
               <div className="flip-back">
-              <p>
-              This problem likewise afflicts excess inventory, with studies
-              showing that even in well-run firms, 20 – 30% of inventory is
-              excess.
-            </p>
-            <br></br>
+                <p>
+                  This problem likewise afflicts excess inventory, with studies
+                  showing that even in well-run firms, 20 – 30% of inventory is
+                  excess.
+                </p>
+                <br></br>
 
-            <p>
-              Cumulatively, this implies the existence of a large amount of
-              functional goods which are simply sitting on the shelves of our
-              local SMEs.
-            </p>
+                <p>
+                  Cumulatively, this implies the existence of a large amount of
+                  functional goods which are simply sitting on the shelves of
+                  our local SMEs.
+                </p>
               </div>
             </div>
           </div>
-
-
-
-
         </div>
-{/* 
+        {/* 
         <div className="grid grid-cols-2 mt-5">
           <div>
             <img
@@ -200,7 +198,7 @@ const About = () => {
 
         <div className="border-4 border-black mt-20 text-center p-4">
           <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-black text-center">
-            Unlocking Southeast Asia's Resource and Monetary Capital
+            Unlocking Southeast Asia&apos;s Resource and Monetary Capital
           </h1>
 
           <p className=" mt-4 mb-4">
@@ -280,12 +278,16 @@ const About = () => {
         </h1>
         <div className="flex flex-row justify-around mt-20">
           <div className="flex flex-col items-center">
-            <p className="text-3xl text-bold text-dark-blue-recoverly ">[# of products]</p>
+            <p className="text-3xl text-bold text-dark-blue-recoverly ">
+              [# of products]
+            </p>
             <p>products</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <p className="text-3xl text-bold text-dark-blue-recoverly ">[# of brands]</p>
+            <p className="text-3xl text-bold text-dark-blue-recoverly ">
+              [# of brands]
+            </p>
             <p>brands</p>
           </div>
         </div>
