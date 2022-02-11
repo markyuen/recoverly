@@ -74,7 +74,7 @@ const NavBar = () => {
           <div className="flex items-center py-4">
             <div className="pr-4 text-2xl text-black">
               <Link href={"/"} passHref>
-                <div className="flex items-center">
+                <div className="flex items-center cursor-pointer">
                   <Image src="/logo.png" width={150} height={150} alt="logo" />
                 </div>
               </Link>
