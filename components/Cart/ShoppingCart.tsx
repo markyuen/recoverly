@@ -1,9 +1,9 @@
 import Link from "next/link";
 import React from "react";
 import { useCart } from "../../context/CartContext";
-import CartItem from "./CartItem";
+import CartItemDisplay from "./CartItemDisplay";
 
-const ShoppingCart = ({ limits }) => {
+const ShoppingCart = () => {
   const { cartItems } = useCart();
   return (
     <div className="col-span-4">
@@ -21,14 +21,15 @@ const ShoppingCart = ({ limits }) => {
                 </div>
                 <div className="flex justify-between">
                   <div>
-                    <CartItem
+                    <CartItemDisplay
                       product_id={item.product_id}
+                      product_name={item.product_name}
                       variation_pair_id={item.variation_pair_id}
                       variation_1={item.variation_1}
                       variation_2={item.variation_2}
                       quantity={item.quantity}
                       discounted_price={item.discounted_price}
-                      limit={limits}
+                      limit={item.limit}
                     />
                   </div>
                 </div>

@@ -28,7 +28,6 @@ type ProductVariation = {
 
 const Product = ({ initialData }: ProductPageProp) => {
   const router = useRouter();
-
   const [currPrice, setCurrPrice] = useState(null);
   const [currQty, setCurrQty] = useState(null);
   const [currVariation, setCurrVariation] = useState<ProductVariation>(null);

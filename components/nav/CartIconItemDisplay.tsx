@@ -1,13 +1,13 @@
 import React from "react";
 import { CartItem } from "../../types/items";
 
-type CartIconDetailsProps = {
+type CartIconItemDisplayProps = {
   item: CartItem;
 };
 
-const CartIconDetails = ({
+const CartIconItemDisplay = ({
   item,
-}: CartIconDetailsProps) => {
+}: CartIconItemDisplayProps) => {
   return (
     item &&
     <div className="px-4 py-2">
@@ -34,4 +34,4 @@ const CartIconDetails = ({
   );
 };
 
-export default CartIconDetails;
+export default CartIconItemDisplay;

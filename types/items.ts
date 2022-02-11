@@ -53,4 +53,5 @@ export type CartItem = {
   variation_2: string;
   quantity: number;
   discounted_price: number;
+  limit: number;
 };

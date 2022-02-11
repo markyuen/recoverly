@@ -5,7 +5,7 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useCart } from "../../context/CartContext";
-import CartIconDetails from "./ShoppingCartItem";
+import CartIconItemDisplay from "./CartIconItemDisplay";
 import LinkContainer from "../Common/LinkContainer";
 
 export default function ShoppingCartIcon() {
@@ -43,7 +43,7 @@ export default function ShoppingCartIcon() {
         }
         {
           cartItems.map((item, index) => {
-            return <CartIconDetails key={index} item={item} />;
+            return <CartIconItemDisplay key={index} item={item} />;
           })}
         {
           cartItems.length > 0 &&

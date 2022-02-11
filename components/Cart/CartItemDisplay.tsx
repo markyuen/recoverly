@@ -1,17 +1,8 @@
 import React from "react";
 import ProductQuantity from "../Product/ProductQuantity";
+import { CartItem } from "../../types/items";
 
-type CartItemProps = {
-  product_id: number;
-  variation_pair_id: number;
-  variation_1: string;
-  variation_2: string;
-  quantity: number;
-  discounted_price: number;
-  limit: number;
-};
-
-const CartItem = ({
+const CartItemDisplay = ({
   product_id,
   variation_pair_id,
   variation_1,
@@ -19,7 +10,7 @@ const CartItem = ({
   quantity,
   discounted_price,
   limit,
-}: CartItemProps) => {
+}: CartItem) => {
   return (
     <div className="flex items-center justify-between w-max">
       <p className="ml-2">
@@ -36,4 +27,4 @@ const CartItem = ({
   );
 };
 
-export default CartItem;
+export default CartItemDisplay;

@@ -55,7 +55,7 @@ const ProductQuantity = ({
   };
 
   const addOne = () => {
-    if (count + getProductCount(variation_pair_id) >= limit) {
+    if (count >= limit) {
       generateWarningToast("Error", "You can't add more than the limit");
       return;
     }
@@ -63,13 +63,13 @@ const ProductQuantity = ({
   };
 
   const removeOne = () => {
-    if (count - 1 < 0) {
+    if (count <= 0) {
       return;
     }
     setProductCount(count - 1);
   };
 
-  const handleAddToCart = () => {
+  const handleUpdateCart = () => {
     if (!checkForUser()) {
       return;
     }
@@ -121,9 +121,9 @@ const ProductQuantity = ({
       </svg>
       <div
         className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        onClick={() => handleAddToCart()}
+        onClick={() => handleUpdateCart()}
       >
-        Add To Cart
+        Update Cart
       </div>
     </div>
   );

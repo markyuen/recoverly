@@ -6,8 +6,8 @@ import { CartItem } from "../types/items";
 type CartContext = {
   cartItems: CartItem[];
   dispatch: (any) => void;
-  getProductCount: (variation_pair_id: number) => number;
   productExistsInCart: (variation_pair_id: number) => boolean;
+  getProductCount: (variation_pair_id: number) => number;
   updateCartProduct: (
     user_id: string,
     variation_pair_id: number,
@@ -37,6 +37,7 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         variation_2,
         price,
         quantity,
+        limit,
       } = action.payload;
       const itemIndex = state.findIndex(
         (item) => item.variation_pair_id === variation_pair_id
@@ -52,6 +53,7 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
             variation_2,
             quantity,
             discounted_price: price,
+            limit,
           },
         ]);
       } else {
@@ -90,6 +92,7 @@ export function CartWrapper({ children }) {
             variation_2: item.variation_pair.variation_2,
             quantity: item.quantity,
             discounted_price: item.variation_pair.discounted_price,
+            limit: item.variation_pair.quantity,
           }
         })
         dispatch({ type: SET_INIT_STATE, payload: payload });
@@ -103,7 +106,6 @@ export function CartWrapper({ children }) {
 
   const getProductCount = (variation_pair_id: number) => {
     const idx = cartItems.findIndex((item) => item.variation_pair_id === variation_pair_id);
-    console.log(cartItems)
     if (idx === -1) {
       return 0;
     }
