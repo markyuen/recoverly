@@ -1,60 +1,37 @@
-import { Box, MenuItem } from "@chakra-ui/react";
 import React from "react";
 import { CartItem } from "../../types/items";
-import QuantityButton from "../Product/QuantityButton";
 
-type ShoppingCartItemProp = {
+type CartIconDetailsProps = {
   item: CartItem;
 };
 
-const ShoppingCartItem = ({
-  item: { product_name, variation_1, variation_2, quantity, discounted_price },
-}: ShoppingCartItemProp) => {
+const CartIconDetails = ({
+  item,
+}: CartIconDetailsProps) => {
   return (
+    item &&
     <div className="px-4 py-2">
       <div>
-        <p className="text-md font-bold">{product_name}</p>
+        <p className="text-md font-bold">{item.product_name}</p>
       </div>
       <div className="flex justify-between">
         <div>
           {
             <p className="ml-2">
-              - {variation_1}/{variation_2} x {quantity}
+              - {item.variation_1}/{item.variation_2} x{item.quantity}
             </p>
           }
-          {/* {variation.map(({ variation_1, variation_2, quantity }, index) => {
-            return (
-            );
-          })} */}
         </div>
         <div>
           {
             <p>
-              {""}$
-              {Math.round(
-                (quantity * discounted_price + Number.EPSILON) * 100
-              ) / 100}
+              ${item.quantity * item.discounted_price}
             </p>
           }
-          {/* {variation.map(
-            (
-              { variation_1, variation_2, discounted_price, quantity },
-              index
-            ) => {
-              return (
-                <p key={index}>
-                  {""}$
-                  {Math.round(
-                    (quantity * discounted_price + Number.EPSILON) * 100
-                  ) / 100}
-                </p>
-              );
-            }
-          )} */}
         </div>
       </div>
     </div>
   );
 };
 
-export default ShoppingCartItem;
+export default CartIconDetails;

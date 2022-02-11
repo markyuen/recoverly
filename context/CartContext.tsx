@@ -5,7 +5,7 @@ import { CartItem } from "../types/items";
 
 type CartContext = {
   cartItems: CartItem[];
-  dispatch: any;
+  dispatch: (any) => void;
   getProductCount: (variation_pair_id: number) => number;
   productExistsInCart: (variation_pair_id: number) => boolean;
   updateCartProduct: (

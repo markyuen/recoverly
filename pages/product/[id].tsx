@@ -8,7 +8,7 @@ import { Tag } from "@chakra-ui/react";
 import Link from "next/link";
 import { generateItemSlugLink } from "../../lib/string";
 import PDFViewer from "../../components/Common/PDFViewer";
-import QuantityButtonWithAddToCart from "../../components/Product/QuantityButtonWithDispatch";
+import ProductQuantity from "../../components/Product/ProductQuantity";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import getProductInformation from "../../queries/getProductInformation";
@@ -94,13 +94,12 @@ const Product = ({ initialData }: ProductPageProp) => {
                   </span>
                   ${currPrice} with {currQty} remaining
                 </p>
-                <QuantityButtonWithAddToCart
+                <ProductQuantity
                   product_id={product_id}
                   variation_pair_id={currVariation.variation_pair_id}
                   variation_1={currVariation.variation_1}
                   variation_2={currVariation.variation_2}
                   limit={currQty}
-                  currPrice={currPrice}
                 />
               </>
             )}

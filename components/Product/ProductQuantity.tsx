@@ -10,7 +10,7 @@ const iconSize = {
   medium: "h-8 w-8 cursor-pointer",
 };
 
-type QuantityButtonWithAddToCartProps = {
+type ProductQuantityProps = {
   product_id: number;
   variation_pair_id: number;
   variation_1: string;
@@ -18,13 +18,13 @@ type QuantityButtonWithAddToCartProps = {
   limit: number;
 };
 
-const QuantityButtonWithAddToCart = ({
+const ProductQuantity = ({
   product_id,
   variation_pair_id,
   variation_1,
   variation_2,
   limit,
-}: QuantityButtonWithAddToCartProps) => {
+}: ProductQuantityProps) => {
   const { user } = useUser();
   const { userId } = useUserRole();
   const {
@@ -129,4 +129,4 @@ const QuantityButtonWithAddToCart = ({
   );
 };
 
-export default QuantityButtonWithAddToCart;
+export default ProductQuantity;
