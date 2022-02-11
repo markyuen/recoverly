@@ -1,4 +1,6 @@
 import "../styles/global.css";
+import '../styles/about.css';
+
 import { UserProvider } from "@auth0/nextjs-auth0";
 
 import { CartWrapper } from "../context/CartContext";

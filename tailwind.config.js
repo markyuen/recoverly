@@ -12,6 +12,7 @@ module.exports = {
         'light-green-matching-1' : '#e3db62',
         'light-green-matching-2' : '#6be362',
         'tint-background': '#263b0b',
+        'dark-blue-recoverly': '#002570'
       }
     },
   },

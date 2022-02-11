@@ -9,10 +9,79 @@ const About = () => {
   return (
     <ProtectedRoute>
       <ShopNav>
-        <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-light-green-recoverly text-center">
+        <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-black text-center">
           Our Why
         </h1>
 
+        <div className="about-us-display">
+          <div className="flip border-4 border-black mt-20 text-center p-6">
+            <div className="flip-content flexjustify-center">
+              <div className="flip-front">
+                <h1 className="font-bold text-2xl">THE PROBLEM</h1>
+              </div>
+              <div className="flip-back">
+              <p>
+                SMEs face an issue with monetary and resource capital locked up in
+                inventory due to:{" "}
+              </p>
+              <br />
+              <ul className="list-disc ml-4">
+                <li> Product returns from eCommerce transactions </li>
+                <li> Excess inventory </li>
+              </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="flip border-4 border-black mt-20 text-center p-6">
+            <div className="flip-content">
+              <div className="flip-front">
+                <h1 className="font-bold text-2xl">ECOMMERCE'S GROWING PAINS</h1>
+              </div>
+              <div className="flip-back">
+              <p>
+              While 5 - 10% of brick-and-mortar transactions are returned, due
+              to practices such as bracketing, eCommerce transactions have a
+              higher return rate of 15 - 40%.{" "}
+            </p>
+            <br></br>
+            <p>
+              This is not only environmentally inefficient, with returns
+              estimated to contribute 5bn pounds of waste in the U.S. alone, but
+              also capital inefficient as 75% of these products are not properly
+              liquidated
+            </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flip mr-2 border-4 border-black mt-20 text-center p-6">
+            <div className="flip-content">
+              <div className="flip-front">
+                <h1 className="font-bold text-2xl">EXCESS INVENTORY</h1>
+              </div>
+              <div className="flip-back">
+              <p>
+              This problem likewise afflicts excess inventory, with studies
+              showing that even in well-run firms, 20 – 30% of inventory is
+              excess.
+            </p>
+            <br></br>
+
+            <p>
+              Cumulatively, this implies the existence of a large amount of
+              functional goods which are simply sitting on the shelves of our
+              local SMEs.
+            </p>
+              </div>
+            </div>
+          </div>
+
+
+
+
+        </div>
+{/* 
         <div className="grid grid-cols-2 mt-5">
           <div>
             <img
@@ -51,17 +120,22 @@ const About = () => {
             </p>
           </div>
           <div>
-            <img src="https://images.unsplash.com/photo-1575833947349-69324d765146?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" alt="" />
+            <img
+              src="https://images.unsplash.com/photo-1575833947349-69324d765146?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
+              alt=""
+            />
           </div>
         </div>
-        
 
         <div className="grid grid-cols-2">
           <div>
-            <img src="https://images.unsplash.com/photo-1567570671138-76c7e06caa3b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80" alt="" />
+            <img
+              src="https://images.unsplash.com/photo-1567570671138-76c7e06caa3b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80"
+              alt=""
+            />
           </div>
           <div className="flex flex-col p-6 justify-center">
-          <h1 className="font-bold"> EXCESS INVENTORY </h1>
+            <h1 className="font-bold"> EXCESS INVENTORY </h1>
             <p>
               This problem likewise afflicts excess inventory, with studies
               showing that even in well-run firms, 20 – 30% of inventory is
@@ -70,14 +144,14 @@ const About = () => {
             <br></br>
 
             <p>
-            Cumulatively, this implies the existence of a large amount of functional goods which are simply sitting on the shelves of our local SMEs.
-
-
+              Cumulatively, this implies the existence of a large amount of
+              functional goods which are simply sitting on the shelves of our
+              local SMEs.
             </p>
           </div>
-        </div>
+        </div> */}
 
-{/* 
+        {/* 
 
         <div className="flex flex-row text-center">
           <div className="flex flex-col bg-light-green-matching-1 mt-4 shadow-lg p-6">
@@ -124,24 +198,39 @@ const About = () => {
           </p>
         </div> */}
 
-        <div className="border-4 border-black mt-20 text-center">
-        <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-light-green-recoverly text-center">
-          Unlocking Southeast Asia's Resource and Monetary Capital
-        </h1>
-          
+        <div className="border-4 border-black mt-20 text-center p-4">
+          <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-black text-center">
+            Unlocking Southeast Asia's Resource and Monetary Capital
+          </h1>
 
-          <p className="ml-6 mt-4 mb-4">
+          <p className=" mt-4 mb-4">
             Recognising this, Recoverly provides Southeast Asia’s SMEs the tools
             and platform to unlock their excess inventory and returned products.
           </p>
-          <p className="ml-6 mt-6 mb-4">        
+          <p className="mt-6 mb-4">
             More importantly, our goal is to re-circulate as many of these
             unused products, minimizing our region’s environmental waste while
             maximizing our SMEs’ monetary capital
           </p>
         </div>
 
-        <h1 className="text-5xl pt-4 mt-20 ml-4 lg:px-0 font-bold text-light-green-recoverly text-center">
+        {/* <div className="border-4 border-black mt-20 text-center bg-tint-background">
+          <h1 className="text-5xl pt-4 ml-4 lg:px-0 font-bold text-light-green-recoverly text-center">
+            Unlocking Southeast Asia's Resource and Monetary Capital
+          </h1>
+
+          <p className="ml-6 mt-4 mb-4 text-light-green-recoverly">
+            Recognising this, Recoverly provides Southeast Asia’s SMEs the tools
+            and platform to unlock their excess inventory and returned products.
+          </p>
+          <p className="ml-6 mt-6 mb-4 text-light-green-recoverly">
+            More importantly, our goal is to re-circulate as many of these
+            unused products, minimizing our region’s environmental waste while
+            maximizing our SMEs’ monetary capital
+          </p>
+        </div> */}
+
+        <h1 className="text-5xl pt-4 mt-20 ml-4 lg:px-0 font-bold text-black text-center">
           Something for Everyone
         </h1>
         <div className="flex flex-row text-center">
@@ -186,12 +275,19 @@ const About = () => {
           </div>
         </div>
 
-        <h1 className="text-5xl pt-4 mt-20  ml-4 lg:px-0 font-bold text-light-green-recoverly text-center">
+        <h1 className="text-5xl pt-4 mt-20  ml-4 lg:px-0 font-bold text-black text-center">
           Recoverly By the Numbers
         </h1>
-        <div className="flex flex-row justify-center">
-          <p className="ml-6 mt-4">[# of products] products</p>
-          <p className="ml-6 mt-4">[# of brands] brands</p>
+        <div className="flex flex-row justify-around mt-20">
+          <div className="flex flex-col items-center">
+            <p className="text-3xl text-bold text-dark-blue-recoverly ">[# of products]</p>
+            <p>products</p>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <p className="text-3xl text-bold text-dark-blue-recoverly ">[# of brands]</p>
+            <p>brands</p>
+          </div>
         </div>
       </ShopNav>
     </ProtectedRoute>
