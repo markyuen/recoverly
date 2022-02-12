@@ -18,7 +18,8 @@ const CartIconItemDisplay = ({
         <div>
           {
             <p className="ml-2">
-              - {item.variation_1}/{item.variation_2} x{item.quantity}
+              - {item.variation_1}{item.variation_2 ? `/${item.variation_2}` : ""
+              } x{item.quantity}
             </p>
           }
         </div>

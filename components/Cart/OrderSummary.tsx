@@ -12,7 +12,8 @@ const OrderSummary = () => {
     // Create a Checkout Session.
     const lineItems = cartItems.map((item) => {
       return {
-        name: `${item.product_name} (${item.variation_1}/${item.variation_2})`,
+        name: `${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
+          })`,
         amount: item.discounted_price,
         currency: CURRENCY,
         quantity: item.quantity,
