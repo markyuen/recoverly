@@ -13,8 +13,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const amount: number = req.body.amount
-    const items = req.body.items
+    // TODO REMOVE LATER #####################
+    const items = req.body.items.map((item) => {
+      return {
+        ...item,
+        amount: item.amount * 100,
+      }
+    })
+    const amount: number = items.reduce((acc: number, item) => {
+      return acc + item.quantity * item.amount;
+    }, 0)
     try {
       // Validate the amount that was passed from the client.
       if (!(amount >= MIN_AMOUNT && amount <= MAX_AMOUNT)) {
@@ -37,9 +45,10 @@ export default async function handler(
           // TODO: implement
           // receipt_email: "",
         },
-        metadata: {
-          user_id: "" // Add user id
-        },
+        // TODO
+        // metadata: {
+        //   user_id: "" // Add user id
+        // },
       }
       const checkoutSession: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create(params)

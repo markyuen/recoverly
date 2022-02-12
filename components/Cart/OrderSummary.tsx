@@ -1,23 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../../context/CartContext";
-
 import getStripe from '../../lib/get-stripejs';
 import { CURRENCY } from "../../config"
-
-const TEST_ITEMS = [
-  {
-    name: "Something",
-    amount: 1,
-    currency: CURRENCY,
-    quantity: 1,
-  },
-  {
-    name: "Another thing",
-    amount: 100,
-    currency: CURRENCY,
-    quantity: 5,
-  }
-]
 
 const OrderSummary = () => {
   const { cartItems } = useCart();
@@ -26,15 +10,21 @@ const OrderSummary = () => {
   const handleSubmit = async () => {
     setLoading(true)
     // Create a Checkout Session.
+    const lineItems = cartItems.map((item) => {
+      return {
+        name: `${item.product_name} (${item.variation_1}/${item.variation_2})`,
+        amount: item.discounted_price,
+        currency: CURRENCY,
+        quantity: item.quantity,
+      }
+    })
     const response = await fetch('/api/checkout_sessions', {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        amount: 100,
-        // TODO replace with real cart
-        items: TEST_ITEMS,
+        items: lineItems,
       }),
     });
     const data = await response.json();
@@ -73,13 +63,16 @@ const OrderSummary = () => {
           }, 0)
         }
       </p>
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={loading}
-        className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-        Checkout with Stripe
-      </button>
+      {
+        cartItems && cartItems.length > 0 &&
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={loading}
+          className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+          Checkout with Stripe
+        </button>
+      }
     </div>
   );
 };
