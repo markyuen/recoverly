@@ -24,6 +24,8 @@ const Index = () => {
     fetcherWithBody
   );
 
+  console.log(data);
+
   if (!data) {
     return (
       <ShopNav>

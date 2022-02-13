@@ -36,7 +36,6 @@ const Category = ({ category_name }: CategoryProps) => {
     offset
   );
 
-  console.log(items.length, hasMore);
 
   const { observe } = useInView({
     // For better UX, we can grow the root margin so the data will be loaded earlier
@@ -52,7 +51,8 @@ const Category = ({ category_name }: CategoryProps) => {
     },
   });
 
-  if (isLoading && items.length === 0) {
+
+  if (!data && !error) {
     return (
       <ShopNav>
         <SpinnerWithMessage label="Downloading Items" />
@@ -60,39 +60,6 @@ const Category = ({ category_name }: CategoryProps) => {
     );
   }
 
-  // const { data, error } = useSWR(
-  //   [
-  //     "/api/graphql/getCategoryItems",
-  //     {
-  //       query: getCategoryItems,
-  //       variables: { category_name },
-  //     },
-  //   ],
-  //   fetcherWithBody
-  // );
-
-  // if (!data && !error) {
-  //   return (
-  //     <ShopNav>
-  //       <Header name={category_name} />
-  //       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
-  //         <SkeletonGrid count={8} />
-  //       </div>
-  //     </ShopNav>
-  //   );
-  // }
-
-  // const pages = data.category[0].category
-  //   ? [
-  //       {
-  //         name: data.category[0].category["category_name"],
-  //         href: "/category/[category_slug]",
-  //         current: false,
-  //       },
-  //     ]
-  //   : [];
-
-  // console.log(data.category[0].category);
 
   return (
     <ShopNav>

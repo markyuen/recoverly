@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { useCart } from "../../context/CartContext";
+import { convertCentToDollar } from "../../lib/helpers";
 import ShoppingCartItem from "../nav/ShoppingCartItem";
 import CartItemVariation from "./CartItemVariation";
 
@@ -17,7 +18,13 @@ const ShoppingCart = ({ limits }) => {
           return (
             <div key={index} className="px-4 py-2">
               <div>
-                <Link href={`/product/${product_id}`} passHref>
+                <Link
+                  href={{
+                    pathname: "/product",
+                    query: { product_id: product_id.toString() },
+                  }}
+                  passHref
+                >
                   <p className="text-md font-bold cursor-pointer hover:text-blue-400">
                     {product_name}
                   </p>
@@ -48,9 +55,11 @@ const ShoppingCart = ({ limits }) => {
               </div>
               <p>
                 Total:${" "}
-                {variation.reduce((acc, { quantity, discounted_price }) => {
-                  return acc + quantity * discounted_price;
-                }, 0)}
+                {convertCentToDollar(
+                  variation.reduce((acc, { quantity, discounted_price }) => {
+                    return acc + quantity * discounted_price;
+                  }, 0)
+                )}
               </p>
             </div>
           );

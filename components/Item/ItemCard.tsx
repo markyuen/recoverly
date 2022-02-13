@@ -14,7 +14,7 @@ const ItemCard = ({ item }: ItemCardProp) => {
   const { product_id, product_images, product_name, variations } = item;
 
   const calculateDiscount = (original_price, discounted_price) => {
-    if (original_price == discounted_price) {
+    if (original_price === discounted_price) {
       return 0;
     }
     return parseFloat(
@@ -27,7 +27,10 @@ const ItemCard = ({ item }: ItemCardProp) => {
       (acc, item) =>
         Math.max(
           acc,
-          calculateDiscount(item.original_price, item.discounted_price)
+          calculateDiscount(
+            item.original_price_cents,
+            item.discounted_price_cents
+          )
         ),
       0
     );
@@ -54,15 +57,29 @@ const ItemCard = ({ item }: ItemCardProp) => {
         <p className="text-md text-gray-900 font-bold">{product_name}</p>
         <p>
           $
-          {variations.reduce(
-            (acc, item) => Math.min(acc, item.discounted_price),
-            Number.POSITIVE_INFINITY
-          )}
+          {(
+            variations
+              .filter(
+                ({ discounted_price_cents, original_price_cents }) =>
+                  original_price_cents > 0 && discounted_price_cents > 0
+              )
+              .reduce(
+                (acc, item) => Math.min(acc, item.discounted_price_cents),
+                Number.POSITIVE_INFINITY
+              ) / 100
+          ).toFixed(2)}
           - $
-          {variations.reduce(
-            (acc, item) => Math.max(acc, item.discounted_price),
-            0
-          )}{" "}
+          {(
+            variations
+              .filter(
+                ({ discounted_price_cents, original_price_cents }) =>
+                  original_price_cents > 0 && discounted_price_cents > 0
+              )
+              .reduce(
+                (acc, item) => Math.max(acc, item.discounted_price_cents),
+                0
+              ) / 100
+          ).toFixed(2)}{" "}
           <Tag
             style={{
               backgroundColor: "#002570",
