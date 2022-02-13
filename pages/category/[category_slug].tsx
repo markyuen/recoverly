@@ -30,12 +30,15 @@ const Category = ({ category_name }: CategoryProps) => {
   const router = useRouter();
   const observer = useRef();
 
-  const [offset, setOffset] = useState(0);
-  const { isLoading, error, items, hasMore } = useCategoryItems(
-    category_name,
-    offset
-  );
-
+  const {
+    isLoading,
+    error,
+    items,
+    hasMore,
+    pages,
+    subcategories,
+    increaseOffset,
+  } = useCategoryItems(category_name);
 
   const { observe } = useInView({
     // For better UX, we can grow the root margin so the data will be loaded earlier
@@ -47,12 +50,11 @@ const Category = ({ category_name }: CategoryProps) => {
       // Load more data
       console.log("----Triggered");
       if (!hasMore) return;
-      setOffset((offset) => offset + 40);
+      increaseOffset();
     },
   });
 
-
-  if (!data && !error) {
+  if (!items && !error) {
     return (
       <ShopNav>
         <SpinnerWithMessage label="Downloading Items" />
@@ -60,31 +62,22 @@ const Category = ({ category_name }: CategoryProps) => {
     );
   }
 
-
   return (
     <ShopNav>
-      {/* <BreadCrumbs
-        pages={pages.concat([
-          {
-            name: category_name,
-            href: "/category/[category_slug]",
-            current: true,
-          },
-        ])}
-      /> */}
+      <BreadCrumbs pages={pages} />
       <Header name={category_name} />
-      {/* {data.category[0].categories.length > 0 && (
+      {subcategories.length > 0 && (
         <p className="text-2xl pt-4 ml-4 lg:px-0 font-bold text-black">
           Subcategories
         </p>
-      )} */}
+      )}
       {/* {data.category.categories[0].map((item, index) => {
         return <Link>{item.category_name}</Link>;
       })} */}
       <div className="flex pl-4 items-center flex-wrap">
-        {/* {data.category[0].categories.map((item, index) => {
+        {subcategories.map((item, index) => {
           return <SubCategoryLink name={item.category_name} key={index} />;
-        })} */}
+        })}
       </div>
 
       <p className="mt-10 text-2xl pt-4 ml-4 lg:px-0 font-bold text-black">
@@ -104,8 +97,12 @@ const Category = ({ category_name }: CategoryProps) => {
           );
         })}
       </div>
-      {isLoading && <SpinnerWithMessage label="Finding more items" />}
-      {!hasMore && <p>No More Products Found</p>}
+      <div className="container mt-10 mx-auto text-center">
+        {isLoading && <SpinnerWithMessage label="Finding more items" />}
+        {!hasMore && (
+          <p className="text-lg font-extrabold">No More Products Found</p>
+        )}
+      </div>
     </ShopNav>
   );
 };

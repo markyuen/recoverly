@@ -14,6 +14,9 @@ type BreadCrumbProps = {
 };
 
 const BreadCrumbs = ({ pages }: BreadCrumbProps) => {
+  if (pages.length == 0) {
+    return null;
+  }
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-4">
@@ -32,7 +35,6 @@ const BreadCrumbs = ({ pages }: BreadCrumbProps) => {
         </li>
         {pages &&
           pages.map((page) => {
-            console.log(page);
             return (
               <li key={page.name}>
                 <Link
