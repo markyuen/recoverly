@@ -1,5 +1,6 @@
 import { Box, MenuItem } from "@chakra-ui/react";
 import React from "react";
+import { convertCentToDollar } from "../../lib/helpers";
 import { CartItem } from "../../types/items";
 import QuantityButton from "../Product/QuantityButton";
 
@@ -26,21 +27,13 @@ const ShoppingCartItem = ({
           })}
         </div>
         <div>
-          {variation.map(
-            (
-              { variation_1, variation_2, discounted_price, quantity },
-              index
-            ) => {
-              return (
-                <p key={index}>
-                  {""}$
-                  {Math.round(
-                    (quantity * discounted_price + Number.EPSILON) * 100
-                  ) / 100}
-                </p>
-              );
-            }
-          )}
+          {variation.map(({ discounted_price, quantity }, index) => {
+            return (
+              <p key={index}>
+                {""}${convertCentToDollar(quantity * discounted_price)}
+              </p>
+            );
+          })}
         </div>
       </div>
     </div>
