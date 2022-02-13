@@ -24,11 +24,6 @@ import {
 import { addVariationCategory } from "../../lib/addFormState";
 import { ProductFormItem } from "../../types/seller";
 
-function round(num) {
-  var m = Number((Math.abs(num) * 100).toPrecision(15));
-  return (Math.round(m) / 100) * Math.sign(num);
-}
-
 export const SellerItemReducer = (state: ProductFormItem, action) => {
   switch (action.type) {
     case MODIFY_PRODUCT_NAME:
@@ -269,11 +264,9 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
         };
 
         if (newState.variation_sku[variation_id_1]) {
-          newState.variation_sku[variation_id_1][variation_id_2][1] =
-            round(count);
+          newState.variation_sku[variation_id_1][variation_id_2][1] = count;
         } else {
-          newState.variation_sku[variation_id_2][variation_id_1][1] =
-            round(count);
+          newState.variation_sku[variation_id_2][variation_id_1][1] = count;
         }
         return newState;
       } catch (error) {
@@ -292,11 +285,9 @@ export const SellerItemReducer = (state: ProductFormItem, action) => {
         };
 
         if (newState.variation_sku[variation_id_1]) {
-          newState.variation_sku[variation_id_1][variation_id_2][2] =
-            round(count);
+          newState.variation_sku[variation_id_1][variation_id_2][2] = count;
         } else {
-          newState.variation_sku[variation_id_2][variation_id_1][2] =
-            round(count);
+          newState.variation_sku[variation_id_2][variation_id_1][2] = count;
         }
         return newState;
       } catch (error) {
