@@ -1,6 +1,6 @@
 const query = `
 query getAboutInformation{
-    product_aggregate{
+    variation_pair_aggregate{
       aggregate{
         count
       }

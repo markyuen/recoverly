@@ -168,12 +168,12 @@ const About = ({ productCount, brandCount }) => {
 export default About;
 
 export async function getStaticProps(context) {
-  const { product_aggregate, brand_aggregate } = await serverSideHasura(
+  const { variation_pair_aggregate, brand_aggregate } = await serverSideHasura(
     "getAboutInformation",
     {}
   );
 
-  const productCount = product_aggregate.aggregate.count;
+  const productCount = variation_pair_aggregate.aggregate.count;
   const brandCount = brand_aggregate.aggregate.count;
 
   return {
