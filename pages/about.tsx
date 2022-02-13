@@ -4,8 +4,9 @@ import ShopNav from "../components/layouts/ShopNav";
 import ProtectedRoute from "../components/route/ProtectedRoute";
 import { FaGlobeAsia } from "react-icons/fa";
 import { BsShopWindow, BsPeople } from "react-icons/bs";
+import { serverSideHasura } from "../lib/GraphQL";
 
-const About = () => {
+const About = ({ productCount, brandCount }) => {
   return (
     <ProtectedRoute>
       <ShopNav>
@@ -147,14 +148,14 @@ const About = () => {
         <div className="flex flex-row justify-around mt-20">
           <div className="flex flex-col items-center">
             <p className="text-3xl text-bold text-dark-blue-recoverly ">
-              [# of products]
+              {productCount}
             </p>
             <p>products</p>
           </div>
 
           <div className="flex flex-col items-center">
             <p className="text-3xl text-bold text-dark-blue-recoverly ">
-              [# of brands]
+              {brandCount}
             </p>
             <p>brands</p>
           </div>
@@ -165,3 +166,21 @@ const About = () => {
 };
 
 export default About;
+
+export async function getStaticProps(context) {
+  const { product_aggregate, brand_aggregate } = await serverSideHasura(
+    "getAboutInformation",
+    {}
+  );
+
+  const productCount = product_aggregate.aggregate.count;
+  const brandCount = brand_aggregate.aggregate.count;
+
+  return {
+    props: {
+      productCount,
+      brandCount,
+    }, // will be passed to the page component as props
+    revalidate: 60,
+  };
+}
