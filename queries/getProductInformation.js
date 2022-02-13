@@ -23,8 +23,8 @@ query getProductInformation($product_id: Int!, $_eq: Int = 10) {
         variation_1
         variation_2
         quantity
-        original_price
-        discounted_price
+        original_price_cents
+        discounted_price_cents
       }
     }
   }

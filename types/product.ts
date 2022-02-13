@@ -10,8 +10,8 @@ export type product_page_file = {
 };
 
 export type product_page_variation = {
-  discounted_price: number;
-  original_price: number;
+  discounted_price_cents: number;
+  original_price_cents: number;
   quantity: number;
   variation_1: string;
   variation_2: string | null;

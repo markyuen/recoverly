@@ -1,4 +1,5 @@
 import React from "react";
+import { convertCentToDollar } from "../../lib/helpers";
 import QuantityButton from "../Product/QuantityButton";
 
 type product_info = {
@@ -40,8 +41,7 @@ const CartItemVariation = ({
     <div className="flex items-center justify-between w-max">
       <p className="ml-2">
         - {variation_1}/{variation_2} x {quantity} ( {""}$
-        {Math.round((quantity * discounted_price + Number.EPSILON) * 100) / 100}
-        )
+        {convertCentToDollar(quantity * discounted_price)})
       </p>
       <QuantityButton
         product_id={product_id}
