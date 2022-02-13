@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { convertCentToDollar } from "../../lib/helpers";
 import {
   ProductCartVariation,
   product_page_variation,
@@ -30,20 +31,20 @@ const ProductVariations = ({
     const {
       variation_1,
       variation_2,
-      discounted_price,
-      original_price,
+      discounted_price_cents,
+      original_price_cents,
       quantity,
-    } = variations[0];
+    } = variations.filter(({ quantity }) => quantity > 0)[0];
 
-    setCurrPrice(discounted_price);
+    setCurrPrice(discounted_price_cents);
     setCurrQty(quantity);
     setCurrVariation({
       variation_1,
       variation_2,
-      price: discounted_price,
+      price: discounted_price_cents,
       quantity,
     });
-    setCurrPrevPrice(original_price);
+    setCurrPrevPrice(original_price_cents);
   }, [variations]);
 
   return (
@@ -52,9 +53,9 @@ const ProductVariations = ({
         <>
           <p className="text-gray-700 text-sm">
             <span className="line-through	text-red-600 mr-2">
-              ${currPrevPrice}
+              ${convertCentToDollar(currPrevPrice)}
             </span>
-            ${currPrice} with {currQty} remaining
+            ${convertCentToDollar(currPrice)} with {currQty} remaining
           </p>
           <QuantityButtonWithAddToCart
             currPrice={currPrice}
@@ -74,8 +75,8 @@ const ProductVariations = ({
             const {
               variation_1,
               variation_2,
-              discounted_price,
-              original_price,
+              discounted_price_cents,
+              original_price_cents,
               quantity,
             } = variation;
             const extraProps =
@@ -89,15 +90,15 @@ const ProductVariations = ({
               <div
                 key={index}
                 onClick={() => {
-                  setCurrPrice(discounted_price);
+                  setCurrPrice(discounted_price_cents);
                   setCurrQty(quantity);
                   setCurrVariation({
                     variation_1,
                     variation_2,
-                    price: discounted_price,
+                    price: discounted_price_cents,
                     quantity,
                   });
-                  setCurrPrevPrice(original_price);
+                  setCurrPrevPrice(original_price_cents);
                 }}
                 className={`text-center border rounded-full px-2 py-2 cursor-pointer mr-2 mb-2 col-span-1 ${extraProps}`}
               >

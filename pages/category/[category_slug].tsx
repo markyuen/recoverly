@@ -36,6 +36,9 @@ const Category = ({ category_name }: CategoryProps) => {
     fetcherWithBody
   );
 
+  console.log(data);
+  console.log(error);
+
   if (!data && !error) {
     return (
       <ShopNav>
