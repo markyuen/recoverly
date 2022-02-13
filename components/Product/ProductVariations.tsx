@@ -34,7 +34,7 @@ const ProductVariations = ({
       discounted_price_cents,
       original_price_cents,
       quantity,
-    } = variations[0];
+    } = variations.filter(({ quantity }) => quantity > 0)[0];
 
     setCurrPrice(discounted_price_cents);
     setCurrQty(quantity);

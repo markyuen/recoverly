@@ -1,5 +1,7 @@
 export const convertCentToDollar = (cents: number) => {
-  return parseFloat(cents / 100).toFixed(2);
+  // Convert to 2.d.p
+  const parsedFloat = cents.toFixed(2);
+  return (parseFloat(parsedFloat) / 100).toFixed(2);
 };
 
 export const roundTo2dp = (num) => {
