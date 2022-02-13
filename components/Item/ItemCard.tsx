@@ -54,7 +54,6 @@ const ItemCard = ({ item }: ItemCardProp) => {
           height={300}
           alt={"Fake news"}
         />
-
         <p className="text-md text-gray-900 font-bold">{product_name}</p>
         <p>
           $
