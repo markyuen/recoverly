@@ -12,7 +12,7 @@ type CartContext = {
     user_id: string,
     variation_pair_id: number,
     quantity: number
-  ) => void;
+  ) => Promise<void>;
 };
 
 const CartContext = createContext<CartContext>(null!);
@@ -112,13 +112,13 @@ export function CartWrapper({ children }) {
     return cartItems[idx].quantity;
   };
 
-  const updateCartProduct = (
+  const updateCartProduct = async (
     user_id: string,
     variation_pair_id: number,
     quantity: number
   ) => {
     if (quantity === REMOVE_ID) {
-      makeGraphQLQuery("deleteCartProduct", {
+      await makeGraphQLQuery("deleteCartProduct", {
         user_id: user_id,
         variation_pair_id: variation_pair_id,
       })
@@ -136,20 +136,21 @@ export function CartWrapper({ children }) {
       quantity: quantity,
     }
     if (productExistsInCart(variation_pair_id)) {
-      makeGraphQLQuery("updateCartProduct", payload)
+      await makeGraphQLQuery("updateCartProduct", payload)
         .then((res) => {
           console.log(res);
           console.log("Succesfully updated product quantity");
         })
         .catch((err) => console.log(err));
     } else {
-      makeGraphQLQuery("insertNewCartProduct", payload)
+      await makeGraphQLQuery("insertNewCartProduct", payload)
         .then((res) => {
           console.log(res);
           console.log("Succesfully added new cart product to database");
         })
         .catch((err) => console.log("Error Encountered of ", err));
     }
+    return;
   };
 
   let sharedState = {

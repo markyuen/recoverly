@@ -42,6 +42,7 @@ const ProductQuantity = ({
   const size = "medium";
 
   const [count, setProductCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setProductCount(getProductCount(variation_pair_id));
@@ -74,41 +75,54 @@ const ProductQuantity = ({
     setProductCount(count - 1);
   };
 
-  const handleUpdateCart = () => {
-    if (!checkForUser()) {
-      return;
+  const handleUpdateCart = async () => {
+    setLoading(true);
+    try {
+      if (!checkForUser()) {
+        return;
+      }
+      if (count <= 0) {
+        return generateWarningToast("Error", "Quantity must be greater than 0");
+      }
+      if (count === getProductCount(variation_pair_id)) {
+        return generateWarningToast("Error", "Quantity must be different than current quantity");
+      }
+      await updateCartProduct(userId, variation_pair_id, count);
+      dispatch({
+        type: UPDATE_ITEM_COUNT,
+        payload: {
+          product_id,
+          variation_pair_id,
+          product_name,
+          variation_1,
+          variation_2,
+          quantity: count,
+          price,
+          limit,
+        },
+      });
+      generateSuccessToast("Added to Cart", "Item added to cart");
+    } finally {
+      setLoading(false);
     }
-    if (count <= 0) {
-      return generateWarningToast("Error", "Quantity must be greater than 0");
-    }
-    updateCartProduct(userId, variation_pair_id, count);
-    dispatch({
-      type: UPDATE_ITEM_COUNT,
-      payload: {
-        product_id,
-        variation_pair_id,
-        product_name,
-        variation_1,
-        variation_2,
-        quantity: count,
-        price,
-        limit,
-      },
-    });
-    generateSuccessToast("Added to Cart", "Item added to cart");
   };
 
-  const handleRemoveFromCart = () => {
-    if (!checkForUser()) {
-      return;
+  const handleRemoveFromCart = async () => {
+    setLoading(true);
+    try {
+      if (!checkForUser()) {
+        return;
+      }
+      await updateCartProduct(userId, variation_pair_id, REMOVE_ID);
+      dispatch({
+        type: REMOVE_ITEM,
+        payload: variation_pair_id,
+      });
+      setProductCount(0);
+      generateSuccessToast("Removed from Cart", "Item removed from cart");
+    } finally {
+      setLoading(false);
     }
-    updateCartProduct(userId, variation_pair_id, REMOVE_ID);
-    dispatch({
-      type: REMOVE_ITEM,
-      payload: variation_pair_id,
-    });
-    setProductCount(0);
-    generateSuccessToast("Removed from Cart", "Item removed from cart");
   }
 
   return (
@@ -142,7 +156,7 @@ const ProductQuantity = ({
       </svg>
       <div
         className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        onClick={() => handleUpdateCart()}
+        onClick={() => { if (!loading) handleUpdateCart() }}
       >
         {productExistsInCart(variation_pair_id) ? "Update Cart" : "Add to Cart"}
       </div>
@@ -150,7 +164,7 @@ const ProductQuantity = ({
         productExistsInCart(variation_pair_id) &&
         <div
           className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          onClick={() => handleRemoveFromCart()}
+          onClick={() => { if (!loading) handleRemoveFromCart() }}
         >
           Remove
         </div>
