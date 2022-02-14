@@ -154,20 +154,22 @@ const ProductQuantity = ({
           clipRule="evenodd"
         />
       </svg>
-      <div
-        className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        onClick={() => { if (!loading) handleUpdateCart() }}
-      >
+      <button
+        type="button"
+        onClick={handleUpdateCart}
+        disabled={loading}
+        className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
         {productExistsInCart(variation_pair_id) ? "Update Cart" : "Add to Cart"}
-      </div>
+      </button>
       {
         productExistsInCart(variation_pair_id) &&
-        <div
-          className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          onClick={() => { if (!loading) handleRemoveFromCart() }}
-        >
+        <button
+          type="button"
+          onClick={handleRemoveFromCart}
+          disabled={loading}
+          className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
           Remove
-        </div>
+        </button>
       }
     </div>
   );

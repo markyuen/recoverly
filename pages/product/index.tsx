@@ -12,19 +12,19 @@ const Index = () => {
   const { product_id } = router.query;
 
   const { data, error } = useSWR(
-    [
-      "/api/graphql/getProductInformation",
-      {
+    {
+      url: "/api/graphql/getProductInformation",
+      body: {
         query: getProductInformation,
         variables: {
           product_id,
         },
       },
-    ],
-    fetcherWithBody
+    },
+    fetcherWithBody,
   );
 
-  console.log(data);
+  console.log(data, error);
 
   if (!data) {
     return (
@@ -36,7 +36,7 @@ const Index = () => {
 
   return (
     <ShopNav>
-      <ProductPage product={data.product_by_pk} />
+      <ProductPage product={data[0].product_by_pk} />
     </ShopNav>
   );
 };

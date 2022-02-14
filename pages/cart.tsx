@@ -1,3 +1,4 @@
+import useSWR from "swr";
 import OrderSummary from "../components/Cart/OrderSummary";
 import ShoppingCart from "../components/Cart/ShoppingCart";
 import Header from "../components/Common/Header";
@@ -5,6 +6,7 @@ import SpinnerWithMessage from "../components/Common/SpinnerWithMessage";
 import ShopNav from "../components/layouts/ShopNav";
 import ProtectedRoute from "../components/route/ProtectedRoute";
 import { useCart } from "../context/CartContext";
+import { fetcherWithBody } from "../lib/swr";
 
 const Cart = () => {
   const { cartItems } = useCart();

@@ -1,21 +1,14 @@
-import { useRouter } from "next/router";
-import React, { useCallback, useRef, useState } from "react";
+import React from "react";
 import Header from "../../components/Common/Header";
-import InternalLink from "../../components/Common/Link";
 
 // Helper Functions
 import {
-  capitalizeFirstLetter,
   decodeItemSlug,
   generateItemSlugLink,
 } from "../../lib/string";
 import ItemCard from "../../components/Item/ItemCard";
 import ShopNav from "../../components/layouts/ShopNav";
 import { serverSideHasura } from "../../lib/GraphQL";
-import { fetcherWithBody } from "../../lib/swr";
-import getCategoryItems from "../../queries/getCategoryItems";
-import useSWR from "swr";
-import SkeletonGrid from "../../components/Skeleton/SkeletonGrid";
 import BreadCrumbs from "../../components/Common/BreadCrumbs";
 import SubCategoryLink from "../../components/Category/SubCategoryLink";
 import useCategoryItems from "../../hooks/useCategoryItems";
@@ -27,9 +20,6 @@ type CategoryProps = {
 };
 
 const Category = ({ category_name }: CategoryProps) => {
-  const router = useRouter();
-  const observer = useRef();
-
   const {
     isLoading,
     error,
