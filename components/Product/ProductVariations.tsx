@@ -29,22 +29,22 @@ const ProductVariations = ({
     const {
       variation_1,
       variation_2,
-      discounted_price_cents,
-      original_price_cents,
+      discounted_price,
+      original_price,
       quantity,
       variation_pair_id,
     } = variations.filter(({ quantity }) => quantity > 0)[0];
 
-    setCurrPrice(discounted_price_cents);
+    setCurrPrice(discounted_price);
     setCurrQty(quantity);
     setCurrVariation({
       variation_1,
       variation_2,
-      price: discounted_price_cents,
+      price: discounted_price,
       quantity,
       variation_pair_id,
     });
-    setCurrPrevPrice(original_price_cents);
+    setCurrPrevPrice(original_price);
   }, [variations]);
 
   return (
@@ -54,9 +54,9 @@ const ProductVariations = ({
           <>
             <p className="text-gray-700 text-sm">
               <span className="line-through	text-red-600 mr-2">
-                ${currPrevPrice}
+                ${convertCentToDollar(currPrevPrice)}
               </span>
-              ${currPrice} with {currQty} remaining
+              ${convertCentToDollar(currPrice)} with {currQty} remaining
             </p>
             <ProductQuantity
               product_id={product_id}

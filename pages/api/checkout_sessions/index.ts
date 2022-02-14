@@ -13,14 +13,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    // TODO REMOVE LATER #####################
-    const items = req.body.items.map((item) => {
-      return {
-        ...item,
-        amount: item.amount * 100,
-      }
-    })
-    const amount: number = items.reduce((acc: number, item) => {
+    const items = req.body.items;
+    const amount: number = req.body.items.reduce((acc: number, item) => {
       return acc + item.quantity * item.amount;
     }, 0)
     try {

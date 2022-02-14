@@ -41,8 +41,8 @@ const ProductPage = ({ product }: ProductPageProps) => {
         Math.max(
           acc,
           calculateDiscount(
-            item.original_price_cents,
-            item.discounted_price_cents
+            item.original_price,
+            item.discounted_price,
           )
         ),
       0

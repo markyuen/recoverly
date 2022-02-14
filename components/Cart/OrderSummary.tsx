@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import getStripe from '../../lib/get-stripejs';
 import { CURRENCY } from "../../config"
+import { convertCentToDollar } from "../../lib/helpers";
 
 const OrderSummary = () => {
   const { cartItems } = useCart();
@@ -59,9 +60,11 @@ const OrderSummary = () => {
         Total: $
         {
           cartItems &&
-          cartItems.reduce((acc, item) => {
-            return acc + item.quantity * item.discounted_price;
-          }, 0)
+          convertCentToDollar(
+            cartItems.reduce((acc, item) => {
+              return acc + item.quantity * item.discounted_price;
+            }, 0)
+          )
         }
       </p>
       {

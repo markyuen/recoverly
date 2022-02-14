@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { useCart } from "../../context/CartContext";
+import { convertCentToDollar } from "../../lib/helpers";
 import CartItemDisplay from "./CartItemDisplay";
 
 const ShoppingCart = () => {
@@ -35,7 +36,7 @@ const ShoppingCart = () => {
                   </div>
                 </div>
                 <p>
-                  Total: ${item.quantity * item.discounted_price}
+                  Total: ${convertCentToDollar(item.quantity * item.discounted_price)}
                 </p>
               </div>
             );

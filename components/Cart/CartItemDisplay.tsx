@@ -1,6 +1,7 @@
 import React from "react";
 import ProductQuantity from "../Product/ProductQuantity";
 import { CartItem } from "../../types/items";
+import { convertCentToDollar } from "../../lib/helpers";
 
 const CartItemDisplay = ({
   product_id,
@@ -16,7 +17,7 @@ const CartItemDisplay = ({
     <div className="flex items-center justify-between w-max">
       <p className="ml-2">
         {variation_1}{variation_2 ? `/${variation_2}` : ""
-        } x{quantity} (${discounted_price})
+        } x{quantity} (${convertCentToDollar(discounted_price)})
       </p>
       <ProductQuantity
         product_id={product_id}

@@ -1,4 +1,5 @@
 import React from "react";
+import { convertCentToDollar } from "../../lib/helpers";
 import { CartItem } from "../../types/items";
 
 type CartIconItemDisplayProps = {
@@ -26,7 +27,7 @@ const CartIconItemDisplay = ({
         <div>
           {
             <p>
-              ${item.quantity * item.discounted_price}
+              ${convertCentToDollar(item.quantity * item.discounted_price)}
             </p>
           }
         </div>

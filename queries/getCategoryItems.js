@@ -22,8 +22,8 @@ query getCategoryItems($category_name: String!, $limit: Int = 20, $offset: Int =
           url
         }
         variations{
-          discounted_price_cents
-          original_price_cents
+          discounted_price
+          original_price
         }
       }
       

@@ -28,8 +28,8 @@ const ItemCard = ({ item }: ItemCardProp) => {
         Math.max(
           acc,
           calculateDiscount(
-            item.original_price_cents,
-            item.discounted_price_cents
+            item.original_price,
+            item.discounted_price
           )
         ),
       0
@@ -60,23 +60,22 @@ const ItemCard = ({ item }: ItemCardProp) => {
           {(
             variations
               .filter(
-                ({ discounted_price_cents, original_price_cents }) =>
-                  original_price_cents > 0 && discounted_price_cents > 0
+                ({ discounted_price, original_price }) =>
+                  original_price > 0 && discounted_price > 0
               )
               .reduce(
-                (acc, item) => Math.min(acc, item.discounted_price_cents),
+                (acc, item) => Math.min(acc, item.discounted_price),
                 Number.POSITIVE_INFINITY
               ) / 100
-          ).toFixed(2)}
-          - $
+          ).toFixed(2)} - $
           {(
             variations
               .filter(
-                ({ discounted_price_cents, original_price_cents }) =>
-                  original_price_cents > 0 && discounted_price_cents > 0
+                ({ discounted_price, original_price }) =>
+                  original_price > 0 && discounted_price > 0
               )
               .reduce(
-                (acc, item) => Math.max(acc, item.discounted_price_cents),
+                (acc, item) => Math.max(acc, item.discounted_price),
                 0
               ) / 100
           ).toFixed(2)}{" "}
