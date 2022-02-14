@@ -1,5 +1,5 @@
 const query = `
-query getCategoryItems($category_name: String!) {
+query getCategoryItems($category_name: String!, $limit: Int = 20, $offset: Int = 0) {
   category(where: {category_name: {_eq: $category_name}}){
     category_id
     category_name
@@ -14,7 +14,7 @@ query getCategoryItems($category_name: String!) {
       image_url
       parent_category_id
     }
-    products_categories{
+    products_categories(limit: $limit, offset: $offset){
       product{
         product_id
         product_name
@@ -22,8 +22,8 @@ query getCategoryItems($category_name: String!) {
           url
         }
         variations{
-          discounted_price
-          original_price
+          discounted_price_cents
+          original_price_cents
         }
       }
       

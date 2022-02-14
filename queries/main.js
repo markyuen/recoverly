@@ -25,6 +25,7 @@ import insertNewCartProduct from "./insertNewCartProduct";
 import updateCartProduct from "./updateCartProduct";
 import { getUserCartProducts } from "./getUserCartProducts";
 import { deleteCartProduct } from "./deleteCartProduct";
+import getAboutInformation from "./getAboutInformation";
 
 // Map Queries here so the hook can import the right query
 const mapping = {
@@ -55,6 +56,7 @@ const mapping = {
   insertNewCartProduct,
   updateCartProduct,
   deleteCartProduct,
+  getAboutInformation,
 };
 
 export default mapping;

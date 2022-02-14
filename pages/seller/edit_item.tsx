@@ -66,8 +66,8 @@ const EditItemPage = () => {
             variation_2,
             variation_2_category,
             quantity,
-            original_price,
-            discounted_price,
+            original_price_cents,
+            discounted_price_cents,
           }) => {
             if (!variations[variation_1_category].includes(variation_1)) {
               variations[variation_1_category].push(variation_1);
@@ -83,14 +83,14 @@ const EditItemPage = () => {
 
               variation_sku[variation_1][variation_2] = [
                 quantity,
-                discounted_price,
-                original_price,
+                discounted_price_cents,
+                original_price_cents,
               ];
             } else {
               variation_sku[variation_1][""] = [
                 quantity,
-                discounted_price,
-                original_price,
+                discounted_price_cents,
+                original_price_cents,
               ];
             }
           }

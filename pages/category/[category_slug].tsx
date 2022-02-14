@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useCallback, useRef, useState } from "react";
 import Header from "../../components/Common/Header";
 import InternalLink from "../../components/Common/Link";
 
@@ -18,6 +18,9 @@ import useSWR from "swr";
 import SkeletonGrid from "../../components/Skeleton/SkeletonGrid";
 import BreadCrumbs from "../../components/Common/BreadCrumbs";
 import SubCategoryLink from "../../components/Category/SubCategoryLink";
+import useCategoryItems from "../../hooks/useCategoryItems";
+import SpinnerWithMessage from "../../components/Common/SpinnerWithMessage";
+import useInView from "react-cool-inview";
 
 type CategoryProps = {
   category_name: string;
@@ -25,53 +28,45 @@ type CategoryProps = {
 
 const Category = ({ category_name }: CategoryProps) => {
   const router = useRouter();
-  const { data, error } = useSWR(
-    [
-      "/api/graphql/getCategoryItems",
-      {
-        query: getCategoryItems,
-        variables: { category_name },
-      },
-    ],
-    fetcherWithBody
-  );
+  const observer = useRef();
 
-  if (!data && !error) {
+  const {
+    isLoading,
+    error,
+    items,
+    hasMore,
+    pages,
+    subcategories,
+    increaseOffset,
+  } = useCategoryItems(category_name);
+
+  const { observe } = useInView({
+    // For better UX, we can grow the root margin so the data will be loaded earlier
+    rootMargin: "100px 0px",
+    // When the last item comes to the viewport
+    onEnter: ({ unobserve }) => {
+      // Pause observe when loading data
+      unobserve();
+      // Load more data
+      console.log("----Triggered");
+      if (!hasMore) return;
+      increaseOffset();
+    },
+  });
+
+  if (!items && !error) {
     return (
       <ShopNav>
-        <Header name={category_name} />
-        <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
-          <SkeletonGrid count={8} />
-        </div>
+        <SpinnerWithMessage label="Downloading Items" />
       </ShopNav>
     );
   }
 
-  const pages = data.category[0].category
-    ? [
-        {
-          name: data.category[0].category["category_name"],
-          href: "/category/[category_slug]",
-          current: false,
-        },
-      ]
-    : [];
-
-  console.log(data.category[0].category);
-
   return (
     <ShopNav>
-      <BreadCrumbs
-        pages={pages.concat([
-          {
-            name: category_name,
-            href: "/category/[category_slug]",
-            current: true,
-          },
-        ])}
-      />
+      <BreadCrumbs pages={pages} />
       <Header name={category_name} />
-      {data.category[0].categories.length > 0 && (
+      {subcategories.length > 0 && (
         <p className="text-2xl pt-4 ml-4 lg:px-0 font-bold text-black">
           Subcategories
         </p>
@@ -80,7 +75,7 @@ const Category = ({ category_name }: CategoryProps) => {
         return <Link>{item.category_name}</Link>;
       })} */}
       <div className="flex pl-4 items-center flex-wrap">
-        {data.category[0].categories.map((item, index) => {
+        {subcategories.map((item, index) => {
           return <SubCategoryLink name={item.category_name} key={index} />;
         })}
       </div>
@@ -89,11 +84,24 @@ const Category = ({ category_name }: CategoryProps) => {
         Browse Items
       </p>
       <div className="grid grid-cols-3 mx-4 pt-10">
-        {data &&
-          data.category &&
-          data.category[0]["products_categories"].map(({ product }, index) => {
-            return <ItemCard key={index} item={product} />;
-          })}
+        {items.map(({ product }, index) => {
+          return (
+            <div
+              key={index}
+              ref={
+                index === Math.round(items.length - 0.3 * 80) ? observe : null
+              }
+            >
+              <ItemCard key={index} item={product} />
+            </div>
+          );
+        })}
+      </div>
+      <div className="container mt-10 mx-auto text-center">
+        {isLoading && <SpinnerWithMessage label="Finding more items" />}
+        {!hasMore && (
+          <p className="text-lg font-extrabold">No More Products Found</p>
+        )}
       </div>
     </ShopNav>
   );

@@ -6,6 +6,8 @@ import {
   UPDATE_VARIATION_ORIGINAL_PRICE,
   UPDATE_VARIATION_QUANTITY,
 } from "../../constants/seller";
+import { roundTo2dp } from "../../lib/helpers";
+import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum";
 
 type VariationTableProps = {
   variation_categories: string[];
@@ -35,7 +37,7 @@ const TableHeader = ({ fields }) => {
   );
 };
 
-const TableCell = ({
+const QuantityTableCell = ({
   variation_1,
   variation_2,
   variation_sku,
@@ -48,21 +50,43 @@ const TableCell = ({
     : variation_sku[variation_2][variation_1][ind];
 
   const [tableCellValue, setTableCellValue] = useState(value);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
+    setTableCellValue(e.target.value);
     if (e.target.value === "") {
+      setError(true);
+      setErrorMessage("Quantity cannot be empty");
       return;
     }
-    //TODO: Handle error parsing
-    dispatch({
-      type: action_type,
-      payload: {
-        variation_id_1: variation_1,
-        variation_id_2: variation_2,
-        count: e.target.value,
-      },
-    });
-    setTableCellValue(e.target.value);
+
+    try {
+      const parsed_number = parseFloat(e.target.value);
+      if (isNaN(parsed_number)) {
+        throw new Error("Not a number");
+      }
+
+      if (!Number.isInteger(parsed_number)) {
+        setError(true);
+        setErrorMessage("Quantity must be a valid integer.");
+        return;
+      }
+      setError(false);
+      setErrorMessage("");
+      dispatch({
+        type: action_type,
+        payload: {
+          variation_id_1: variation_1,
+          variation_id_2: variation_2,
+          count: Math.floor(parsed_number),
+        },
+      });
+    } catch {
+      setError(true);
+      setErrorMessage("Please input a valid number");
+      return;
+    }
   };
 
   return (
@@ -70,14 +94,171 @@ const TableCell = ({
       <input
         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
         id="first-name"
-        type="number"
+        type="text"
         value={tableCellValue}
         onChange={handleChange}
-        step="0.01"
       />
+      {!error ? null : (
+        <p className="text-sm wrap text-red-400 ml-4">{errorMessage}</p>
+      )}
     </td>
   );
 };
+
+const PriceTableCell = ({
+  variation_1,
+  variation_2,
+  variation_sku,
+  dispatch,
+  action_type,
+  ind,
+}) => {
+  const value = variation_sku[variation_1]
+    ? variation_sku[variation_1][variation_2][ind]
+    : variation_sku[variation_2][variation_1][ind];
+
+  const [tableCellValue, setTableCellValue] = useState(value);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (e) => {
+    setTableCellValue(e.target.value);
+    if (e.target.value === "") {
+      setError(true);
+      setErrorMessage("Quantity cannot be empty");
+      return;
+    }
+
+    try {
+      const parsed_number = parseFloat(e.target.value);
+      if (isNaN(parsed_number)) {
+        throw new Error("Not a number");
+      }
+
+      if (!validateTwoDecimalNum(e.target.value)) {
+        setError(true);
+        setErrorMessage("Please only input prices of up to 2 decimal places");
+        return;
+      }
+
+      setError(false);
+      // Float Value
+      if (!Number.isInteger(parsed_number)) {
+        const rounded_value = Math.floor(
+          parseFloat((parsed_number * 100).toFixed(2))
+        );
+        console.log(rounded_value);
+        dispatch({
+          type: action_type,
+          payload: {
+            variation_id_1: variation_1,
+            variation_id_2: variation_2,
+            count: rounded_value,
+          },
+        });
+      } else {
+        dispatch({
+          type: action_type,
+          payload: {
+            variation_id_1: variation_1,
+            variation_id_2: variation_2,
+            count: Math.floor(parsed_number) * 100,
+          },
+        });
+      }
+    } catch {
+      setError(true);
+      setErrorMessage("Please input a valid number");
+      return;
+    }
+  };
+
+  return (
+    <td>
+      <input
+        className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+        id="first-name"
+        type="text"
+        value={tableCellValue}
+        onChange={handleChange}
+      />
+      {!error ? null : (
+        <p className="text-sm text-red-400 ml-4">{errorMessage}</p>
+      )}
+    </td>
+  );
+};
+
+// const TableCell = ({
+//   variation_1,
+//   variation_2,
+//   variation_sku,
+//   dispatch,
+//   action_type,
+//   ind,
+//   value_conversion_function,
+//   check_input,
+//   error_message,
+// }) => {
+//   const value = variation_sku[variation_1]
+//     ? variation_sku[variation_1][variation_2][ind]
+//     : variation_sku[variation_2][variation_1][ind];
+
+//   const [tableCellValue, setTableCellValue] = useState(value);
+//   const [error, setError] = useState(false);
+//   const [errorMessage, setErrorMessage] = useState("");
+
+//   const handleChange = (e) => {
+//     setTableCellValue(e.target.value);
+
+//     if (e.target.value === "") {
+//       return;
+//     }
+
+//     try {
+//       const parsed_number = parseFloat(e.target.value);
+//     } catch {
+//       setError(true);
+//       return;
+//     }
+
+//     if (!Number.isInteger(parseInt(e.target.value))) {
+//       setError(true);
+//       return;
+//     }
+
+//     if (!check_input) {
+//       setError(true);
+//       return;
+//     }
+
+//     setError(false);
+//     dispatch({
+//       type: action_type,
+//       payload: {
+//         variation_id_1: variation_1,
+//         variation_id_2: variation_2,
+//         count: value,
+//       },
+//     });
+//   };
+
+//   return (
+//     <td>
+//       <input
+//         className="appearance-none bg-transparent rounded w-full py-2 px-4 text-gray-700 border-none"
+//         id="first-name"
+//         type="number"
+//         value={tableCellValue}
+//         onChange={handleChange}
+//         step="0.01"
+//       />
+//       {!error ? null : (
+//         <p className="text-sm text-red-400 ml-4">{error_message}</p>
+//       )}
+//     </td>
+//   );
+// };
 
 const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
   return (
@@ -92,7 +273,7 @@ const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
         <td>Original Price</td>
         {variations.map((variation, index) => {
           return (
-            <TableCell
+            <PriceTableCell
               key={index}
               variation_1={label}
               variation_2={variation}
@@ -108,7 +289,7 @@ const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
         <td>Discounted Price</td>
         {variations.map((variation, index) => {
           return (
-            <TableCell
+            <PriceTableCell
               key={index}
               variation_1={label}
               variation_2={variation}
@@ -124,7 +305,7 @@ const TableRow = ({ label, variations, index, variation_sku, dispatch }) => {
         <td>Quantity</td>
         {variations.map((variation, index) => {
           return (
-            <TableCell
+            <QuantityTableCell
               key={index}
               variation_1={label}
               variation_2={variation}

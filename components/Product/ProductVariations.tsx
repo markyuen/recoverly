@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { convertCentToDollar } from "../../lib/helpers";
 import {
   ProductCartVariation,
   product_page_variation,
@@ -28,22 +29,22 @@ const ProductVariations = ({
     const {
       variation_1,
       variation_2,
-      discounted_price,
-      original_price,
+      discounted_price_cents,
+      original_price_cents,
       quantity,
       variation_pair_id,
-    } = variations[0];
+    } = variations.filter(({ quantity }) => quantity > 0)[0];
 
-    setCurrPrice(discounted_price);
+    setCurrPrice(discounted_price_cents);
     setCurrQty(quantity);
     setCurrVariation({
       variation_1,
       variation_2,
-      price: discounted_price,
+      price: discounted_price_cents,
       quantity,
       variation_pair_id,
     });
-    setCurrPrevPrice(original_price);
+    setCurrPrevPrice(original_price_cents);
   }, [variations]);
 
   return (

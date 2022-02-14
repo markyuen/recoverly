@@ -5,10 +5,10 @@ import { CURRENCY } from "../../config"
 
 const OrderSummary = () => {
   const { cartItems } = useCart();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    setLoading(true)
+    setLoading(true);
     // Create a Checkout Session.
     const lineItems = cartItems.map((item) => {
       return {
@@ -31,26 +31,26 @@ const OrderSummary = () => {
     const data = await response.json();
 
     if (data.statusCode === 500) {
-      console.error(data.message)
-      return
+      console.error(data.message);
+      return;
     }
 
     // TODO: write order to DB and store the data.id as the stripe_checkout field
 
     // Redirect to Checkout.
-    const stripe = await getStripe()
+    const stripe = await getStripe();
     const { error } = await stripe!.redirectToCheckout({
       // Make the id field from the Checkout Session creation API response
       // available to this file, so you can provide it as parameter here
       // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
       sessionId: data.id,
-    })
+    });
     // If `redirectToCheckout` fails due to a browser or network
     // error, display the localized error message to your customer
     // using `error.message`.
-    console.warn(error.message)
-    setLoading(false)
-  }
+    console.warn(error.message);
+    setLoading(false);
+  };
 
   return (
     <div className="flex flex-col">
