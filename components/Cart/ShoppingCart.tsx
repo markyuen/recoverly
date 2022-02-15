@@ -2,11 +2,12 @@ import Link from "next/link";
 import React from "react";
 import { useCart } from "../../context/CartContext";
 import { convertCentToDollar } from "../../lib/helpers";
+import { ProductSellerInformation } from "../../types/product";
 import CartItemDisplay from "./CartItemDisplay";
 
-const ShoppingCart = () => {
+const ShoppingCart = ({ sellerInfo }) => {
   const { cartItems } = useCart();
-  
+
   return (
     <div className="col-span-4">
       <div className="grid space-y-4 grid-cols-1">
@@ -24,6 +25,7 @@ const ShoppingCart = () => {
                 <div className="flex justify-between">
                   <div>
                     <CartItemDisplay
+                      seller_id={item.seller_id}
                       product_id={item.product_id}
                       product_name={item.product_name}
                       variation_pair_id={item.variation_pair_id}

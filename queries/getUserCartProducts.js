@@ -7,6 +7,7 @@ query getUserCartProducts($user_id:String!) {
     quantity
     variation_pair {
       product {
+        seller_id
         product_id
         product_name
       }

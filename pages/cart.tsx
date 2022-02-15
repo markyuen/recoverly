@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import OrderSummary from "../components/Cart/OrderSummary";
 import ShoppingCart from "../components/Cart/ShoppingCart";
@@ -7,11 +8,36 @@ import ShopNav from "../components/layouts/ShopNav";
 import ProtectedRoute from "../components/route/ProtectedRoute";
 import { useCart } from "../context/CartContext";
 import { fetcherWithBody } from "../lib/swr";
+import { getSellerFees } from "../queries/getSellerFees";
+import { ProductSellerInformation } from "../types/product";
 
 const Cart = () => {
   const { cartItems } = useCart();
+  const [mounted, setMounted] = useState(false);
 
-  if (!cartItems) {
+  const { data, error } = useSWR(
+    !mounted ? null :
+      [...new Set(cartItems.map((item) => { return item.seller_id }))]
+        .map((seller_id) => {
+          return {
+            url: "/api/graphql/getSellerFees",
+            body: {
+              query: getSellerFees,
+              variables: {
+                user_id: seller_id,
+              },
+            },
+          }
+        }),
+    fetcherWithBody,
+  );
+
+  useEffect(() => {
+    if (!cartItems) return;
+    setMounted(true);
+  }, [cartItems])
+
+  if (!data) {
     return (
       <ProtectedRoute>
         <ShopNav>
@@ -24,14 +50,20 @@ const Cart = () => {
     );
   }
 
+  const sellerInfo: ProductSellerInformation[] = data.map((item) => {
+    return {
+      ...item.seller_by_pk
+    }
+  });
+
   return (
     <ProtectedRoute>
       <ShopNav>
         <div>
           <Header name="Shopping Cart" />
           <div className="grid grid-cols-6 px-5 mt-10">
-            <ShoppingCart />
-            <OrderSummary />
+            <ShoppingCart sellerInfo={sellerInfo} />
+            <OrderSummary sellerInfo={sellerInfo} />
           </div>
         </div>
       </ShopNav>

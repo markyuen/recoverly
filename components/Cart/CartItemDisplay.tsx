@@ -4,6 +4,7 @@ import { CartItem } from "../../types/items";
 import { convertCentToDollar } from "../../lib/helpers";
 
 const CartItemDisplay = ({
+  seller_id,
   product_id,
   variation_pair_id,
   product_name,
@@ -20,6 +21,7 @@ const CartItemDisplay = ({
         } x{quantity} (${convertCentToDollar(discounted_price)})
       </p>
       <ProductQuantity
+        seller_id={seller_id}
         product_id={product_id}
         variation_pair_id={variation_pair_id}
         product_name={product_name}

@@ -1,6 +1,6 @@
 export const getSellerFees = `
-query getSellerFees($product_id: Int!) {
-  seller(where: {products: {product_id: {_eq: $product_id}}}) {
+query getSellerFees($user_id: String!) {
+  seller_by_pk(user_id: $user_id) {
     user_id
     company_name
     flat_shipping_fee

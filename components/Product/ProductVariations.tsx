@@ -7,12 +7,14 @@ import {
 import ProductQuantity from "../../components/Product/ProductQuantity";
 
 type ProductVariationsProps = {
+  seller_id: string;
   product_id: number;
   product_name: string;
   variations: product_page_variation[];
 };
 
 const ProductVariations = ({
+  seller_id,
   product_id,
   product_name,
   variations,
@@ -23,7 +25,7 @@ const ProductVariations = ({
   const [currPrevPrice, setCurrPrevPrice] = useState(null);
 
   useEffect(() => {
-    if (variations.length == 0) {
+    if (variations.length === 0) {
       return;
     }
     const {
@@ -59,6 +61,7 @@ const ProductVariations = ({
               ${convertCentToDollar(currPrice)} with {currQty} remaining
             </p>
             <ProductQuantity
+              seller_id={seller_id}
               product_id={product_id}
               variation_pair_id={currVariation.variation_pair_id}
               product_name={product_name}

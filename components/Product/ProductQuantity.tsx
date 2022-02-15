@@ -11,6 +11,7 @@ const iconSize = {
 };
 
 type ProductQuantityProps = {
+  seller_id: string;
   product_id: number;
   variation_pair_id: number;
   product_name: string;
@@ -21,6 +22,7 @@ type ProductQuantityProps = {
 };
 
 const ProductQuantity = ({
+  seller_id,
   product_id,
   variation_pair_id,
   product_name,
@@ -91,6 +93,7 @@ const ProductQuantity = ({
       dispatch({
         type: UPDATE_ITEM_COUNT,
         payload: {
+          seller_id,
           product_id,
           variation_pair_id,
           product_name,

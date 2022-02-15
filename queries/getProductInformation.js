@@ -1,6 +1,7 @@
 const query = `
 query getProductInformation($product_id: Int!) {
   product_by_pk(product_id: $product_id) {
+    seller_id
     brand {
       brand_name
     }

@@ -19,6 +19,7 @@ export type product_page_variation = {
 };
 
 export type ProductInformation = {
+  seller_id: string;
   brand: { brand_name: string };
   description: string;
   product_id: number;
@@ -35,4 +36,11 @@ export type ProductCartVariation = {
   variation_2: string;
   price: number;
   quantity: number;
+};
+
+export type ProductSellerInformation = {
+  user_id: string;
+  company_name: string;
+  flat_shipping_fee: number;
+  product_total_free_delivery: number;
 };

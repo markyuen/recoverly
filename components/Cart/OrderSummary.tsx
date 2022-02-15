@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "../../context/CartContext";
 import getStripe from '../../lib/get-stripejs';
 import { CURRENCY } from "../../config"
 import { convertCentToDollar } from "../../lib/helpers";
+import { ProductSellerInformation } from "../../types/product";
+import { CartItem } from "../../types/items";
 
-const OrderSummary = () => {
+const UNSET_SHIPPING_COST = -69;
+
+const OrderSummary = ({ sellerInfo }) => {
   const { cartItems } = useCart();
   const [loading, setLoading] = useState(false);
+  const [shippingCost, setShippingCost] = useState(UNSET_SHIPPING_COST);
+
+  useEffect(() => {
+    if (!cartItems) return;
+    const totalFee =
+      sellerInfo
+        .map((seller: ProductSellerInformation) => {
+          const sellerProductTotal = cartItems
+            .filter((item: CartItem) => item.seller_id === seller.user_id)
+            .reduce((acc, item: CartItem) => {
+              return acc + item.quantity * item.discounted_price;
+            }, 0);
+          if (sellerProductTotal >= seller.product_total_free_delivery) {
+            return 0;
+          } else {
+            return seller.flat_shipping_fee;
+          }
+        })
+        .reduce((acc, fee) => { return acc + fee })
+    setShippingCost(totalFee);
+  }, [cartItems, sellerInfo])
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -19,7 +44,15 @@ const OrderSummary = () => {
         currency: CURRENCY,
         quantity: item.quantity,
       }
-    })
+    });
+    if (shippingCost > 0) {
+      lineItems.push({
+        name: "Total Shipping Fee",
+        amount: shippingCost,
+        currency: CURRENCY,
+        quantity: 1,
+      });
+    }
     const response = await fetch('/api/checkout_sessions', {
       method: "POST",
       headers: {
@@ -57,7 +90,7 @@ const OrderSummary = () => {
     <div className="flex flex-col">
       <div className="col-span-2"><p><b>Order Summary</b></p></div>
       <p>
-        Total: $
+        Product Total: $
         {
           cartItems &&
           convertCentToDollar(
@@ -67,8 +100,16 @@ const OrderSummary = () => {
           )
         }
       </p>
+      <p>
+        Shipping Total: {
+          shippingCost !== UNSET_SHIPPING_COST &&
+            shippingCost === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingCost)}`
+        }
+      </p>
       {
-        cartItems && cartItems.length > 0 &&
+        cartItems &&
+        cartItems.length > 0 &&
+        shippingCost !== UNSET_SHIPPING_COST &&
         <button
           type="button"
           onClick={handleSubmit}

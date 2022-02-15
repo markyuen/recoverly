@@ -30,6 +30,7 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
 
     case UPDATE_ITEM_COUNT: {
       const {
+        seller_id,
         product_id,
         variation_pair_id,
         product_name,
@@ -46,6 +47,7 @@ const CartReducer = (state: CartItem[], action): CartItem[] => {
         console.log("----adding Item");
         return state.concat([
           {
+            seller_id,
             product_id,
             variation_pair_id,
             product_name,
@@ -85,6 +87,7 @@ export function CartWrapper({ children }) {
         console.log(res);
         const payload = res.cart_product.map((item) => {
           return {
+            seller_id: item.variation_pair.product.seller_id,
             variation_pair_id: item.variation_pair_id,
             product_id: item.variation_pair.product.product_id,
             product_name: item.variation_pair.product.product_name,
