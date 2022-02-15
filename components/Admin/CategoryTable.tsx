@@ -9,29 +9,29 @@ const fields = ["Category", "Parent", "Image", "", ""];
 
 const CategoryTable = () => {
   const { data, error } = useSWR(
-    [
-      "/api/graphql/getCategoriesAndParent",
-      {
+    {
+      url: "/api/graphql/getCategoriesAndParent",
+      body: {
         query: getCategoriesAndParent,
       },
-    ],
-    fetcherWithBody
+    },
+    fetcherWithBody,
   );
 
   return (
     <>
-      {data && data.category && (
-        <AddNewCategoryModal categories={data.category} />
+      {data && data[0].category && (
+        <AddNewCategoryModal categories={data[0].category} />
       )}
       <GenericAdminTable title="Categories" fields={fields}>
         <tbody>
           {data &&
-            data.category &&
-            data.category.map((item, index) => (
+            data[0].category &&
+            data[0].category.map((item, index) => (
               <CategoryTableRow
                 category={item}
                 key={index}
-                all_categories={data.category}
+                all_categories={data[0].category}
               />
             ))}
         </tbody>

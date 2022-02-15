@@ -16,8 +16,8 @@ export type ItemListing = {
   product_images: { url: string }[];
   product_name: string;
   variations: {
-    discounted_price_cents: number;
-    original_price_cents: number;
+    discounted_price: number;
+    original_price: number;
   }[];
 };
 
@@ -40,18 +40,19 @@ export type ItemPageData = {
     variation_1: string;
     variation_2: string;
     quantity: number;
-    original_price_cents: number;
-    discounted_price_cents: number;
+    original_price: number;
+    discounted_price: number;
   }[];
 };
 
 export type CartItem = {
+  seller_id: string;
+  variation_pair_id: number;
   product_id: number;
   product_name: string;
-  variation: {
-    variation_1: string;
-    variation_2: string;
-    quantity: number;
-    discounted_price: number;
-  }[];
+  variation_1: string;
+  variation_2: string;
+  quantity: number;
+  discounted_price: number;
+  limit: number;
 };

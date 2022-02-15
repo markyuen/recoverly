@@ -1,69 +1,65 @@
 import Link from "next/link";
-import React from "react";
-import { useCart } from "../../context/CartContext";
 import { convertCentToDollar } from "../../lib/helpers";
-import ShoppingCartItem from "../nav/ShoppingCartItem";
-import CartItemVariation from "./CartItemVariation";
+import { CartItem } from "../../types/items";
+import CartItemDisplay from "./CartItemDisplay";
 
-type Props = {
-  limits: any;
-};
-
-const ShoppingCart = ({ limits }) => {
-  const { cartItems } = useCart();
+const ShoppingCart = ({ cartItemsBySeller }) => {
   return (
     <div className="col-span-4">
       <div className="grid space-y-4 grid-cols-1">
-        {cartItems.map(({ product_name, variation, product_id }, index) => {
+        {cartItemsBySeller.map(({ company, items, item_total, shipping_fee }, index: number) => {
           return (
-            <div key={index} className="px-4 py-2">
-              <div>
-                <Link
-                  href={{
-                    pathname: "/product",
-                    query: { product_id: product_id.toString() },
-                  }}
-                  passHref
-                >
-                  <p className="text-md font-bold cursor-pointer hover:text-blue-400">
-                    {product_name}
-                  </p>
-                </Link>
-              </div>
-              <div className="flex justify-between">
-                <div>
-                  {variation.map(
-                    (
-                      { variation_1, variation_2, quantity, discounted_price },
-                      index
-                    ) => {
-                      return (
-                        <CartItemVariation
-                          product_id={product_id}
-                          product_name={product_name}
-                          key={index}
-                          variation_1={variation_1}
-                          variation_2={variation_2}
-                          quantity={quantity}
-                          discounted_price={discounted_price}
-                          limit={limits}
-                        />
-                      );
-                    }
-                  )}
-                </div>
-              </div>
+            <div key={index}>
               <p>
-                Total:${" "}
-                {convertCentToDollar(
-                  variation.reduce((acc, { quantity, discounted_price }) => {
-                    return acc + quantity * discounted_price;
-                  }, 0)
-                )}
+                <b>Company:</b> {company}
+              </p>
+
+              {items.map((item: CartItem, index: number) => {
+                return (
+                  <div key={index} className="px-4 py-2">
+                    <div>
+                      <Link href={`/product?product_id=${item.product_id}`} passHref>
+                        <p className="text-md font-bold cursor-pointer hover:text-blue-400">
+                          {item.product_name}
+                        </p>
+                      </Link>
+                    </div>
+                    <div className="flex justify-between">
+                      <div>
+                        <CartItemDisplay
+                          seller_id={item.seller_id}
+                          product_id={item.product_id}
+                          product_name={item.product_name}
+                          variation_pair_id={item.variation_pair_id}
+                          variation_1={item.variation_1}
+                          variation_2={item.variation_2}
+                          quantity={item.quantity}
+                          discounted_price={item.discounted_price}
+                          limit={item.limit}
+                        />
+                      </div>
+                    </div>
+                    <p>
+                      Total: ${convertCentToDollar(item.quantity * item.discounted_price)}
+                    </p>
+                  </div>
+                )
+              })
+              }
+
+              <p>
+                <b>Company Shipping Fee:</b> {
+                  shipping_fee === 0 ? "You qualify for free shipping!" : `$${convertCentToDollar(shipping_fee)}`
+                }
+              </p>
+
+              <p>
+                <b>Company Product Total:</b> {convertCentToDollar(item_total + shipping_fee)}
               </p>
             </div>
-          );
-        })}
+          )
+        })
+        }
       </div>
     </div>
   );

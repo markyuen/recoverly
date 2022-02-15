@@ -16,6 +16,7 @@ type ProductPageProps = {
 
 const ProductPage = ({ product }: ProductPageProps) => {
   const {
+    seller_id,
     product_id,
     brand: { brand_name },
     product_images,
@@ -41,8 +42,8 @@ const ProductPage = ({ product }: ProductPageProps) => {
         Math.max(
           acc,
           calculateDiscount(
-            item.original_price_cents,
-            item.discounted_price_cents
+            item.original_price,
+            item.discounted_price,
           )
         ),
       0
@@ -67,6 +68,7 @@ const ProductPage = ({ product }: ProductPageProps) => {
             Up to {getMaxDiscountPercentage()}% Off
           </Tag>
           <ProductVariations
+            seller_id={seller_id}
             product_id={product_id}
             product_name={product_name}
             variations={variations}

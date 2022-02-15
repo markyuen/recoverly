@@ -1,41 +1,50 @@
 import React, { useState } from "react";
-import { useCart } from "../../context/CartContext";
-
-import getStripe from "../../lib/get-stripejs";
-import { CURRENCY } from "../../config";
+import getStripe from '../../lib/get-stripejs';
+import { CURRENCY } from "../../config"
 import { convertCentToDollar } from "../../lib/helpers";
+import { ProductBySeller } from "../../types/product";
+import { CartItem } from "../../types/items";
 
-const TEST_ITEMS = [
-  {
-    name: "Something",
-    amount: 1,
-    currency: CURRENCY,
-    quantity: 1,
-  },
-  {
-    name: "Another thing",
-    amount: 100,
-    currency: CURRENCY,
-    quantity: 5,
-  },
-];
-
-const OrderSummary = () => {
-  const { cartItems } = useCart();
+const OrderSummary = ({ cartItemsBySeller }) => {
   const [loading, setLoading] = useState(false);
+
+  const productTotal: number = cartItemsBySeller
+    .reduce((acc: number, item: ProductBySeller) => { return acc + item.item_total }, 0)
+
+  const shippingTotal: number = cartItemsBySeller
+    .reduce((acc: number, item: ProductBySeller) => { return acc + item.shipping_fee }, 0)
 
   const handleSubmit = async () => {
     setLoading(true);
     // Create a Checkout Session.
-    const response = await fetch("/api/checkout_sessions", {
+    const lineItems = cartItemsBySeller
+      .map((seller: ProductBySeller) => {
+        return seller.items.map((item: CartItem) => {
+          return {
+            name: `${seller.company} - ${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
+              })`,
+            amount: item.discounted_price,
+            currency: CURRENCY,
+            quantity: item.quantity,
+          }
+        })
+      })
+      .flat();
+    if (shippingTotal > 0) {
+      lineItems.push({
+        name: "Total Shipping Fee",
+        amount: shippingTotal,
+        currency: CURRENCY,
+        quantity: 1,
+      });
+    }
+    const response = await fetch('/api/checkout_sessions', {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        amount: 100,
-        // TODO replace with real cart
-        items: TEST_ITEMS,
+        items: lineItems,
       }),
     });
     const data = await response.json();
@@ -64,29 +73,24 @@ const OrderSummary = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="col-span-2">Order Summary</div>
+      <div className="col-span-2"><p><b>Order Summary</b></p></div>
       <p>
-        Total :${" "}
-        {cartItems &&
-          convertCentToDollar(
-            cartItems.reduce((acc, { variation }) => {
-              return (
-                acc +
-                variation.reduce((acc, { quantity, discounted_price }) => {
-                  return acc + quantity * discounted_price;
-                }, 0)
-              );
-            }, 0)
-          )}
+        Product Total: ${convertCentToDollar(productTotal)}
       </p>
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={loading}
-        className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
-      >
-        Checkout with Stripe
-      </button>
+      <p>
+        Shipping Total: {
+          shippingTotal === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingTotal)}`
+        }
+      </p>
+      {
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={loading}
+          className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+          Checkout with Stripe
+        </button>
+      }
     </div>
   );
 };

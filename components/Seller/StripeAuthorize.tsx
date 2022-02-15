@@ -12,11 +12,11 @@ const StripeAuthorize = () => {
   const [payload, setPayload] = useState(null);
 
   const { data } = useSWR(
-    [
-      mounted ? "/api/verifyStripe" : null,
-      payload,
-    ],
-    fetcherWithBody
+    {
+      url: mounted ? "/api/verifyStripe" : null,
+      body: payload,
+    },
+    fetcherWithBody,
   );
 
   useEffect(() => {

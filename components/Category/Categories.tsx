@@ -1,26 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useSWR from "swr";
 import { fetcherWithBody } from "../../lib/swr";
 import Header from "../Common/Header";
 import CategoryCard from "./CategoryCard";
 import getParentCategories from "../../queries/getParentCategories";
-import { Skeleton } from "@chakra-ui/react";
 import SkeletonGrid from "../Skeleton/SkeletonGrid";
-
-type CategoryData = {
-  category_name: string;
-  image_url: string;
-};
 
 const Categories = () => {
   const { data, error } = useSWR(
-    [
-      "/api/graphql/getParentCategories",
-      {
+    {
+      url: "/api/graphql/getParentCategories",
+      body: {
         query: getParentCategories,
       },
-    ],
-    fetcherWithBody
+    },
+    fetcherWithBody,
   );
 
   if (!data && !error) {
@@ -40,8 +34,8 @@ const Categories = () => {
       <Header name="Categories" />
       <div className="grid grid-cols-2 md:grid-cols-4 mt-10 gap-x-4 gap-y-4">
         {data &&
-          data.category &&
-          data.category.map((item, index) => {
+          data[0].category &&
+          data[0].category.map((item, index) => {
             const { category_name, image_url } = item;
 
             return (

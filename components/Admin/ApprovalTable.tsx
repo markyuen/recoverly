@@ -17,22 +17,22 @@ const fields = [
 
 const AdminTable = () => {
   const { data, error } = useSWR(
-    [
-      "/api/graphql/getSellers",
-      {
+    {
+      url: "/api/graphql/getSellers",
+      body: {
         query: getSellers,
       },
-    ],
-    fetcherWithBody
+    },
+    fetcherWithBody,
   );
 
   return (
     <div className="my-10">
       <GenericAdminTable fields={fields} title="Sellers">
         <>
-          {data && data.seller && (
+          {data && data[0].seller && (
             <ApprovalTableBody
-              sellers={data.seller.map((seller) => ({
+              sellers={data[0].seller.map((seller) => ({
                 ...seller,
                 user_id: seller.user.user_id,
                 contact_name: seller.first_name + " " + seller.last_name,

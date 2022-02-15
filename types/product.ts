@@ -1,3 +1,5 @@
+import { CartItem } from "./items";
+
 export type product_page_category = {
   main_category: boolean;
   category: {
@@ -10,14 +12,16 @@ export type product_page_file = {
 };
 
 export type product_page_variation = {
-  discounted_price_cents: number;
-  original_price_cents: number;
+  discounted_price: number;
+  original_price: number;
   quantity: number;
   variation_1: string;
   variation_2: string | null;
+  variation_pair_id: number;
 };
 
 export type ProductInformation = {
+  seller_id: string;
   brand: { brand_name: string };
   description: string;
   product_id: number;
@@ -29,8 +33,23 @@ export type ProductInformation = {
 };
 
 export type ProductCartVariation = {
+  variation_pair_id: number;
   variation_1: string;
   variation_2: string;
   price: number;
   quantity: number;
 };
+
+export type ProductSellerInformation = {
+  user_id: string;
+  company_name: string;
+  flat_shipping_fee: number;
+  product_total_free_delivery: number;
+};
+
+export type ProductBySeller = {
+  company: string;
+  items: CartItem[];
+  item_total: number;
+  shipping_fee: number;
+}

@@ -36,12 +36,12 @@ const generateVariations = (formState, product_id) => {
           variation_1,
           variation_1_category,
           quantity: getVariationQuantity(variation_1, "", variation_sku),
-          original_price_cents: getVariationOriginalPrice(
+          original_price: getVariationOriginalPrice(
             variation_1,
             "",
             variation_sku
           ),
-          discounted_price_cents: getVariationDiscountedPrice(
+          discounted_price: getVariationDiscountedPrice(
             variation_1,
             "",
             variation_sku
@@ -61,12 +61,12 @@ const generateVariations = (formState, product_id) => {
               variation_2,
               variation_sku
             ),
-            original_price_cents: getVariationOriginalPrice(
+            original_price: getVariationOriginalPrice(
               variation_1,
               variation_2,
               variation_sku
             ),
-            discounted_price_cents: getVariationDiscountedPrice(
+            discounted_price: getVariationDiscountedPrice(
               variation_1,
               variation_2,
               variation_sku

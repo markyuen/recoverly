@@ -11,12 +11,12 @@ export const makeGraphQLQuery = (operation, variables) => {
 
   // console.log(req_body);
 
-  return fetcherWithBody(req_url, req_body).then((res) => {
-    if (!res || res.errors) {
-      const errors = "Error: " + res.errors[0].message;
+  return fetcherWithBody({ url: req_url, body: req_body }).then((res) => {
+    if (!res || res[0].errors) {
+      const errors = "Error: " + res[0].errors[0].message;
       throw new Error(errors);
     }
-    return res;
+    return res[0];
   });
 };
 
