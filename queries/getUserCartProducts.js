@@ -1,6 +1,6 @@
 export const getUserCartProducts = `
 query getUserCartProducts($user_id:String!) {
-  cart_product(where: {user_id: {_eq: $user_id}}) {
+  cart_product(where: {user_id: {_eq: $user_id}}, order_by: {variation_pair: {product: {seller: {company_name: asc}}}}) {
     user_id
     variation_pair_id
     cart_product_status_id
