@@ -1,54 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { useCart } from "../../context/CartContext";
+import React, { useState } from "react";
 import getStripe from '../../lib/get-stripejs';
 import { CURRENCY } from "../../config"
 import { convertCentToDollar } from "../../lib/helpers";
-import { ProductSellerInformation } from "../../types/product";
+import { ProductBySeller } from "../../types/product";
 import { CartItem } from "../../types/items";
 
-const UNSET_SHIPPING_COST = -69;
-
-const OrderSummary = ({ sellerInfo }) => {
-  const { cartItems } = useCart();
+const OrderSummary = ({ cartItemsBySeller }) => {
   const [loading, setLoading] = useState(false);
-  const [shippingCost, setShippingCost] = useState(UNSET_SHIPPING_COST);
 
-  useEffect(() => {
-    if (!cartItems) return;
-    const totalFee =
-      sellerInfo
-        .map((seller: ProductSellerInformation) => {
-          const sellerProductTotal = cartItems
-            .filter((item: CartItem) => item.seller_id === seller.user_id)
-            .reduce((acc, item: CartItem) => {
-              return acc + item.quantity * item.discounted_price;
-            }, 0);
-          if (sellerProductTotal >= seller.product_total_free_delivery) {
-            return 0;
-          } else {
-            return seller.flat_shipping_fee;
-          }
-        })
-        .reduce((acc, fee) => { return acc + fee })
-    setShippingCost(totalFee);
-  }, [cartItems, sellerInfo])
+  const productTotal: number = cartItemsBySeller
+    .reduce((acc: number, item: ProductBySeller) => { return acc + item.item_total }, 0)
+
+  const shippingTotal: number = cartItemsBySeller
+    .reduce((acc: number, item: ProductBySeller) => { return acc + item.shipping_fee }, 0)
 
   const handleSubmit = async () => {
     setLoading(true);
     // Create a Checkout Session.
-    const lineItems = cartItems.map((item) => {
-      return {
-        name: `${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
-          })`,
-        amount: item.discounted_price,
-        currency: CURRENCY,
-        quantity: item.quantity,
-      }
-    });
-    if (shippingCost > 0) {
+    const lineItems = cartItemsBySeller
+      .map((seller: ProductBySeller) => {
+        return seller.items.map((item: CartItem) => {
+          return {
+            name: `${seller.company} - ${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
+              })`,
+            amount: item.discounted_price,
+            currency: CURRENCY,
+            quantity: item.quantity,
+          }
+        })
+      })
+      .flat();
+    if (shippingTotal > 0) {
       lineItems.push({
         name: "Total Shipping Fee",
-        amount: shippingCost,
+        amount: shippingTotal,
         currency: CURRENCY,
         quantity: 1,
       });
@@ -90,26 +75,14 @@ const OrderSummary = ({ sellerInfo }) => {
     <div className="flex flex-col">
       <div className="col-span-2"><p><b>Order Summary</b></p></div>
       <p>
-        Product Total: $
-        {
-          cartItems &&
-          convertCentToDollar(
-            cartItems.reduce((acc, item) => {
-              return acc + item.quantity * item.discounted_price;
-            }, 0)
-          )
-        }
+        Product Total: ${convertCentToDollar(productTotal)}
       </p>
       <p>
         Shipping Total: {
-          shippingCost !== UNSET_SHIPPING_COST &&
-            shippingCost === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingCost)}`
+          shippingTotal === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingTotal)}`
         }
       </p>
       {
-        cartItems &&
-        cartItems.length > 0 &&
-        shippingCost !== UNSET_SHIPPING_COST &&
         <button
           type="button"
           onClick={handleSubmit}

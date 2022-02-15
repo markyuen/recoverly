@@ -9,7 +9,8 @@ import ProtectedRoute from "../components/route/ProtectedRoute";
 import { useCart } from "../context/CartContext";
 import { fetcherWithBody } from "../lib/swr";
 import { getSellerFees } from "../queries/getSellerFees";
-import { ProductSellerInformation } from "../types/product";
+import { CartItem } from "../types/items";
+import { ProductBySeller, ProductSellerInformation } from "../types/product";
 
 const Cart = () => {
   const { cartItems } = useCart();
@@ -50,11 +51,26 @@ const Cart = () => {
     );
   }
 
-  const sellerInfo: ProductSellerInformation[] = data.map((item) => {
-    return {
-      ...item.seller_by_pk
-    }
-  });
+  const cartItemsBySeller: ProductBySeller[] = data
+    .map((item) => { return { ...item.seller_by_pk } })
+    .map((seller: ProductSellerInformation) => {
+      const sellerProducts = cartItems
+        .filter((item: CartItem) => item.seller_id === seller.user_id)
+      const sellerProductTotal = sellerProducts
+        .reduce((acc, item: CartItem) => {
+          return acc + item.quantity * item.discounted_price;
+        }, 0);
+      const shipping_fee =
+        sellerProductTotal >= seller.product_total_free_delivery
+          ? 0
+          : seller.flat_shipping_fee
+      return {
+        company: seller.company_name,
+        items: [...sellerProducts],
+        item_total: sellerProductTotal,
+        shipping_fee,
+      }
+    });
 
   return (
     <ProtectedRoute>
@@ -62,8 +78,8 @@ const Cart = () => {
         <div>
           <Header name="Shopping Cart" />
           <div className="grid grid-cols-6 px-5 mt-10">
-            <ShoppingCart sellerInfo={sellerInfo} />
-            <OrderSummary sellerInfo={sellerInfo} />
+            <ShoppingCart cartItemsBySeller={cartItemsBySeller} />
+            <OrderSummary cartItemsBySeller={cartItemsBySeller} />
           </div>
         </div>
       </ShopNav>

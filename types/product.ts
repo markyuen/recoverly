@@ -1,3 +1,5 @@
+import { CartItem } from "./items";
+
 export type product_page_category = {
   main_category: boolean;
   category: {
@@ -44,3 +46,10 @@ export type ProductSellerInformation = {
   flat_shipping_fee: number;
   product_total_free_delivery: number;
 };
+
+export type ProductBySeller = {
+  company: string;
+  items: CartItem[];
+  item_total: number;
+  shipping_fee: number;
+}

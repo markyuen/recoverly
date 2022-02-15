@@ -10,6 +10,9 @@ import { deleteSingleCategory } from "../../queries/deleteSingleCategory";
 import { generateItemSlugLink } from "../../lib/string";
 import { mutate } from "swr";
 import { getCategoriesAndParent } from "../../queries/getCategoriesAndParent";
+import { makeGraphQLQuery } from "../../lib/GraphQL";
+
+// TODO: Refactor to use makeGraphQLQuery
 
 type CategoryTableRowProps = {
   category: product_category;
@@ -35,8 +38,8 @@ const CategoryTableRow = ({
         category_id,
       },
     }).then((res) => {
-      if (res.errors) {
-        const errors = "Error: " + res.errors[0].message;
+      if (res[0].errors) {
+        const errors = "Error: " + res[0].errors[0].message;
         toast({
           title: "Error Encountered",
           description: errors,
@@ -87,8 +90,8 @@ const CategoryTableRow = ({
         })
       )
       .then((res) => {
-        if (res.errors) {
-          const errors = "Error: " + res.errors[0].message;
+        if (res[0].errors) {
+          const errors = "Error: " + res[0].errors[0].message;
           toast({
             title: "Error Encountered",
             description: errors,
