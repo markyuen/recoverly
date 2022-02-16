@@ -10,25 +10,22 @@ const NavBar = () => {
 
   return (
     <>
-      <div className="bg-gray-100 py-10 ">
+      <div className="">
         <div className="mx-auto max-w-4xl xl:max-w-6xl px-4">
           <div className="flex justify-between  text-gray-600 text-xs">
             <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                />
-              </svg>
-              <span className="px-2 flex items-center"> +65 1234-1234</span>
+              <div className=" text-black">
+                <Link href={"/"} passHref>
+                  <div className="flex items-center cursor-pointer">
+                    <Image
+                      src="/logo.png"
+                      width={100}
+                      height={100}
+                      alt="logo"
+                    />
+                  </div>
+                </Link>
+              </div>
             </div>
             <div className="flex items-center justify-center">
               {!user ? (
@@ -71,17 +68,7 @@ const NavBar = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center py-4">
-            <div className="pr-4 text-2xl text-black">
-              <Link href={"/"} passHref>
-                <div className="flex items-center cursor-pointer">
-                  <Image src="/logo.png" width={150} height={150} alt="logo" />
-                </div>
-              </Link>
-            </div>
 
-            <SearchBar />
-          </div>
           {/* <div className="text-md text-gray-600">
             <span className="pr-5">Categories</span>
             <span className="">Brands</span>

@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <>
       <ShopNav>
-        <main className="lg:relative">
+        <main className="lg:relative flex">
           <div className="mx-auto max-w-7xl w-full pt-16 pb-20 text-center lg:py-48 lg:text-left">
             <div className="px-4 lg:w-1/2 sm:px-8 xl:pr-16">
               <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl">
@@ -24,7 +24,7 @@ const Index = () => {
               </p>
             </div>
           </div>
-          <div className="relative w-full h-64 sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 lg:h-full">
+          <div className="hidden md:block md:w-full h-64 sm:h-72 md:h-96 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 lg:h-full">
             <Image src="/logo.png" width={500} height={500} alt="logo" />
           </div>
         </main>

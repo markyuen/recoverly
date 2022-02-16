@@ -64,7 +64,7 @@ const PopularItems = () => {
             />
           </svg>
         )}
-        <div className="grid grid-cols-4 mx-4 pt-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 mx-4 pt-10">
           {data &&
             data[0]["product"]
               .filter((_, index) => index >= start && index <= end)

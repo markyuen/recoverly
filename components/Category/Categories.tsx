@@ -63,7 +63,7 @@ const Categories = () => {
             />
           </svg>
         )}
-        <div className="grid grid-cols-4 my-4 ">
+        <div className="grid grid-cols-2 md:grid-cols-4 my-4 ">
           {data &&
             data[0].category &&
             data[0].category
