@@ -24,7 +24,7 @@ const SellOnRecoverly = () => {
           </h1>
           <ul className="list-disc ml-6">
               <li className="p-2">Sign up for an account from the navigation bar above</li>
-              <li className="p-2">Navigate to "Your Account" and fill in few short details</li>
+              <li className="p-2">Navigate to `Your Account` and fill in few short details</li>
               <li className="p-2">Get approved and begin listing your products</li>
           </ul>
         </div>
