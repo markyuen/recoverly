@@ -1,24 +1,34 @@
 import React, { useState } from "react";
-import useSWR from "swr";
-import { fetcherWithBody } from "../../lib/swr";
 import Header from "../Common/Header";
-import CategoryCard from "./CategoryCard";
-import getParentCategories from "../../queries/getParentCategories";
+import getPopularItems from "../../queries/getPopularItems";
+import { fetcherWithBody } from "../../lib/swr";
+import useSWR from "swr";
 import SkeletonGrid from "../Skeleton/SkeletonGrid";
+import ItemCard from "../Item/ItemCard";
 
-const Categories = () => {
+const PopularItems = () => {
   const { data, error } = useSWR(
     {
-      url: "/api/graphql/getParentCategories",
+      url: "/api/graphql/getPopularItems",
       body: {
-        query: getParentCategories,
+        query: getPopularItems,
       },
     },
     fetcherWithBody
   );
 
   const [start, setStart] = useState(0);
-  const [end, setEnd] = useState(3);
+  const [end, setEnd] = useState(7);
+
+  const incrementIndex = () => {
+    setStart((start) => start + 7);
+    setEnd((end) => end + 7);
+  };
+
+  const decrementIndex = () => {
+    setStart((start) => start - 7);
+    setEnd((end) => end - 7);
+  };
 
   if (!data && !error) {
     return (
@@ -31,26 +41,17 @@ const Categories = () => {
     );
   }
 
-  const incrementIndex = () => {
-    setStart((start) => start + 1);
-    setEnd((end) => end + 1);
-  };
+  console.log(data[0]["product"]);
 
-  const decrementIndex = () => {
-    setStart((start) => start - 1);
-    setEnd((end) => end - 1);
-  };
-
-  console.log(data);
   return (
-    <>
-      <Header name="Popular Categories" />
-      <div className="flex items-center ">
+    <div className="mt-20">
+      <Header name="Popular Items" />
+      <div className="flex items-center">
         {start > 0 && (
           <svg
             onClick={decrementIndex}
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 cursor-pointer mr-4"
+            className="h-20 w-20 cursor-pointer mr-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -63,28 +64,24 @@ const Categories = () => {
             />
           </svg>
         )}
-        <div className="grid grid-cols-2 md:grid-cols-4 my-4 ">
+        <div className="grid grid-cols-2 md:grid-cols-4 mx-4 pt-10">
           {data &&
-            data[0].category &&
-            data[0].category
-              .filter((item, index) => index >= start && index <= end)
-              .map((item, index) => {
-                const { category_name, image_url } = item;
-
+            data[0]["product"]
+              .filter((_, index) => index >= start && index <= end)
+              .map((product, index) => {
                 return (
-                  <CategoryCard
-                    key={index}
-                    name={category_name}
-                    image_url={image_url}
-                  />
+                  // <div>{product.product_name}</div>
+                  <div key={index}>
+                    <ItemCard key={index} item={product} />
+                  </div>
                 );
               })}
         </div>
-        {data && data[0].category && start < data[0].category.length - 4 && (
+        {data && data[0]["product"] && start < data[0]["product"].length - 20 && (
           <svg
             onClick={incrementIndex}
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 cursor-pointer ml-4"
+            className="h-20 w-20 cursor-pointer ml-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -98,8 +95,8 @@ const Categories = () => {
           </svg>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
-export default Categories;
+export default PopularItems;
