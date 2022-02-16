@@ -180,7 +180,6 @@ export async function getStaticProps(context) {
     props: {
       productCount,
       brandCount,
-    }, // will be passed to the page component as props
-    revalidate: 60,
+    },
   };
 }
