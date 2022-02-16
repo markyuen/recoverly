@@ -24,7 +24,7 @@ const FAQComponent = (props) => {
           expanded ? "max-h-auto" : "max-h-0"
         }`}
       >
-        <p>{props.question.body}</p>
+        <p className="whitespace-pre-line">{props.question.body}</p>
       </div>
     </div>
   );
@@ -88,12 +88,14 @@ const FAQ = () => {
     },
   ];
 
-  const FAQBuyerItems = buyerFAQ.map((faq) => {
-    return <FAQComponent question={faq} />;
+  // render all the FAQs from Buyers
+  const FAQBuyerItems = buyerFAQ.map((faq, index) => {
+    return <FAQComponent key={index} question={faq} />;
   });
 
-  const FAQSellerItems = sellerFAQ.map((faq) => {
-    return <FAQComponent question={faq} />;
+  // render all the FAQs from Sellers
+  const FAQSellerItems = sellerFAQ.map((faq, index) => {
+    return <FAQComponent key={index} question={faq} />;
   });
 
   return (
