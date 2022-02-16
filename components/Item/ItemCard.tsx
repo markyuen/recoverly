@@ -27,15 +27,16 @@ const ItemCard = ({ item }: ItemCardProp) => {
       (acc, item) =>
         Math.max(
           acc,
-          calculateDiscount(
-            item.original_price,
-            item.discounted_price
-          )
+          calculateDiscount(item.original_price, item.discounted_price)
         ),
       0
     );
     return Math.round(maxDiscount - (maxDiscount % 5));
   };
+
+  if (!product_images[0]) {
+    console.log(product_id);
+  }
 
   return (
     <LinkContainer
@@ -67,17 +68,16 @@ const ItemCard = ({ item }: ItemCardProp) => {
                 (acc, item) => Math.min(acc, item.discounted_price),
                 Number.POSITIVE_INFINITY
               ) / 100
-          ).toFixed(2)} - $
+          ).toFixed(2)}{" "}
+          - $
           {(
             variations
               .filter(
                 ({ discounted_price, original_price }) =>
                   original_price > 0 && discounted_price > 0
               )
-              .reduce(
-                (acc, item) => Math.max(acc, item.discounted_price),
-                0
-              ) / 100
+              .reduce((acc, item) => Math.max(acc, item.discounted_price), 0) /
+            100
           ).toFixed(2)}{" "}
           <Tag
             style={{
