@@ -2,9 +2,12 @@
 const navigation = {
   main: [
     { name: "About", href: "/about" },
-    { name: "Returns and Refunds", href: "/about" },
-    { name: "FAQs", href: "/about" },
-    { name: "Terms and Conditions", href: "/about" },
+    { name: "Sell On Recoverly", href: "/sell_on_recoverly"},
+    { name: "Returns and Refunds", href: "/returns_and_refunds" },
+    { name: "FAQs", href: "/faq" },
+    { name: "Privacy Policy", href: "/privacypolicy"},
+    { name: "Terms and Conditions", href: "/termsandconditions" },
+    
   ],
   social: [
     // {
