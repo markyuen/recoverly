@@ -89,6 +89,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
             }
           }),
       };
+      
       makeGraphQLQuery("insertNewOrder", payload)
         .then((res) => {
           console.log("Success, redirecting...");
@@ -97,6 +98,8 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           console.log(err);
           return;
         });
+      
+      // TODO: remove items from cart, update product counts
 
       // Redirect to Checkout
       const stripe = await getStripe();

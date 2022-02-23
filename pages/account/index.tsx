@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../components/Common/Header";
-import ShopNav from "../components/layouts/ShopNav";
-import UserProfile from "../components/Profile/UserProfile";
-import ProtectedRoute from "../components/route/ProtectedRoute";
+import Header from "../../components/Common/Header";
+import ShopNav from "../../components/layouts/ShopNav";
+import UserProfile from "../../components/Profile/UserProfile";
+import ProtectedRoute from "../../components/route/ProtectedRoute";
 
 const Account = () => {
   return (
