@@ -5,14 +5,12 @@ import { CURRENCY } from "../../config"
 import { convertCentToDollar } from "../../lib/helpers";
 import { ProductBySeller } from "../../types/product";
 import { CartItem } from "../../types/items";
-import FormInput from "../Form/FormInput";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
 
 const OrderSummary = ({ cartItemsBySeller }) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
-  const [shippingAddress, setshippingAddress] = useState("");
 
   const productTotal: number = cartItemsBySeller
     .reduce((acc: number, item: ProductBySeller) => { return acc + item.item_total }, 0)
@@ -23,10 +21,6 @@ const OrderSummary = ({ cartItemsBySeller }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      if (shippingAddress === "") {
-        return alert("Please enter a shipping address before proceeding to checkout.");
-      }
-
       // Create a Checkout Session.
       const lineItems = cartItemsBySeller
         .map((seller: ProductBySeller) => {
@@ -68,7 +62,6 @@ const OrderSummary = ({ cartItemsBySeller }) => {
       // Write order to DB
       const payload = {
         user_id: user.sub,
-        shipping_address: shippingAddress,
         stripe_checkout_id: data.id,
         orders_products_data: cartItemsBySeller
           .map((seller: ProductBySeller) => {
@@ -89,7 +82,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
             }
           }),
       };
-      
+
       makeGraphQLQuery("insertNewOrder", payload)
         .then((res) => {
           console.log("Success, redirecting...");
@@ -98,7 +91,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           console.log(err);
           return;
         });
-      
+
       // TODO: remove items from cart, update product counts
 
       // Redirect to Checkout
@@ -133,21 +126,18 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           shippingTotal === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingTotal)}`
         }
       </p>
-      <FormInput
-        type="text"
-        value={shippingAddress}
-        onChange={(e) => setshippingAddress(e.target.value)}
-        label="Please enter the shipping address for this order:"
-      />
-      {
-        <button
-          type="button"
-          onClick={handleSubmit}
-          disabled={loading}
-          className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
-          Checkout with Stripe
-        </button>
-      }
+      <p>
+        <b>
+          Order Total: ${convertCentToDollar(productTotal + shippingTotal)}
+        </b>
+      </p>
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={loading}
+        className="mt-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer">
+        Checkout with Stripe
+      </button>
     </div>
   );
 };

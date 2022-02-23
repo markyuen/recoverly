@@ -29,6 +29,7 @@ import getAboutInformation from "./getAboutInformation";
 import { getSellerFees } from "./getSellerFees";
 import { insertNewOrder } from "./insertNewOrder";
 import { getUserOrders } from "./getUserOrders";
+import { updateUserOrderStatus } from "./updateUserOrderStatus";
 
 // Map Queries here so the hook can import the right query
 const mapping = {
@@ -63,6 +64,7 @@ const mapping = {
   getSellerFees,
   insertNewOrder,
   getUserOrders,
+  updateUserOrderStatus,
 };
 
 export default mapping;

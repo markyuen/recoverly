@@ -97,7 +97,7 @@ const UserOrders = () => {
                 </p>
                 {
                   order.products.map((product: OrderProduct, index: number) => {
-                    const itemDisplay = `${product.product_name} ${product.variation_1}${product.variation_2 ? `/${product.variation_2}` : ""} x${product.product_amount} (Total: $${convertCentToDollar(product.total_price)})`;
+                    const itemDisplay = `${product.product_name} ${product.variation_1}${product.variation_2 ? `/${product.variation_2}` : ""} x${product.product_amount} - Total: $${convertCentToDollar(product.total_price)} - Status: ${product.order_product_status}`;
 
                     return (
                       <div key={index} className="px-4 py-2">

@@ -3,6 +3,7 @@ import Cors from 'micro-cors'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import Stripe from 'stripe'
+import { makeGraphQLQuery, serverSideHasura } from '../../../lib/GraphQL'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
   apiVersion: '2020-08-27',
@@ -43,7 +44,15 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log('✅ Success:', event.id)
 
     // Cast event data to Stripe object.
-    if (event.type === 'payment_intent.succeeded') {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session
+      const address = `${session.shipping.name} - ${session.shipping.address.line1}${session.shipping.address.line2 ? ` session.shipping.address.line2` : ""} - ${session.shipping.address.country} ${session.shipping.address.postal_code}`;
+      await serverSideHasura("updateUserOrderStatus", {
+        stripe_checkout_id: session.id,
+        order_status_id: 2, // PAYMENT_RECEIVED
+        shipping_address: address,
+      })
+    } else if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object as Stripe.PaymentIntent
       // TODO: update status of order by checkout session id returned
       // Notify sellers that they have an order
