@@ -241,8 +241,8 @@ INSERT INTO orders_products_status (orders_products_status_name) VALUES
 -- price should be locked in once the order is submitted
 CREATE TABLE "orders_products" (
   order_id INTEGER REFERENCES "order" (order_id),
-  product_id INTEGER REFERENCES "product" (product_id),
-  PRIMARY KEY (order_id, product_id),
+  variation_pair_id INTEGER REFERENCES "variation_pair" (variation_pair_id),
+  PRIMARY KEY (order_id, variation_pair_id),
   orders_products_status_id INTEGER NOT NULL REFERENCES "orders_products_status" (orders_products_status_id) DEFAULT 1,
   product_amount INTEGER NOT NULL CHECK (product_amount > 0),
   total_price INTEGER NOT NULL CHECK (total_price > 0),
