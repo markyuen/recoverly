@@ -11,6 +11,10 @@ import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 export const SIGN_UP_TYPE = "SIGN_UP"
 export const UPDATE_TYPE = "UPDATE"
 
+function convertToInt(n: string) {
+  return ~~(parseFloat(n) * 100)
+}
+
 const SellerDetails = ({ callerType }) => {
   const { user } = useUser();
   const [loadingData, setLoadingData] = useState(true);
@@ -61,7 +65,6 @@ const SellerDetails = ({ callerType }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(sellerData);
     setLoading(true);
     try {
       // Input validation
@@ -96,7 +99,10 @@ const SellerDetails = ({ callerType }) => {
 
       if (callerType === SIGN_UP_TYPE) {
         // Insert new seller
-        makeGraphQLQuery("insertNewSeller", sellerData)
+        const payload = { ...sellerData }
+        payload.flat_shipping_fee = convertToInt(payload.flat_shipping_fee)
+        payload.product_total_free_delivery = convertToInt(payload.product_total_free_delivery)
+        await makeGraphQLQuery("insertNewSeller", sellerData)
           .then((res) => {
             console.log(res);
             window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name);
@@ -124,12 +130,12 @@ const SellerDetails = ({ callerType }) => {
           alert("Nothing to update!");
           return;
         }
-        const payload = { ...sellerData, user_id: user.sub };
-        payload.flat_shipping_fee = payload.flat_shipping_fee * 100;
-        payload.product_total_free_delivery = payload.product_total_free_delivery * 100;
+        const payload = { ...sellerData, user_id: user.sub }
+        payload.flat_shipping_fee = convertToInt(payload.flat_shipping_fee)
+        payload.product_total_free_delivery = convertToInt(payload.product_total_free_delivery)
         delete payload.stripe_id;
         delete payload.verified;
-        makeGraphQLQuery("updateSellerInfo", payload)
+        await makeGraphQLQuery("updateSellerInfo", payload)
           .then((res) => {
             setOriginalSellerData(JSON.stringify(sellerData));
             alert("Success updating your information!");
