@@ -133,9 +133,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
         Product Total: ${convertCentToDollar(productTotal)}
       </p>
       <p>
-        Shipping Total: {
-          shippingTotal === 0 ? <b>Free!</b> : `$${convertCentToDollar(shippingTotal)}`
-        }
+        Shipping Total: ${convertCentToDollar(shippingTotal)}
       </p>
       <p>
         <b>

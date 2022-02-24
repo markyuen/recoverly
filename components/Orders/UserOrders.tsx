@@ -1,7 +1,5 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useEffect, useState } from "react";
-
-import InternalLink from "../Common/Link";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 import { OrderProduct, OrderSeller, UserOrder } from "../../types/orders";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
@@ -23,6 +21,7 @@ const UserOrders = () => {
               shipping_address: item.shipping_address,
               stripe_checkout_id: item.stripe_checkout_id,
               order_status: item.order_status.order_status_name,
+              created_at: new Date(item.created_at + "Z"),
               products: item.orders_products
                 .map((product) => {
                   return {
@@ -78,9 +77,9 @@ const UserOrders = () => {
               }, 0)
 
             return (
-              <div key={index}>
+              <div key={index} className="border-2">
                 <p>
-                  <b>Order {index + 1}</b>
+                  <b>Order Placed: </b>{order.created_at.toString()}
                 </p>
 
                 <p>
@@ -121,7 +120,7 @@ const UserOrders = () => {
                       <div key={index} className="px-4 py-2">
                         <div>
                           <p>
-                            {seller.company_name}: ${convertCentToDollar(seller.delivery_fee)}
+                            {seller.company_name} - Shipping Total: ${convertCentToDollar(seller.delivery_fee)} - Status: {seller.order_seller_status}
                           </p>
                         </div>
                       </div>
@@ -132,21 +131,11 @@ const UserOrders = () => {
                 <p>
                   <b>Order Total: ${convertCentToDollar(orderTotal)}</b>
                 </p>
-
-                <hr></hr>
-
               </div>
             )
           })
         }
       </div>
-
-      <InternalLink
-        href="/"
-        name="Return to main page."
-        styling="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        type="customer"
-      />
     </div>
   );
 };

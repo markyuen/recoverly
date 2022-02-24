@@ -26,6 +26,19 @@ const Index = () => {
         </div>
       </LinkContainer>
       <SellerItemTable />
+      <div className="flex justify-center">
+          <LinkContainer href="/seller/orders">
+            <div className="inline-flex items-center px-5 py-2 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer justify-center">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+              <p>Click here to view your customer orders.</p>
+            </div>
+          </LinkContainer>
+        </div>
     </ShopNav>
   );
 };

@@ -23,6 +23,7 @@ export type UserOrder = {
   shipping_address: string;
   stripe_checkout_id: string;
   order_status: string;
+  created_at: Date;
   products: OrderProduct[];
   sellers: OrderSeller[];
 }
