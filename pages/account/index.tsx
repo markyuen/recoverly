@@ -1,6 +1,5 @@
 import React from "react";
 import Header from "../../components/Common/Header";
-import InternalLink from "../../components/Common/Link";
 import LinkContainer from "../../components/Common/LinkContainer";
 import ShopNav from "../../components/layouts/ShopNav";
 import UserProfile from "../../components/Profile/UserProfile";

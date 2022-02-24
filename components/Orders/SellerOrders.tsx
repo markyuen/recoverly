@@ -6,13 +6,13 @@ import { makeGraphQLQuery } from "../../lib/GraphQL";
 import { convertCentToDollar } from "../../lib/helpers";
 import Link from "next/link";
 
-const UserOrders = () => {
+const SellerOrders = () => {
   const { user } = useUser();
   const [orderData, setOrderData] = useState<Order[]>(null);
 
   useEffect(() => {
     if (!user) return;
-    makeGraphQLQuery("getUserOrders", { user_id: user.sub })
+    makeGraphQLQuery("getSellerOrders", { user_id: user.sub })
       .then((res) => {
         const data: Order[] = res.order
           .map((item) => {
@@ -140,4 +140,4 @@ const UserOrders = () => {
   );
 };
 
-export default UserOrders;
+export default SellerOrders;

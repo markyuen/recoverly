@@ -18,7 +18,7 @@ export type OrderSeller = {
   order_seller_status: string;
 }
 
-export type UserOrder = {
+export type Order = {
   order_id: number;
   shipping_address: string;
   stripe_checkout_id: string;
