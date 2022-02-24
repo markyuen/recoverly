@@ -43,6 +43,16 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           quantity: 1,
         });
       }
+      const productMetadata = cartItemsBySeller
+        .reduce((acc, seller: ProductBySeller) => {
+          const counts = seller.items.map((item: CartItem) => {
+            return [item.variation_pair_id, item.quantity]
+          })
+          counts.forEach(([k, v]) => {
+            acc[k] = v
+          })
+          return acc
+        }, {})
       const response = await fetch('/api/checkout_sessions', {
         method: "POST",
         headers: {
@@ -50,6 +60,9 @@ const OrderSummary = ({ cartItemsBySeller }) => {
         },
         body: JSON.stringify({
           items: lineItems,
+          email: user.email,
+          user_id: user.sub,
+          products: JSON.stringify(productMetadata),
         }),
       });
       const data = await response.json();
@@ -91,8 +104,6 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           console.log(err);
           return;
         });
-
-      // TODO: remove items from cart, update product counts
 
       // Redirect to Checkout
       const stripe = await getStripe();

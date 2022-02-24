@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { convertCentToDollar } from "../../lib/helpers";
 import { CartItem } from "../../types/items";
@@ -13,7 +14,11 @@ const CartIconItemDisplay = ({
     item &&
     <div className="px-4 py-2">
       <div>
-        <p className="text-md font-bold">{item.product_name}</p>
+        <Link href={`/product?product_id=${item.product_id}`} passHref>
+          <p className="text-md font-bold cursor-pointer hover:text-blue-400">
+            {item.product_name}
+          </p>
+        </Link>
       </div>
       <div className="flex justify-between">
         <div>

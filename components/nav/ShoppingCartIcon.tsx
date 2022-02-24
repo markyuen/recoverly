@@ -44,7 +44,8 @@ export default function ShoppingCartIcon() {
         {
           cartItems.map((item, index) => {
             return <CartIconItemDisplay key={index} item={item} />;
-          })}
+          })
+        }
         {
           cartItems.length > 0 &&
           <LinkContainer href="/cart">

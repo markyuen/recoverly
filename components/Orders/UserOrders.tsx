@@ -16,7 +16,6 @@ const UserOrders = () => {
     if (!user) return;
     makeGraphQLQuery("getUserOrders", { user_id: user.sub })
       .then((res) => {
-        console.log(res.order);
         const data: UserOrder[] = res.order
           .map((item) => {
             return {
