@@ -1,10 +1,9 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useEffect, useState } from "react";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import { OrderProduct, OrderSeller, Order } from "../../types/orders";
+import { Order } from "../../types/orders";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
-import { convertCentToDollar } from "../../lib/helpers";
-import ProductStatus from "./ProductStatus";
+import SellerOrderDisplay from "./SellerOrderDisplay";
 
 const SellerOrders = () => {
   const { user } = useUser()
@@ -68,54 +67,7 @@ const SellerOrders = () => {
       <div className="grid space-y-4 grid-cols-1">
         {
           orderData.map((order: Order, index: number) => {
-            const orderTotal =
-              order.products.reduce((acc: number, product: OrderProduct) => {
-                return acc + product.total_price
-              }, 0) +
-              order.sellers.reduce((acc: number, seller: OrderSeller) => {
-                return acc + seller.delivery_fee
-              }, 0)
-
-            return (
-              <div key={index} className="border-2">
-                <p>
-                  <b>Order ID: </b>{order.order_id}
-                </p>
-
-                <p>
-                  <b>Order Placed: </b>{order.created_at.toString()}
-                </p>
-
-                <p>
-                  <b>Shipping To: </b>{order.shipping_address}
-                </p>
-
-                <p>
-                  <b>Order Status: </b>{order.order_status}
-                </p>
-
-                <p>
-                  <b>Merchant Status: </b>{order.sellers[0].order_seller_status}
-                </p>
-
-                <p>
-                  <b>Products: </b>
-                </p>
-                {
-                  order.products.map((product: OrderProduct, index: number) => {
-                    return <ProductStatus orderId={order.order_id} product={product} index={index} />
-                  })
-                }
-
-                <p>
-                  <b>Shipping Total: </b>${convertCentToDollar(order.sellers[0].delivery_fee)}
-                </p>
-
-                <p>
-                  <b>Order Total: ${convertCentToDollar(orderTotal)}</b>
-                </p>
-              </div>
-            )
+            return <SellerOrderDisplay order={order} index={index} />
           })
         }
       </div>

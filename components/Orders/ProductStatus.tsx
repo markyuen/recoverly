@@ -11,12 +11,13 @@ type ProductStatusProps = {
   orderId: number;
   product: OrderProduct;
   index: number;
+  setMerchantStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ACCEPTED = "ACCEPTED"
 const REJECTED = "REJECTED"
 
-const ProductStatus = ({ orderId, product, index }: ProductStatusProps) => {
+const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductStatusProps) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false)
 
@@ -69,6 +70,8 @@ const ProductStatus = ({ orderId, product, index }: ProductStatusProps) => {
       }
       await makeGraphQLQuery("updateOrderSellerStatus", payload)
         .catch((err) => console.log(err))
+      // Update display
+      setMerchantStatus(allRejectedForSeller ? REJECTED : ACCEPTED)
     }
 
     // Update this order's status if all products are rejected
@@ -107,6 +110,7 @@ const ProductStatus = ({ orderId, product, index }: ProductStatusProps) => {
             }
           </p>
         </Link>
+
         {
           product.order_product_status === "CONFIRMATION_PENDING" &&
           <div>
