@@ -3,6 +3,7 @@ import Cors from 'micro-cors'
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 import { serverSideHasura } from '../../../lib/GraphQL'
+import { order_status_enum } from '../../../types/db_enums'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   // https://github.com/stripe/stripe-node#configuration
@@ -71,7 +72,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
       // Update order status to paid, remove items from user cart
       serverSideHasura("updateUserOrderStatus", {
         stripe_checkout_id: session.id,
-        order_status_id: 2, // PAYMENT_RECEIVED
+        order_status_id: order_status_enum.PAYMENT_RECEIVED,
         shipping_address: address,
         user_id: session.metadata.user_id,
       })

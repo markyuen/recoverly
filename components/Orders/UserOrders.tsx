@@ -79,6 +79,10 @@ const UserOrders = () => {
             return (
               <div key={index} className="border-2">
                 <p>
+                  <b>Order ID: </b>{order.order_id}
+                </p>
+
+                <p>
                   <b>Order Placed: </b>{order.created_at.toString()}
                 </p>
 

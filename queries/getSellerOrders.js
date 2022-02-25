@@ -1,6 +1,6 @@
 export const getSellerOrders = `
 query getSellerOrders($user_id: String!) {
-  order(where: {orders_products: {variation_pair: {product: {seller_id: {_eq: $user_id}}}}}, order_by: {created_at: desc}) {
+  order(where: {orders_products: {variation_pair: {product: {seller_id: {_eq: $user_id}}}}, _and: {order_status_id: {_gt: 1}}}, order_by: {created_at: desc}) {
     order_id
     shipping_address
     stripe_checkout_id

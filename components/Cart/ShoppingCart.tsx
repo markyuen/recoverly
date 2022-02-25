@@ -55,7 +55,7 @@ const ShoppingCart = ({ cartItemsBySeller }) => {
                 </p>
 
                 <p>
-                  <b>Company Product Total:</b> {convertCentToDollar(item_total + shipping_fee)}
+                  <b>Company Product Total: </b>${convertCentToDollar(item_total + shipping_fee)}
                 </p>
               </div>
             )
