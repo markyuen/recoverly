@@ -25,7 +25,7 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
     if (!user) return
   }, [user])
 
-  // TODO: convert both mutations into single query
+  // TODO: convert all mutations into single query?
   const handleUpdate = async (updateType: string) => {
     setLoading(true)
 
@@ -39,6 +39,18 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
     }
     await makeGraphQLQuery("updateOrderProductStatus", payload)
       .catch((err) => console.log(err))
+    if (updateType === REJECTED) {
+      // Update product stock
+      const res = await makeGraphQLQuery("getProductVariation", {
+        variation_pair_id: product.variation_pair_id
+      })
+      const payload = {
+        variation_pair_id: product.variation_pair_id,
+        quantity: res.variation_pair_by_pk.quantity + product.product_amount,
+      }
+      await makeGraphQLQuery("updateProductCount", payload)
+        .catch((err) => console.log(err))
+    }
     // Update display
     product.order_product_status = updateType
 
