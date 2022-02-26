@@ -67,7 +67,11 @@ const SellerOrders = () => {
       <div className="grid space-y-4 grid-cols-1">
         {
           orderData.map((order: Order, index: number) => {
-            return <SellerOrderDisplay order={order} index={index} />
+            return <SellerOrderDisplay
+              key={index}
+              order={order}
+              index={index}
+            />
           })
         }
       </div>

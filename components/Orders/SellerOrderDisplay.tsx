@@ -5,7 +5,7 @@ import { OrderProduct, OrderSeller, Order } from "../../types/orders";
 import { convertCentToDollar } from "../../lib/helpers";
 import ProductStatus from "./ProductStatus";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
-import { orders_sellers_status_enum } from "../../types/db_enums";
+import { orders_sellers_status_enum, orders_sellers_status_names } from "../../types/db_enums";
 
 type SellerOrderDisplayProps = {
   order: Order;
@@ -36,7 +36,7 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
     }
     await makeGraphQLQuery("updateOrderSellerStatus", payload)
       .catch((err) => console.log(err))
-    setMerchantStatus("SHIPPED")
+    setMerchantStatus(orders_sellers_status_names.SHIPPED)
     alert("Updated status!")
     setLoading(false)
   }
@@ -93,6 +93,7 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
           {
             order.products.map((product: OrderProduct, index: number) => {
               return <ProductStatus
+                key={index}
                 orderId={order.order_id}
                 product={product}
                 index={index}

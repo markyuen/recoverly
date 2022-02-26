@@ -255,7 +255,7 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products"
 
 -- Each sellers portion of an order can be pending confirmation
 -- for each of the orders products, accepted, meaning all products
--- are accounted for and at least one is accepted, shipped, completed
+-- are accounted for and at least one is accepted, shipped,
 -- or rejected if all products are rejected
 CREATE TABLE "orders_sellers_status" (
   orders_sellers_status_id SERIAL PRIMARY KEY,
@@ -271,7 +271,6 @@ INSERT INTO orders_sellers_status (orders_sellers_status_name) VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
   ('SHIPPED'),
-  ('COMPLETED'),
   ('REJECTED');
 
 -- [INTERMEDIARY] Each order can contain multiple sellers,

@@ -1,14 +1,13 @@
-import { useUser } from "@auth0/nextjs-auth0";
-import React, { useEffect, useState } from "react";
-import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import { OrderProduct, OrderSeller, Order } from "../../types/orders";
-import { makeGraphQLQuery } from "../../lib/GraphQL";
-import { convertCentToDollar } from "../../lib/helpers";
-import Link from "next/link";
+import { useUser } from "@auth0/nextjs-auth0"
+import React, { useEffect, useState } from "react"
+import SpinnerWithMessage from "../Common/SpinnerWithMessage"
+import { Order } from "../../types/orders"
+import { makeGraphQLQuery } from "../../lib/GraphQL"
+import UserOrderDisplay from "./UserOrderDisplay"
 
 const UserOrders = () => {
-  const { user } = useUser();
-  const [orderData, setOrderData] = useState<Order[]>(null);
+  const { user } = useUser()
+  const [orderData, setOrderData] = useState<Order[]>(null)
 
   useEffect(() => {
     if (!user) return;
@@ -48,19 +47,19 @@ const UserOrders = () => {
                 }),
             }
           })
-        console.log(data);
-        setOrderData(data);
+        console.log(data)
+        setOrderData(data)
       })
       .catch((err) => {
-        console.log(err);
-        return;
-      });
+        console.log(err)
+        return
+      })
   }, [user])
 
   if (!orderData) {
     return (
       <SpinnerWithMessage label="Getting Order Information" />
-    );
+    )
   }
 
   return (
@@ -68,80 +67,18 @@ const UserOrders = () => {
       <div className="grid space-y-4 grid-cols-1">
         {
           orderData.map((order: Order, index: number) => {
-            const orderTotal =
-              order.products.reduce((acc: number, product: OrderProduct) => {
-                return acc + product.total_price
-              }, 0) +
-              order.sellers.reduce((acc: number, seller: OrderSeller) => {
-                return acc + seller.delivery_fee
-              }, 0)
-
             return (
-              <div key={index} className="border-2">
-                <p>
-                  <b>Order ID: </b>{order.order_id}
-                </p>
-
-                <p>
-                  <b>Order Placed: </b>{order.created_at.toString()}
-                </p>
-
-                <p>
-                  <b>Shipping To: </b>{order.shipping_address}
-                </p>
-
-                <p>
-                  <b>Order Status: </b>{order.order_status}
-                </p>
-
-                <p>
-                  <b>Products: </b>
-                </p>
-                {
-                  order.products.map((product: OrderProduct, index: number) => {
-                    const itemDisplay = `${product.product_name} ${product.variation_1}${product.variation_2 ? `/${product.variation_2}` : ""} x${product.product_amount} - Total: $${convertCentToDollar(product.total_price)} - Status: ${product.order_product_status}`;
-
-                    return (
-                      <div key={index} className="px-4 py-2">
-                        <div>
-                          <Link href={`/product?product_id=${product.product_id}`} passHref>
-                            <p className="text-md cursor-pointer hover:text-blue-400">
-                              {itemDisplay}
-                            </p>
-                          </Link>
-                        </div>
-                      </div>
-                    )
-                  })
-                }
-
-                <p>
-                  <b>Merchants: </b>
-                </p>
-                {
-                  order.sellers.map((seller: OrderSeller, index: number) => {
-                    return (
-                      <div key={index} className="px-4 py-2">
-                        <div>
-                          <p>
-                            {seller.company_name} - Shipping Total: ${convertCentToDollar(seller.delivery_fee)} - Status: {seller.order_seller_status}
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  })
-                }
-
-                <p>
-                  <b>Order Total: ${convertCentToDollar(orderTotal)}</b>
-                </p>
-              </div>
+              <UserOrderDisplay
+                key={index}
+                order={order}
+                index={index}
+              />
             )
           })
         }
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UserOrders;
+export default UserOrders

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
 import { convertCentToDollar } from "../../lib/helpers";
-import { orders_products_status_enum, orders_sellers_status_enum, order_status_enum } from "../../types/db_enums";
+import { orders_products_status_enum, orders_products_status_names, orders_sellers_status_enum, orders_sellers_status_names, order_status_enum } from "../../types/db_enums";
 import { OrderProduct } from "../../types/orders";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 
@@ -14,8 +14,8 @@ type ProductStatusProps = {
   setMerchantStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ACCEPTED = "ACCEPTED"
-const REJECTED = "REJECTED"
+const ACCEPT = "ACCEPT"
+const REJECT = "REJECT"
 
 const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductStatusProps) => {
   const { user } = useUser();
@@ -33,13 +33,13 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
     const payload = {
       order_id: orderId,
       variation_pair_id: product.variation_pair_id,
-      orders_products_status_id: updateType === ACCEPTED
+      orders_products_status_id: updateType === ACCEPT
         ? orders_products_status_enum.ACCEPTED
         : orders_products_status_enum.REJECTED,
     }
     await makeGraphQLQuery("updateOrderProductStatus", payload)
       .catch((err) => console.log(err))
-    if (updateType === REJECTED) {
+    if (updateType === REJECT) {
       // Update product stock
       const res = await makeGraphQLQuery("getProductVariation", {
         variation_pair_id: product.variation_pair_id
@@ -52,7 +52,9 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
         .catch((err) => console.log(err))
     }
     // Update display
-    product.order_product_status = updateType
+    product.order_product_status = updateType === ACCEPT
+      ? orders_products_status_names.ACCEPTED
+      : orders_products_status_names.REJECTED
 
 
     // Query for all products' statuses in the order
@@ -83,7 +85,10 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
       await makeGraphQLQuery("updateOrderSellerStatus", payload)
         .catch((err) => console.log(err))
       // Update display
-      setMerchantStatus(allRejectedForSeller ? REJECTED : ACCEPTED)
+      setMerchantStatus(allRejectedForSeller
+        ? orders_sellers_status_names.REJECTED
+        : orders_sellers_status_names.ACCEPTED
+      )
     }
 
     // Update this order's status if all products are rejected
@@ -128,14 +133,14 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
           <div>
             <button
               type="button"
-              onClick={() => handleUpdate(ACCEPTED)}
+              onClick={() => handleUpdate(ACCEPT)}
               disabled={loading}
               className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Accept
             </button>
             <button
               type="button"
-              onClick={() => handleUpdate(REJECTED)}
+              onClick={() => handleUpdate(REJECT)}
               disabled={loading}
               className="cursor-pointer ml-4 relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
               Reject
