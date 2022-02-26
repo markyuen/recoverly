@@ -95,6 +95,7 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
               return <ProductStatus
                 key={index}
                 orderId={order.order_id}
+                paymentIntentId={order.stripe_payment_intent_id}
                 product={product}
                 index={index}
                 setMerchantStatus={setMerchantStatus}

@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next"
-
 import { MIN_AMOUNT, MAX_AMOUNT } from "../../../config"
 
 import Stripe from "stripe"

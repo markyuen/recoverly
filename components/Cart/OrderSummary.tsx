@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { useUser } from "@auth0/nextjs-auth0";
-import getStripe from '../../lib/get-stripejs';
+import React, { useState } from "react"
+import { useUser } from "@auth0/nextjs-auth0"
+import getStripe from '../../lib/get-stripejs'
 import { CURRENCY } from "../../config"
-import { convertCentToDollar } from "../../lib/helpers";
-import { ProductBySeller } from "../../types/product";
-import { CartItem } from "../../types/items";
-import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import { makeGraphQLQuery } from "../../lib/GraphQL";
+import { convertCentToDollar } from "../../lib/helpers"
+import { ProductBySeller } from "../../types/product"
+import { CartItem } from "../../types/items"
+import SpinnerWithMessage from "../Common/SpinnerWithMessage"
+import { makeGraphQLQuery } from "../../lib/GraphQL"
 
 const OrderSummary = ({ cartItemsBySeller }) => {
-  const { user } = useUser();
-  const [loading, setLoading] = useState(false);
+  const { user } = useUser()
+  const [loading, setLoading] = useState(false)
 
   const productTotal: number = cartItemsBySeller
     .reduce((acc: number, item: ProductBySeller) => { return acc + item.item_total }, 0)
@@ -19,7 +19,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
     .reduce((acc: number, item: ProductBySeller) => { return acc + item.shipping_fee }, 0)
 
   const handleSubmit = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
       // Create a Checkout Session.
       const lineItems = cartItemsBySeller
@@ -34,14 +34,14 @@ const OrderSummary = ({ cartItemsBySeller }) => {
             }
           })
         })
-        .flat();
+        .flat()
       if (shippingTotal > 0) {
         lineItems.push({
           name: "Total Shipping Fee",
           amount: shippingTotal,
           currency: CURRENCY,
           quantity: 1,
-        });
+        })
       }
       const productMetadata = cartItemsBySeller
         .reduce((acc, seller: ProductBySeller) => {
@@ -53,7 +53,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           })
           return acc
         }, {})
-      const response = await fetch('/api/checkout_sessions', {
+      const response = await fetch('/api/payment/checkout_session', {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -64,12 +64,12 @@ const OrderSummary = ({ cartItemsBySeller }) => {
           user_id: user.sub,
           products: JSON.stringify(productMetadata),
         }),
-      });
-      const data = await response.json();
+      })
+      const data = await response.json()
 
       if (data.statusCode === 500) {
-        console.error(data.message);
-        return;
+        console.error(data.message)
+        return
       }
 
       // Write order to DB
@@ -94,36 +94,36 @@ const OrderSummary = ({ cartItemsBySeller }) => {
               delivery_fee: seller.shipping_fee,
             }
           }),
-      };
+      }
 
       makeGraphQLQuery("insertNewOrder", payload)
         .then((res) => {
-          console.log("Success, redirecting...");
+          console.log("Success, redirecting...")
         })
         .catch((err) => {
-          console.log(err);
-          return;
-        });
+          console.log(err)
+          return
+        })
 
       // Redirect to Checkout
-      const stripe = await getStripe();
+      const stripe = await getStripe()
       const { error } = await stripe!.redirectToCheckout({
         // Make the id field from the Checkout Session creation API response
         // available to this file, so you can provide it as parameter here
         // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
         sessionId: data.id,
-      });
+      })
       // If `redirectToCheckout` fails due to a browser or network
       // error, display the localized error message to your customer
       // using `error.message`.
-      console.warn(error.message);
+      console.warn(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   if (!user) {
-    return <SpinnerWithMessage label="Configuring Page" />;
+    return <SpinnerWithMessage label="Configuring Page" />
   }
 
   return (
@@ -148,7 +148,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
         Checkout with Stripe
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default OrderSummary;
+export default OrderSummary

@@ -4,6 +4,7 @@ query getUserOrders($user_id: String!) {
     order_id
     shipping_address
     stripe_checkout_id
+    stripe_payment_intent_id
     created_at
     order_status {
       order_status_id

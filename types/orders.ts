@@ -22,6 +22,7 @@ export type Order = {
   order_id: number;
   shipping_address: string;
   stripe_checkout_id: string;
+  stripe_payment_intent_id: string;
   order_status: string;
   created_at: Date;
   products: OrderProduct[];

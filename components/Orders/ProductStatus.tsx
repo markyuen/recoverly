@@ -9,6 +9,7 @@ import SpinnerWithMessage from "../Common/SpinnerWithMessage";
 
 type ProductStatusProps = {
   orderId: number;
+  paymentIntentId: string;
   product: OrderProduct;
   index: number;
   setMerchantStatus: React.Dispatch<React.SetStateAction<string>>;
@@ -17,7 +18,7 @@ type ProductStatusProps = {
 const ACCEPT = "ACCEPT"
 const REJECT = "REJECT"
 
-const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductStatusProps) => {
+const ProductStatus = ({ orderId, paymentIntentId, product, index, setMerchantStatus }: ProductStatusProps) => {
   const { user } = useUser();
   const [loading, setLoading] = useState(false)
 
@@ -60,21 +61,14 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
     // Query for all products' statuses in the order
     const res = await makeGraphQLQuery("getOrderProductStatuses", { order_id: orderId })
 
-    // Update this seller's status for this order
+    // Update merchant status if all products are accounted for
     const sellerProducts = res.order_by_pk.orders_products
       .filter((item) => item.variation_pair.product.seller_id === user.sub)
     const allAccountedForSeller = sellerProducts
-      .reduce((acc: boolean, item) => {
-        const status = item.orders_products_status_id
-        return acc && status !== orders_products_status_enum.CONFIRMATION_PENDING
-      }, true)
+      .every((item) => item.orders_products_status_id !== orders_products_status_enum.CONFIRMATION_PENDING)
     if (allAccountedForSeller) {
-      // Update merchant status if all products are accounted for
       const allRejectedForSeller = sellerProducts
-        .reduce((acc: boolean, item) => {
-          const status = item.orders_products_status_id
-          return acc && status === orders_products_status_enum.REJECTED
-        }, true)
+        .every((item) => item.orders_products_status_id === orders_products_status_enum.REJECTED)
       const payload = {
         order_id: orderId,
         user_id: user.sub,
@@ -92,19 +86,28 @@ const ProductStatus = ({ orderId, product, index, setMerchantStatus }: ProductSt
     }
 
     // Update this order's status if all products are rejected
-    const allRejected: boolean = res.order_by_pk.orders_products
-      .reduce((acc: boolean, item) => {
-        const status = item.orders_products_status_id
-        return acc && status === orders_products_status_enum.REJECTED
-      }, true)
+    const allRejected = res.order_by_pk.orders_products
+      .every((item) => item.orders_products_status_id === orders_products_status_enum.REJECTED)
     if (allRejected) {
-      // TODO: cancel charge
       const payload = {
         order_id: orderId,
         order_status_id: order_status_enum.CANCELED,
       }
       await makeGraphQLQuery("updateOrderStatus", payload)
         .catch((err) => console.log(err))
+
+      // Refund the entire charge
+      const response = await fetch('/api/payment/refund_all', {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ payment_intent_id: paymentIntentId }),
+      })
+      const data = await response.json()
+      if (data.statusCode === 500) {
+        console.error(data.message)
+      }
     }
 
     alert("Updated status!")
