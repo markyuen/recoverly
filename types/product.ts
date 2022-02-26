@@ -48,6 +48,7 @@ export type ProductSellerInformation = {
 };
 
 export type ProductBySeller = {
+  user_id: string;
   company: string;
   items: CartItem[];
   item_total: number;

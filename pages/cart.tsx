@@ -65,6 +65,7 @@ const Cart = () => {
           ? 0
           : seller.flat_shipping_fee
       return {
+        user_id: seller.user_id,
         company: seller.company_name,
         items: [...sellerProducts],
         item_total: sellerProductTotal,

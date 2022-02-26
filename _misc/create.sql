@@ -241,8 +241,8 @@ INSERT INTO orders_products_status (orders_products_status_name) VALUES
 -- price should be locked in once the order is submitted
 CREATE TABLE "orders_products" (
   order_id INTEGER REFERENCES "order" (order_id),
-  product_id INTEGER REFERENCES "product" (product_id),
-  PRIMARY KEY (order_id, product_id),
+  variation_pair_id INTEGER REFERENCES "variation_pair" (variation_pair_id),
+  PRIMARY KEY (order_id, variation_pair_id),
   orders_products_status_id INTEGER NOT NULL REFERENCES "orders_products_status" (orders_products_status_id) DEFAULT 1,
   product_amount INTEGER NOT NULL CHECK (product_amount > 0),
   total_price INTEGER NOT NULL CHECK (total_price > 0),
@@ -255,7 +255,7 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products"
 
 -- Each sellers portion of an order can be pending confirmation
 -- for each of the orders products, accepted, meaning all products
--- are accounted for and at least one is accepted, shipped, completed
+-- are accounted for and at least one is accepted, shipped,
 -- or rejected if all products are rejected
 CREATE TABLE "orders_sellers_status" (
   orders_sellers_status_id SERIAL PRIMARY KEY,
@@ -271,7 +271,6 @@ INSERT INTO orders_sellers_status (orders_sellers_status_name) VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
   ('SHIPPED'),
-  ('COMPLETED'),
   ('REJECTED');
 
 -- [INTERMEDIARY] Each order can contain multiple sellers,
