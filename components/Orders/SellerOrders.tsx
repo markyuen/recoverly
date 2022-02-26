@@ -19,11 +19,13 @@ const SellerOrders = () => {
               order_id: item.order_id,
               shipping_address: item.shipping_address,
               stripe_checkout_id: item.stripe_checkout_id,
+              stripe_payment_intent_id: item.stripe_payment_intent_id,
               order_status: item.order_status.order_status_name,
               created_at: new Date(item.created_at + "Z"),
               products: item.orders_products
                 .map((product) => {
                   return {
+                    seller_id: product.variation_pair.product.seller_id,
                     product_name: product.variation_pair.product.product_name,
                     product_id: product.variation_pair.product_id,
                     variation_pair_id: product.variation_pair_id,

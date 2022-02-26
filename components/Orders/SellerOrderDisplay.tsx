@@ -95,6 +95,7 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
               return <ProductStatus
                 key={index}
                 orderId={order.order_id}
+                paymentIntentId={order.stripe_payment_intent_id}
                 product={product}
                 index={index}
                 setMerchantStatus={setMerchantStatus}
@@ -116,12 +117,14 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
                 merchantStatus === orders_sellers_status_names.REJECTED
                   ? 0
                   : (
-                    shippingTotal +
-                    order.products.reduce((acc: number, product: OrderProduct) => {
-                      return product.order_product_status === orders_products_status_names.REJECTED
-                        ? acc
-                        : acc + product.total_price * (1 - PLATFORM_FEE_PCT)
-                    }, 0)
+                    (1 - PLATFORM_FEE_PCT) * (
+                      shippingTotal +
+                      order.products.reduce((acc: number, product: OrderProduct) => {
+                        return product.order_product_status === orders_products_status_names.REJECTED
+                          ? acc
+                          : acc + product.total_price
+                      }, 0)
+                    )
                   )
               )
             }</b>

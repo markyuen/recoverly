@@ -10,7 +10,7 @@ const Orders = () => {
     <ProtectedRoute>
       <ShopNav>
         <Header name="Customer Orders" />
-        <p className="ml-6 mt-4">View each order placed with products that you have listed. As the merchant, you are responsible must accept or reject each product in an order. If you choose to reject every item, then your part of the process is complete, and no funds will be released to you. If you accept at least one item, then you must arrange shipping and indicate once you have shipped out the accepted products. Once the customer has acknowleged receipt of products, then funds (after platform fee of {PLATFORM_FEE_PCT * 100}%, not including shipping fee) will be released to your connected Stripe account.</p>
+        <p className="ml-6 mt-4">View each order placed with products that you have listed. As the merchant, you must accept or reject each product in an order. If you choose to reject every item, then your part of the process is complete, and no funds will be released to you. If you accept at least one item, then you must arrange shipping and indicate once you have shipped out the accepted product(s). Once the customer has acknowleged receipt of products, then funds (after platform fee of {PLATFORM_FEE_PCT * 100}%) will be released to your connected Stripe account.</p>
         <SellerOrders />
       </ShopNav>
     </ProtectedRoute>

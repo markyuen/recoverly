@@ -4,6 +4,7 @@ query getSellerOrders($user_id: String!) {
     order_id
     shipping_address
     stripe_checkout_id
+    stripe_payment_intent_id
     created_at
     order_status {
       order_status_id
@@ -23,6 +24,7 @@ query getSellerOrders($user_id: String!) {
         variation_1
         variation_2
         product {
+          seller_id
           product_name
         }
       }

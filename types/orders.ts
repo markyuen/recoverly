@@ -1,4 +1,5 @@
 export type OrderProduct = {
+  seller_id: string;
   product_name: string;
   product_id: number;
   variation_pair_id: number;
@@ -22,6 +23,7 @@ export type Order = {
   order_id: number;
   shipping_address: string;
   stripe_checkout_id: string;
+  stripe_payment_intent_id: string;
   order_status: string;
   created_at: Date;
   products: OrderProduct[];
