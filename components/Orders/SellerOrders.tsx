@@ -25,6 +25,7 @@ const SellerOrders = () => {
               products: item.orders_products
                 .map((product) => {
                   return {
+                    seller_id: product.variation_pair.product.seller_id,
                     product_name: product.variation_pair.product.product_name,
                     product_id: product.variation_pair.product_id,
                     variation_pair_id: product.variation_pair_id,

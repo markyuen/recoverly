@@ -24,6 +24,7 @@ query getUserOrders($user_id: String!) {
         variation_1,
         variation_2,
         product {
+          seller_id
           product_name
         }
       }

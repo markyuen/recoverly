@@ -6,6 +6,7 @@ import { makeGraphQLQuery } from "../../lib/GraphQL"
 import { convertCentToDollar } from "../../lib/helpers"
 import Link from "next/link"
 import { orders_products_status_names, orders_sellers_status_names, order_status_enum, order_status_names } from "../../types/db_enums"
+import { PLATFORM_FEE_PCT } from "../../config"
 
 type UserOrderDisplayProps = {
   order: Order
@@ -21,26 +22,6 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
     if (!user) return;
   }, [user])
 
-  if (!user) {
-    return (
-      <SpinnerWithMessage label="Getting User" />
-    )
-  }
-
-  const handleCompletedUpdate = async () => {
-    setLoading(true)
-    const payload = {
-      order_id: order.order_id,
-      order_status_id: order_status_enum.COMPLETED,
-    }
-    await makeGraphQLQuery("updateOrderStatus", payload)
-      .catch((err) => console.log(err))
-    setOrderStatus("COMPLETED")
-    // TODO: handle payment
-    alert("Updated status! Payment will be released to merchants, and any rejected items will be refunded.")
-    setLoading(false)
-  }
-
   const orderTotal =
     order.products.reduce((acc: number, product: OrderProduct) => {
       return acc + product.total_price
@@ -48,6 +29,71 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
     order.sellers.reduce((acc: number, seller: OrderSeller) => {
       return acc + seller.delivery_fee
     }, 0)
+
+  const amountToCapture =
+    order.sellers.reduce((acc: number, seller: OrderSeller) => {
+      return seller.order_seller_status === orders_sellers_status_names.REJECTED
+        ? acc
+        : acc + seller.delivery_fee
+    }, 0) +
+    order.products.reduce((acc: number, product: OrderProduct) => {
+      return product.order_product_status === orders_products_status_names.REJECTED
+        ? acc
+        : acc + product.total_price
+    }, 0)
+
+  const handleCompletedUpdate = async () => {
+    setLoading(true)
+    // Complete the order by handling payment
+    const transfers: [string, number][] = order.sellers
+      .filter((seller: OrderSeller) => seller.order_seller_status !== orders_sellers_status_names.REJECTED)
+      .map((seller: OrderSeller) => {
+        return [
+          seller.stripe_id,
+          (1 - PLATFORM_FEE_PCT) * (
+            seller.delivery_fee + order.products
+              .filter((product: OrderProduct) => product.seller_id === user.sub)
+              .reduce((acc: number, product: OrderProduct) => {
+                return product.order_product_status === orders_products_status_names.REJECTED
+                  ? acc
+                  : acc + product.total_price
+              }, 0)
+          ),
+        ]
+      })
+    const response = await fetch('/api/payment/order_payout', {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        payment_intent_id: order.stripe_payment_intent_id,
+        capture_amount: amountToCapture,
+        transfers: transfers,
+        order_id: order.order_id,
+      }),
+    })
+    const data = await response.json()
+    if (data.statusCode === 500) {
+      console.error(data.message)
+    }
+    // Update the order status to completed
+    const payload = {
+      order_id: order.order_id,
+      order_status_id: order_status_enum.COMPLETED,
+    }
+    await makeGraphQLQuery("updateOrderStatus", payload)
+      .catch((err) => console.log(err))
+    setOrderStatus("COMPLETED")
+    alert("Updated status! Payment will be released to merchants, and any rejected items will be refunded.")
+    setLoading(false)
+  }
+
+  if (!user) {
+    return (
+      <SpinnerWithMessage label="Getting User" />
+    )
+  }
 
   return (
     <div className="col-span-4">
@@ -130,22 +176,7 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
           </p>
 
           <p>
-            <b>Amount to be Captured Once Complete: ${
-              convertCentToDollar(
-                // Shipping fees
-                order.sellers.reduce((acc: number, seller: OrderSeller) => {
-                  return seller.order_seller_status === orders_sellers_status_names.REJECTED
-                    ? acc
-                    : acc + seller.delivery_fee
-                }, 0) +
-                // Product fees
-                order.products.reduce((acc: number, product: OrderProduct) => {
-                  return product.order_product_status === orders_products_status_names.REJECTED
-                    ? acc
-                    : acc + product.total_price
-                }, 0)
-              )
-            }</b>
+            <b>Amount to be Captured Once Complete: ${convertCentToDollar(amountToCapture)}</b>
           </p>
         </div>
       </div>

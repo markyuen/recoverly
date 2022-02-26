@@ -1,4 +1,5 @@
 export type OrderProduct = {
+  seller_id: string;
   product_name: string;
   product_id: number;
   variation_pair_id: number;

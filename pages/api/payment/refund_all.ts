@@ -12,6 +12,8 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
+      // Since we don't automatically capture payment, we need to cancel the
+      // Payment Intent instead of refunding the associated charge
       const stripeRes: Stripe.Response<Stripe.PaymentIntent> =
         await stripe.paymentIntents.cancel(req.body.payment_intent_id)
       res.status(200).json(stripeRes)

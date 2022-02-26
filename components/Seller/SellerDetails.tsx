@@ -196,7 +196,7 @@ const SellerDetails = ({ callerType }) => {
               type="number"
               value={sellerData.flat_shipping_fee}
               onChange={(e) => updateSellerData("flat_shipping_fee", e.target.value)}
-              label="Flat Shipping Fee (You must handle delivery. This delivery fee will be applied regardless of the order amount. Platform fee computation does not include this amount.)"
+              label="Flat Shipping Fee (You must handle delivery. This delivery fee will be applied unless order amount exceeds the threshold indicated directly below.)"
             />
             <FormInput
               type="number"

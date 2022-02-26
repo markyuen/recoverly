@@ -95,7 +95,6 @@ const ProductStatus = ({ orderId, paymentIntentId, product, index, setMerchantSt
       }
       await makeGraphQLQuery("updateOrderStatus", payload)
         .catch((err) => console.log(err))
-
       // Refund the entire charge
       const response = await fetch('/api/payment/refund_all', {
         method: "POST",
