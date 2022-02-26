@@ -75,6 +75,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         order_status_id: order_status_enum.PAYMENT_RECEIVED,
         shipping_address: address,
         user_id: session.metadata.user_id,
+        stripe_payment_intent_id: session.payment_intent,
       })
     } else if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object as Stripe.PaymentIntent

@@ -108,9 +108,6 @@ CREATE TABLE "product" (
   brand_id INTEGER NOT NULL REFERENCES "brand" (brand_id),
   product_status INTEGER NOT NULL REFERENCES "product_status" (product_status_id),
   product_name TEXT NOT NULL,
-  ind_usual_retail_price INTEGER NOT NULL CHECK (ind_usual_retail_price > 0),
-  ind_current_price INTEGER NOT NULL CHECK (ind_current_price > 0),
-  number_in_stock INTEGER NOT NULL CHECK (number_in_stock > 0),
   description TEXT,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
@@ -156,23 +153,19 @@ CREATE TABLE "products_categories" (
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "products_categories"
   FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
 
-CREATE TABLE "variation_category" (
-  variation_category_id SERIAL PRIMARY KEY,
-  variation_category_name TEXT NOT NULL,
-  updated_at TIMESTAMP NOT NULL DEFAULT now(),
-  created_at TIMESTAMP NOT NULL DEFAULT now()
-);
-
-CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation_category"
-  FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TABLE "variation" (
-  variation_id SERIAL PRIMARY KEY,
+CREATE TABLE "variation_pair" (
+  variation_pair_id SERIAL PRIMARY KEY,
   product_id INTEGER NOT NULL REFERENCES "product" (product_id),
-  variation_category_id INTEGER NOT NULL REFERENCES "variation_category" (variation_category_id),
-  variation_name TEXT NOT NULL,
+  variation_1 TEXT NOT NULL,
+  variation_2 TEXT,
+  variation_1_category TEXT NOT NULL,
+  variation_2_category TEXT,
+  quantity INTEGER NOT NULL CHECK (quantity >= 0),
+  original_price INTEGER NOT NULL CHECK (original_price >= 0),
+  discounted_price INTEGER NOT NULL check (discounted_price >= 0),
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  UNIQUE (product_id, variation_1, variation_2)
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation"
@@ -210,7 +203,8 @@ CREATE TABLE "order" (
   user_id TEXT NOT NULL REFERENCES "user" (user_id),
   order_status_id INTEGER NOT NULL REFERENCES "order_status" (order_status_id) DEFAULT 1,
   shipping_address TEXT NOT NULL,
-  stripe_checkout_id TEXT UNIQUE,
+  stripe_checkout_id TEXT NOT NULL UNIQUE,
+  stripe_payment_intent_id TEXT UNIQUE,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
 );
