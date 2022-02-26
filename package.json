@@ -17,6 +17,7 @@
     "@heroicons/react": "^1.0.5",
     "@stripe/stripe-js": "^1.22.0",
     "@tailwindcss/forms": "^0.4.0",
+    "airtable": "^0.11.2",
     "aws-sdk": "^2.1058.0",
     "axios": "^0.24.0",
     "file-saver": "^2.0.5",

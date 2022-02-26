@@ -3,8 +3,9 @@ const navigation = {
   main: [
     { name: "About", href: "/about" },
     { name: "Returns and Refunds", href: "/about" },
-    { name: "FAQs", href: "/about" },
-    { name: "Terms and Conditions", href: "/about" },
+    { name: "FAQs", href: "/faq" },
+    { name: "Terms and Conditions", href: "/privacypolicy" },
+    { name: "Contact Us", href: "/contact" },
   ],
   social: [
     // {
