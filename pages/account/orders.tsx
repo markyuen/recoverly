@@ -10,7 +10,7 @@ const Orders = () => {
     <ProtectedRoute>
       <ShopNav>
         <Header name="Your Orders" />
-        <p className="ml-6 mt-4">View the orders you have placed and their current statuses. Each product in an order has an individual acceptance status and merchants may choose to accept or reject products on a case-by-case basis. Once a merchant has accepted or rejected each product, for their portion of the order, their status will appear as `Accepted` (or `Rejected` if they declined their entire portion of the order). Once the merchant has shipped their products, their status will appear as `Shipped,` and you can expect to recieve your products. Once all items are recieved, please mark your order as complete, and payment will be released to the merchants. Please note that any products that are rejected by merchants will not be charged.</p>
+        <p className="ml-6 mt-4">View the orders you have placed and their current statuses. Each product in an order has an individual acceptance status and merchants may choose to accept or reject products on a case-by-case basis. Once a merchant has accepted or rejected each product, for their portion of the order, their status will appear as `Accepted` (or `Rejected` if they declined their entire portion of the order). Once the merchant has shipped their products, their status will appear as `Shipped,` and you can expect to recieve your products. Once all items are recieved, please mark your order as complete, and payment will be released to the merchants (the listed `Amount to be Captured`). Please note that any products that are rejected by merchants will not be charged.</p>
         <UserOrders />
         <div className="flex justify-center">
           <LinkContainer href="/">

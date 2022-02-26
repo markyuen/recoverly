@@ -40,7 +40,6 @@ export const orders_sellers_status_names = {
   CONFIRMATION_PENDING: "CONFIRMATION_PENDING",
   ACCEPTED: "ACCEPTED",
   SHIPPED: "SHIPPED",
-  COMPLETED: "COMPLETED",
   REJECTED: "REJECTED",
 }
 

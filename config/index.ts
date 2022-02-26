@@ -4,3 +4,4 @@ export const CURRENCY = 'sgd'
 export const MIN_AMOUNT = 0.0
 export const MAX_AMOUNT = 300000.0 // limit is 3,000
 // export const AMOUNT_STEP = 5.0
+export const PLATFORM_FEE_PCT = 0.05

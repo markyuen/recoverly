@@ -5,7 +5,7 @@ import { OrderProduct, OrderSeller, Order } from "../../types/orders"
 import { makeGraphQLQuery } from "../../lib/GraphQL"
 import { convertCentToDollar } from "../../lib/helpers"
 import Link from "next/link"
-import { orders_sellers_status_names, order_status_enum, order_status_names } from "../../types/db_enums"
+import { orders_products_status_names, orders_sellers_status_names, order_status_enum, order_status_names } from "../../types/db_enums"
 
 type UserOrderDisplayProps = {
   order: Order
@@ -126,7 +126,26 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
           }
 
           <p>
-            <b>Order Total: ${convertCentToDollar(orderTotal)}</b>
+            <b>Order Total: </b>${convertCentToDollar(orderTotal)}
+          </p>
+
+          <p>
+            <b>Amount to be Captured Once Complete: ${
+              convertCentToDollar(
+                // Shipping fees
+                order.sellers.reduce((acc: number, seller: OrderSeller) => {
+                  return seller.order_seller_status === orders_sellers_status_names.REJECTED
+                    ? acc
+                    : acc + seller.delivery_fee
+                }, 0) +
+                // Product fees
+                order.products.reduce((acc: number, product: OrderProduct) => {
+                  return product.order_product_status === orders_products_status_names.REJECTED
+                    ? acc
+                    : acc + product.total_price
+                }, 0)
+              )
+            }</b>
           </p>
         </div>
       </div>

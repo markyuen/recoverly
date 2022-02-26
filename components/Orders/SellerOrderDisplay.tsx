@@ -1,11 +1,12 @@
 import { useUser } from "@auth0/nextjs-auth0";
 import React, { useEffect, useState } from "react";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import { OrderProduct, OrderSeller, Order } from "../../types/orders";
+import { OrderProduct, Order } from "../../types/orders";
 import { convertCentToDollar } from "../../lib/helpers";
 import ProductStatus from "./ProductStatus";
 import { makeGraphQLQuery } from "../../lib/GraphQL";
-import { orders_sellers_status_enum, orders_sellers_status_names } from "../../types/db_enums";
+import { orders_products_status_names, orders_sellers_status_enum, orders_sellers_status_names } from "../../types/db_enums";
+import { PLATFORM_FEE_PCT } from "../../config";
 
 type SellerOrderDisplayProps = {
   order: Order;
@@ -41,12 +42,11 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
     setLoading(false)
   }
 
-  const orderTotal =
+  const shippingTotal = order.sellers[0].delivery_fee
+
+  const orderTotal = shippingTotal +
     order.products.reduce((acc: number, product: OrderProduct) => {
       return acc + product.total_price
-    }, 0) +
-    order.sellers.reduce((acc: number, seller: OrderSeller) => {
-      return acc + seller.delivery_fee
     }, 0)
 
   return (
@@ -107,14 +107,29 @@ const SellerOrderDisplay = ({ order, index }: SellerOrderDisplayProps) => {
           </p>
 
           <p>
-            <b>Order Total: ${convertCentToDollar(orderTotal)}</b>
+            <b>Order Total: </b>${convertCentToDollar(orderTotal)}
           </p>
 
-
+          <p>
+            <b>Amount to be Transfered Once Complete (after platform fees): ${
+              convertCentToDollar(
+                merchantStatus === orders_sellers_status_names.REJECTED
+                  ? 0
+                  : (
+                    shippingTotal +
+                    order.products.reduce((acc: number, product: OrderProduct) => {
+                      return product.order_product_status === orders_products_status_names.REJECTED
+                        ? acc
+                        : acc + product.total_price * (1 - PLATFORM_FEE_PCT)
+                    }, 0)
+                  )
+              )
+            }</b>
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default SellerOrderDisplay;
+export default SellerOrderDisplay
