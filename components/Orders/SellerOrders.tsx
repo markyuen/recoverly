@@ -40,7 +40,7 @@ const SellerOrders = () => {
                 .map((seller) => {
                   return {
                     user_id: seller.user_id,
-                    company_name: seller.seller.company_name,
+                    display_name: seller.seller.display_name,
                     stripe_id: seller.seller.stripe_id,
                     delivery_fee: seller.delivery_fee,
                     stripe_transfer_id: seller.stripe_transfer_id,

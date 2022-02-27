@@ -26,7 +26,7 @@ const OrderSummary = ({ cartItemsBySeller }) => {
         .map((seller: ProductBySeller) => {
           return seller.items.map((item: CartItem) => {
             return {
-              name: `${seller.company} - ${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
+              name: `${seller.display_name} - ${item.product_name} (${item.variation_1}${item.variation_2 ? `/${item.variation_2}` : ""
                 })`,
               amount: item.discounted_price,
               currency: CURRENCY,

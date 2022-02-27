@@ -12,7 +12,7 @@ export type OrderProduct = {
 
 export type OrderSeller = {
   user_id: string;
-  company_name: string;
+  display_name: string;
   stripe_id: string;
   delivery_fee: number;
   stripe_transfer_id: string;

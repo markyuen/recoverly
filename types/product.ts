@@ -42,14 +42,14 @@ export type ProductCartVariation = {
 
 export type ProductSellerInformation = {
   user_id: string;
-  company_name: string;
+  display_name: string;
   flat_shipping_fee: number;
   product_total_free_delivery: number;
 };
 
 export type ProductBySeller = {
   user_id: string;
-  company: string;
+  display_name: string;
   items: CartItem[];
   item_total: number;
   shipping_fee: number;

@@ -134,28 +134,7 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
           </div>
 
           <p>
-            <b>Products: </b>
-          </p>
-          {
-            order.products.map((product: OrderProduct, index: number) => {
-              return (
-                <div key={index} className="px-4 py-2">
-                  <div>
-                    <Link href={`/product?product_id=${product.product_id}`} passHref>
-                      <p className="text-md cursor-pointer hover:text-blue-400">
-                        {
-                          `${product.product_name} ${product.variation_1}${product.variation_2 ? `/${product.variation_2}` : ""} x${product.product_amount} - Total: $${convertCentToDollar(product.total_price)} - Status: ${product.order_product_status}`
-                        }
-                      </p>
-                    </Link>
-                  </div>
-                </div>
-              )
-            })
-          }
-
-          <p>
-            <b>Merchants: </b>
+            <b>Items: </b>
           </p>
           {
             order.sellers.map((seller: OrderSeller, index: number) => {
@@ -163,9 +142,31 @@ const UserOrderDisplay = ({ order, index }: UserOrderDisplayProps) => {
                 <div key={index} className="px-4 py-2">
                   <div>
                     <p>
-                      {seller.company_name} - Shipping Total: ${convertCentToDollar(seller.delivery_fee)} - Status: {seller.order_seller_status}
+                      <b>Merchant: </b>{seller.display_name} - Shipping Total: ${convertCentToDollar(seller.delivery_fee)} - Status: {seller.order_seller_status}
                     </p>
                   </div>
+                  <p>
+                    <b>Products: </b>
+                  </p>
+                  {
+                    order.products
+                      .filter((product: OrderProduct) => product.seller_id === seller.user_id)
+                      .map((product: OrderProduct, index: number) => {
+                        return (
+                          <div key={index} className="px-4 py-2">
+                            <div>
+                              <Link href={`/product?product_id=${product.product_id}`} passHref>
+                                <p className="text-md cursor-pointer hover:text-blue-400">
+                                  {
+                                    `${product.product_name} ${product.variation_1}${product.variation_2 ? `/${product.variation_2}` : ""} x${product.product_amount} - Total: $${convertCentToDollar(product.total_price)} - Status: ${product.order_product_status}`
+                                  }
+                                </p>
+                              </Link>
+                            </div>
+                          </div>
+                        )
+                      })
+                  }
                 </div>
               )
             })

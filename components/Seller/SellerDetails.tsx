@@ -7,6 +7,7 @@ import genStripeOnboardingLink from "../../lib/genStripeOnboardingLink";
 import InternalLink from "../Common/Link";
 import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum";
 import SpinnerWithMessage from "../Common/SpinnerWithMessage";
+import { nanoid } from "nanoid";
 
 export const SIGN_UP_TYPE = "SIGN_UP"
 export const UPDATE_TYPE = "UPDATE"
@@ -20,7 +21,6 @@ const SellerDetails = ({ callerType }) => {
   const [loadingData, setLoadingData] = useState(true);
   const [loading, setLoading] = useState(false);
   const [originalSellerData, setOriginalSellerData] = useState(null);
-
   const [sellerData, setSellerData] = useState(null);
 
   useEffect(() => {
@@ -102,7 +102,8 @@ const SellerDetails = ({ callerType }) => {
         const payload = { ...sellerData }
         payload.flat_shipping_fee = convertToInt(payload.flat_shipping_fee)
         payload.product_total_free_delivery = convertToInt(payload.product_total_free_delivery)
-        await makeGraphQLQuery("insertNewSeller", sellerData)
+        payload.display_name = nanoid(12)
+        await makeGraphQLQuery("insertNewSeller", payload)
           .then((res) => {
             console.log(res);
             window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name);
@@ -135,6 +136,7 @@ const SellerDetails = ({ callerType }) => {
         payload.product_total_free_delivery = convertToInt(payload.product_total_free_delivery)
         delete payload.stripe_id;
         delete payload.verified;
+        delete payload.display_name
         await makeGraphQLQuery("updateSellerInfo", payload)
           .then((res) => {
             setOriginalSellerData(JSON.stringify(sellerData));
@@ -156,6 +158,57 @@ const SellerDetails = ({ callerType }) => {
       <form className="space-y-8" onSubmit={handleSubmit}>
         <div className="space-y-8  sm:space-y-5">
           <div className="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+            {
+              callerType === UPDATE_TYPE &&
+              sellerData &&
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
+                <label
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Merchant Status (You may upload products once you are verified.)
+                </label>
+                {
+                  sellerData.stripe_id &&
+                  <div className="mt-1 sm:mt-0 sm:col-span-2">
+                    <div className="flex items-center">
+                      <p><i>{sellerData.verified ? "Verified" : "Pending Verification"}</i></p>
+                    </div>
+                  </div>
+                }
+                {
+                  !sellerData.stripe_id &&
+                  <div className="mt-1 sm:mt-0 sm:col-span-2">
+                    <button
+                      type="button"
+                      className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      onClick={() => {
+                        window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name);
+                      }}
+                    >
+                      Connect your account with Stripe
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            {
+              callerType === UPDATE_TYPE &&
+              sellerData &&
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
+                <label
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Display Name (Your real company name is anonymized and your products/orders will be listed with this value instead.)
+                </label>
+                <div className="mt-1 sm:mt-0 sm:col-span-2">
+                  <div className="flex items-center">
+                    <p><i>{sellerData.display_name}</i></p>
+                  </div>
+                </div>
+              </div>
+            }
+
             <FormInput
               type="text"
               value={sellerData.company_name}

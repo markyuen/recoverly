@@ -66,12 +66,14 @@ const Cart = () => {
           : seller.flat_shipping_fee
       return {
         user_id: seller.user_id,
-        company: seller.company_name,
+        display_name: seller.display_name,
         items: [...sellerProducts],
         item_total: sellerProductTotal,
         shipping_fee,
       }
     });
+
+    console.log(cartItemsBySeller)
 
   return (
     <ProtectedRoute>

@@ -38,6 +38,7 @@ CREATE TABLE "seller" (
   user_id TEXT PRIMARY KEY REFERENCES "user" (user_id),
   stripe_id TEXT UNIQUE,
   company_name TEXT NOT NULL,
+  display_name TEXT NOT NULL UNIQUE,
   address TEXT NOT NULL,
   office_number TEXT,
   acra_uen TEXT NOT NULL UNIQUE,
