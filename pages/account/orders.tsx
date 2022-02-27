@@ -21,7 +21,7 @@ const Orders = () => {
                 strokeWidth="2"
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
               />
-              <p>Return to main page.</p>
+              <p>Return to main page</p>
             </div>
           </LinkContainer>
         </div>

@@ -19,7 +19,7 @@ const Index = () => {
               strokeWidth="2"
               d="M12 6v6m0 0v6m0-6h6m-6 0H6"
             />
-            <p>Click here to view your customer orders.</p>
+            <p>Click here to view your customer orders</p>
           </div>
         </LinkContainer>
       </div>
