@@ -11,6 +11,7 @@ query getUserSellerInfo($user_id:String!) {
       address
       office_number
       company_name
+      display_name
       first_name
       last_name
       flat_shipping_fee

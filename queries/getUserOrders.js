@@ -42,7 +42,7 @@ query getUserOrders($user_id: String!) {
         orders_sellers_status_name
       }
       seller {
-        company_name
+        display_name
         stripe_id
         verified
       }

@@ -50,13 +50,18 @@ const UserProfile = () => {
       <form className="space-y-8" onSubmit={handleSubmit}>
         <div className="space-y-8  sm:space-y-5">
           <div className="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
-            <FormInput
-              type="email"
-              value={userData.email}
-              onChange={null}
-              label="Email"
-              disabled={true}
-            />
+            <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
+              <label
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <div className="mt-1 sm:mt-0 sm:col-span-2">
+                <div className="flex items-center">
+                  <p><i>{userData.email}</i></p>
+                </div>
+              </div>
+            </div>
             <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-center sm:border-gray-200 sm:pt-5">
               <label
                 htmlFor="photo"

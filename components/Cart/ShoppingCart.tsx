@@ -8,11 +8,11 @@ const ShoppingCart = ({ cartItemsBySeller }) => {
     <div className="col-span-4">
       <div className="grid space-y-4 grid-cols-1">
         {
-          cartItemsBySeller.map(({ company, items, item_total, shipping_fee }, index: number) => {
+          cartItemsBySeller.map(({ display_name, items, item_total, shipping_fee }, index: number) => {
             return (
               <div key={index} className="border-2">
                 <p>
-                  <b>Company:</b> {company}
+                  <b>Company Display Name:</b> {display_name}
                 </p>
 
                 {items.map((item: CartItem, index: number) => {

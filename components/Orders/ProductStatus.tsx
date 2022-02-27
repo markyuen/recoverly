@@ -19,7 +19,7 @@ const ACCEPT = "ACCEPT"
 const REJECT = "REJECT"
 
 const ProductStatus = ({ orderId, paymentIntentId, product, index, setMerchantStatus }: ProductStatusProps) => {
-  const { user } = useUser();
+  const { user } = useUser()
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -56,7 +56,6 @@ const ProductStatus = ({ orderId, paymentIntentId, product, index, setMerchantSt
     product.order_product_status = updateType === ACCEPT
       ? orders_products_status_names.ACCEPTED
       : orders_products_status_names.REJECTED
-
 
     // Query for all products' statuses in the order
     const res = await makeGraphQLQuery("getOrderProductStatuses", { order_id: orderId })
