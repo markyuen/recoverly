@@ -1,13 +1,13 @@
-import { useUser } from "@auth0/nextjs-auth0";
-import React, { useEffect, useState } from "react";
-import FormInput from "../Form/FormInput";
-import { makeGraphQLQuery } from "../../lib/GraphQL";
-import validateUEN from "../../lib/validateUEN";
-import genStripeOnboardingLink from "../../lib/genStripeOnboardingLink";
-import InternalLink from "../Common/Link";
-import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum";
-import SpinnerWithMessage from "../Common/SpinnerWithMessage";
-import { nanoid } from "nanoid";
+import { useUser } from "@auth0/nextjs-auth0"
+import React, { useEffect, useState } from "react"
+import FormInput from "../Form/FormInput"
+import { makeGraphQLQuery } from "../../lib/GraphQL"
+import validateUEN from "../../lib/validateUEN"
+import genStripeOnboardingLink from "../../lib/genStripeOnboardingLink"
+import InternalLink from "../Common/Link"
+import validateTwoDecimalNum from "../../lib/validateTwoDecimalNum"
+import SpinnerWithMessage from "../Common/SpinnerWithMessage"
+import { nanoid } from "nanoid"
 
 export const SIGN_UP_TYPE = "SIGN_UP"
 export const UPDATE_TYPE = "UPDATE"
@@ -17,13 +17,15 @@ function convertToInt(n: string) {
 }
 
 const SellerDetails = ({ callerType }) => {
-  const { user } = useUser();
-  const [loadingData, setLoadingData] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [originalSellerData, setOriginalSellerData] = useState(null);
-  const [sellerData, setSellerData] = useState(null);
+  const { user } = useUser()
+  const [loadingData, setLoadingData] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [lastSellerData, setLastSellerData] = useState(null)
+  const [sellerData, setSellerData] = useState(null)
 
   useEffect(() => {
+    if (!user) return;
+
     if (callerType === SIGN_UP_TYPE) {
       setSellerData({
         user_id: user.sub,
@@ -36,65 +38,64 @@ const SellerDetails = ({ callerType }) => {
         flat_shipping_fee: "",
         product_total_free_delivery: "",
       })
-      setLoadingData(false);
+      setLoadingData(false)
       return
     }
 
     if (callerType === UPDATE_TYPE) {
-      if (!user) return;
       makeGraphQLQuery("getUserSellerInfo", { user_id: user.sub })
         .then((res) => {
-          const data = res.user_by_pk;
+          const data = res.user_by_pk
           if (data.seller) {
-            data.seller.flat_shipping_fee = data.seller.flat_shipping_fee / 100;
-            data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100;
-            setSellerData({ ...data.seller });
-            setOriginalSellerData(JSON.stringify({ ...data.seller }));
+            data.seller.flat_shipping_fee = data.seller.flat_shipping_fee / 100
+            data.seller.product_total_free_delivery = data.seller.product_total_free_delivery / 100
+            setSellerData({ ...data.seller })
+            setLastSellerData(JSON.stringify({ ...data.seller }))
           }
-          setLoadingData(false);
+          setLoadingData(false)
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  }, [user]);
+  }, [user])
 
   const updateSellerData = (k: string, v: any) => {
-    const newSellerData = { ...sellerData };
-    newSellerData[k] = v;
-    setSellerData(newSellerData);
-  };
+    const newSellerData = { ...sellerData }
+    newSellerData[k] = v
+    setSellerData(newSellerData)
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault()
+    setLoading(true)
     try {
       // Input validation
       if (sellerData.company_name === "") {
-        alert("Company Name cannot be empty.");
-        return;
+        alert("Company Name cannot be empty.")
+        return
       }
       if (sellerData.address === "") {
-        alert("Address cannot be empty.");
-        return;
+        alert("Address cannot be empty.")
+        return
       }
       if (!validateUEN(sellerData.acra_uen)) {
         alert("Invalid UEN format.")
-        return;
+        return
       }
       if (sellerData.first_name === "") {
-        alert("First Name cannot be empty.");
-        return;
+        alert("First Name cannot be empty.")
+        return
       }
       if (sellerData.last_name === "") {
-        alert("Last Name cannot be empty.");
-        return;
+        alert("Last Name cannot be empty.")
+        return
       }
       if (!validateTwoDecimalNum(sellerData.flat_shipping_fee)) {
-        alert("Flat Shipping Fee must be a number with at most two decimal places.");
-        return;
+        alert("Flat Shipping Fee must be a number with at most two decimal places.")
+        return
       }
       if (!validateTwoDecimalNum(sellerData.product_total_free_delivery)) {
-        alert("Free Delivery Threshold must be a number with at most two decimal places.");
-        return;
+        alert("Free Delivery Threshold must be a number with at most two decimal places.")
+        return
       }
 
       if (callerType === SIGN_UP_TYPE) {
@@ -105,10 +106,10 @@ const SellerDetails = ({ callerType }) => {
         payload.display_name = nanoid(12)
         await makeGraphQLQuery("insertNewSeller", payload)
           .then((res) => {
-            console.log(res);
-            window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name);
+            console.log(res)
+            window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name)
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
 
         // TODO: switch to Stripe server link generation instead of
         // manually creating link, however, will then need to properly
@@ -127,30 +128,30 @@ const SellerDetails = ({ callerType }) => {
 
       if (callerType === UPDATE_TYPE) {
         // Update info
-        if (JSON.stringify(sellerData) === originalSellerData) {
-          alert("Nothing to update!");
-          return;
+        if (JSON.stringify(sellerData) === lastSellerData) {
+          alert("Nothing to update!")
+          return
         }
         const payload = { ...sellerData, user_id: user.sub }
         payload.flat_shipping_fee = convertToInt(payload.flat_shipping_fee)
         payload.product_total_free_delivery = convertToInt(payload.product_total_free_delivery)
-        delete payload.stripe_id;
-        delete payload.verified;
+        delete payload.stripe_id
+        delete payload.verified
         delete payload.display_name
         await makeGraphQLQuery("updateSellerInfo", payload)
           .then((res) => {
-            setOriginalSellerData(JSON.stringify(sellerData));
-            alert("Success updating your information!");
+            setLastSellerData(JSON.stringify(sellerData))
+            alert("Success updating your information!")
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
       }
     } finally {
       setLoading(false)
     }
-  };
+  }
 
   if (loadingData) {
-    return <SpinnerWithMessage label="Configuring Page" />;
+    return <SpinnerWithMessage label="Configuring Page" />
   }
 
   return (
@@ -158,6 +159,9 @@ const SellerDetails = ({ callerType }) => {
       <form className="space-y-8" onSubmit={handleSubmit}>
         <div className="space-y-8  sm:space-y-5">
           <div className="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+
+            {/* Probably can be removed since a seller can only be verified after they
+            register with Stripe */}
             {
               callerType === UPDATE_TYPE &&
               sellerData &&
@@ -182,7 +186,7 @@ const SellerDetails = ({ callerType }) => {
                       type="button"
                       className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       onClick={() => {
-                        window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name);
+                        window.location.href = genStripeOnboardingLink(user.email, sellerData.first_name, sellerData.last_name)
                       }}
                     >
                       Connect your account with Stripe
@@ -302,7 +306,7 @@ const SellerDetails = ({ callerType }) => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default SellerDetails;
+export default SellerDetails
