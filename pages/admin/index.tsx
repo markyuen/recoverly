@@ -1,9 +1,9 @@
 import React from "react";
-import ApprovalTable from "../components/Admin/ApprovalTable";
-import CategoryTable from "../components/Admin/CategoryTable";
-import InternalLink from "../components/Common/Link";
-import ShopNav from "../components/layouts/ShopNav";
-import ProtectedRoute from "../components/route/ProtectedRoute";
+import ApprovalTable from "../../components/Admin/ApprovalTable";
+import CategoryTable from "../../components/Admin/CategoryTable";
+import InternalLink from "../../components/Common/Link";
+import ShopNav from "../../components/layouts/ShopNav";
+import ProtectedRoute from "../../components/route/ProtectedRoute";
 
 const Admin = () => {
   return (

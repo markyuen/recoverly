@@ -27,7 +27,7 @@ import { getUserCartProducts } from "./getUserCartProducts";
 import { deleteCartProduct } from "./deleteCartProduct";
 import getAboutInformation from "./getAboutInformation";
 import { getSellerFees } from "./getSellerFees";
-
+import updateCustomerQueryStatus from "./updateCustomerQueryStatus";
 import InsertCustomerQuery from "./insertCustomerQuery";
 
 // Map Queries here so the hook can import the right query
@@ -62,6 +62,7 @@ const mapping = {
   getAboutInformation,
   getSellerFees,
   InsertCustomerQuery,
+  updateCustomerQueryStatus,
 };
 
 export default mapping;
