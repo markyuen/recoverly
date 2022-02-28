@@ -27,8 +27,11 @@ import { getUserCartProducts } from "./getUserCartProducts";
 import { deleteCartProduct } from "./deleteCartProduct";
 import getAboutInformation from "./getAboutInformation";
 import { getSellerFees } from "./getSellerFees";
+<<<<<<< HEAD
 import updateCustomerQueryStatus from "./updateCustomerQueryStatus";
 import InsertCustomerQuery from "./insertCustomerQuery";
+=======
+>>>>>>> main
 import { insertNewOrder } from "./insertNewOrder";
 import { getUserOrders } from "./getUserOrders";
 import { updateUserOrderStatus } from "./updateUserOrderStatus";

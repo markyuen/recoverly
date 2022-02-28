@@ -9,9 +9,11 @@ type ApprovalTableBodyProps = {
 const ApprovalTableBody = ({ sellers }: ApprovalTableBodyProps) => {
   return (
     <tbody className="bg-white divide-y divide-gray-200">
-      {sellers.map((seller, index) => {
-        return <ApprovalTableRow key={index} seller={seller} />;
-      })}
+      {
+        sellers.map((seller, index) => {
+          return <ApprovalTableRow key={index} seller={seller} />;
+        })
+      }
     </tbody>
   );
 };

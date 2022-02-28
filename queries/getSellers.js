@@ -1,6 +1,6 @@
 export const getSellers = `
 query getSellers {
-  seller {
+  seller(order_by: {created_at: desc}) {
     company_name
     acra_uen
     address

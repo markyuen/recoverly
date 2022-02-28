@@ -38,6 +38,7 @@ CREATE TABLE "seller" (
   user_id TEXT PRIMARY KEY REFERENCES "user" (user_id),
   stripe_id TEXT UNIQUE,
   company_name TEXT NOT NULL,
+  display_name TEXT NOT NULL UNIQUE,
   address TEXT NOT NULL,
   office_number TEXT,
   acra_uen TEXT NOT NULL UNIQUE,
@@ -108,9 +109,6 @@ CREATE TABLE "product" (
   brand_id INTEGER NOT NULL REFERENCES "brand" (brand_id),
   product_status INTEGER NOT NULL REFERENCES "product_status" (product_status_id),
   product_name TEXT NOT NULL,
-  ind_usual_retail_price INTEGER NOT NULL CHECK (ind_usual_retail_price > 0),
-  ind_current_price INTEGER NOT NULL CHECK (ind_current_price > 0),
-  number_in_stock INTEGER NOT NULL CHECK (number_in_stock > 0),
   description TEXT,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
@@ -156,23 +154,19 @@ CREATE TABLE "products_categories" (
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "products_categories"
   FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
 
-CREATE TABLE "variation_category" (
-  variation_category_id SERIAL PRIMARY KEY,
-  variation_category_name TEXT NOT NULL,
-  updated_at TIMESTAMP NOT NULL DEFAULT now(),
-  created_at TIMESTAMP NOT NULL DEFAULT now()
-);
-
-CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation_category"
-  FOR EACH ROW EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TABLE "variation" (
-  variation_id SERIAL PRIMARY KEY,
+CREATE TABLE "variation_pair" (
+  variation_pair_id SERIAL PRIMARY KEY,
   product_id INTEGER NOT NULL REFERENCES "product" (product_id),
-  variation_category_id INTEGER NOT NULL REFERENCES "variation_category" (variation_category_id),
-  variation_name TEXT NOT NULL,
+  variation_1 TEXT NOT NULL,
+  variation_2 TEXT,
+  variation_1_category TEXT NOT NULL,
+  variation_2_category TEXT,
+  quantity INTEGER NOT NULL CHECK (quantity >= 0),
+  original_price INTEGER NOT NULL CHECK (original_price >= 0),
+  discounted_price INTEGER NOT NULL check (discounted_price >= 0),
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
-  created_at TIMESTAMP NOT NULL DEFAULT now()
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  UNIQUE (product_id, variation_1, variation_2)
 );
 
 CREATE TRIGGER set_timestamp BEFORE UPDATE ON "variation"
@@ -210,7 +204,8 @@ CREATE TABLE "order" (
   user_id TEXT NOT NULL REFERENCES "user" (user_id),
   order_status_id INTEGER NOT NULL REFERENCES "order_status" (order_status_id) DEFAULT 1,
   shipping_address TEXT NOT NULL,
-  stripe_checkout_id TEXT UNIQUE,
+  stripe_checkout_id TEXT NOT NULL UNIQUE,
+  stripe_payment_intent_id TEXT UNIQUE,
   updated_at TIMESTAMP NOT NULL DEFAULT now(),
   created_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -241,8 +236,8 @@ INSERT INTO orders_products_status (orders_products_status_name) VALUES
 -- price should be locked in once the order is submitted
 CREATE TABLE "orders_products" (
   order_id INTEGER REFERENCES "order" (order_id),
-  product_id INTEGER REFERENCES "product" (product_id),
-  PRIMARY KEY (order_id, product_id),
+  variation_pair_id INTEGER REFERENCES "variation_pair" (variation_pair_id),
+  PRIMARY KEY (order_id, variation_pair_id),
   orders_products_status_id INTEGER NOT NULL REFERENCES "orders_products_status" (orders_products_status_id) DEFAULT 1,
   product_amount INTEGER NOT NULL CHECK (product_amount > 0),
   total_price INTEGER NOT NULL CHECK (total_price > 0),
@@ -255,7 +250,7 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON "orders_products"
 
 -- Each sellers portion of an order can be pending confirmation
 -- for each of the orders products, accepted, meaning all products
--- are accounted for and at least one is accepted, shipped, completed
+-- are accounted for and at least one is accepted, shipped,
 -- or rejected if all products are rejected
 CREATE TABLE "orders_sellers_status" (
   orders_sellers_status_id SERIAL PRIMARY KEY,
@@ -271,7 +266,6 @@ INSERT INTO orders_sellers_status (orders_sellers_status_name) VALUES
   ('CONFIRMATION_PENDING'),
   ('ACCEPTED'),
   ('SHIPPED'),
-  ('COMPLETED'),
   ('REJECTED');
 
 -- [INTERMEDIARY] Each order can contain multiple sellers,

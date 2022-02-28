@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next"
-
 import { MIN_AMOUNT, MAX_AMOUNT } from "../../../config"
 
 import Stripe from "stripe"
@@ -14,7 +13,7 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const items = req.body.items;
-    const amount: number = req.body.items.reduce((acc: number, item) => {
+    const amount: number = items.reduce((acc: number, item) => {
       return acc + item.quantity * item.amount;
     }, 0)
     try {
@@ -28,21 +27,19 @@ export default async function handler(
         payment_method_types: ["card"],
         line_items: items,
         customer_creation: "always", // KIV, can potentially tie customer to user in future
-        // customer_email: "", // Put in user email
-        success_url: `${req.headers.origin}/checkout_success?session_id={CHECKOUT_SESSION_ID}`,
+        customer_email: req.body.email,
+        success_url: `${req.headers.origin}/account/orders`,
         cancel_url: `${req.headers.origin}/cart`,
         shipping_address_collection: {
           allowed_countries: ["SG"]
         },
         payment_intent_data: {
           capture_method: "manual",
-          // TODO: implement
-          // receipt_email: "",
         },
-        // TODO
-        // metadata: {
-        //   user_id: "" // Add user id
-        // },
+        metadata: {
+          user_id: req.body.user_id,
+          products: req.body.products,
+        },
       }
       const checkoutSession: Stripe.Checkout.Session =
         await stripe.checkout.sessions.create(params)
