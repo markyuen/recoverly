@@ -54,4 +54,13 @@ const Inquiry = () => {
   );
 };
 
+export async function getStaticProps(context) {
+  return {
+    props: {
+      protected: true,
+      userTypes: ["admin"],
+    },
+  };
+}
+
 export default Inquiry;

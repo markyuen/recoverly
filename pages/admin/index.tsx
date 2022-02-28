@@ -10,6 +10,13 @@ const Admin = () => {
     <ProtectedRoute>
       <ShopNav>
         <InternalLink
+          name="See Open Inquiries"
+          href="/admin/inquiry"
+          styling="pr-2 mb-4 cursor-pointer text-blue-400 hover:underline transition duration-75"
+          type="admin"
+        />
+
+        <InternalLink
           name="Add Item For Seller"
           href="/seller/add_item"
           styling="pr-2 mb-4 cursor-pointer text-blue-400 hover:underline transition duration-75"
