@@ -1,8 +1,11 @@
-import React, { useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import ContactInput from "./ContactInput";
 import axios from "axios";
 import useChakraToast from "../../hooks/useChakraToast";
 import { validateEmail } from "../../lib/helpers";
+import queries from "../../queries/main";
+import { useUserRole } from "../../context/UserRoleContext";
+import { useUser } from "@auth0/nextjs-auth0";
 
 const initialFormState = {
   name: "",
@@ -39,6 +42,15 @@ const ContactForm = () => {
   const [formState, dispatch] = useReducer(reducer, initialFormState);
   const { generateSuccessToast, generateWarningToast } = useChakraToast();
 
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      dispatch({ type: UPDATE_NAME, payload: user.name });
+      dispatch({ type: UPDATE_EMAIL, payload: user.email });
+    }
+  }, [user]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -56,10 +68,17 @@ const ContactForm = () => {
     }
 
     axios
-      .post("/api/airtable/customer_enquiry", {
-        ...formState,
+      .post("/api/customer/insertCustomerQuery", {
+        operation: "insertCustomerQuery",
+        query: queries["InsertCustomerQuery"],
+        variables: {
+          customer_email: formState.email,
+          full_name: formState.name,
+          message: formState.message,
+        },
       })
       .then((res) => {
+        console.log(res);
         dispatch({ type: RESET_STATE });
         generateSuccessToast(
           "Success!",
