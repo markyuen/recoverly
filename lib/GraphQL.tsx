@@ -56,3 +56,28 @@ export const makeRequestToHasura = async (operation, query, variables) => {
 
   return { errors, data };
 };
+
+export const makeRequestToCustomerService = async (
+  operation,
+  query,
+  variables
+) => {
+  const graphqlQuery = {
+    operationName: operation,
+    query,
+    variables: variables ? variables : {},
+  };
+  const response = await axios({
+    url: process.env.HASURA_CRM_DB_ENDPOINT,
+    method: "post",
+    headers: {
+      "content-type": "application/json",
+      "x-hasura-admin-secret": process.env.HASURA_CRM_ADMIN_SECRET,
+    },
+    data: graphqlQuery,
+  });
+
+  const { errors, data } = response;
+
+  return { errors, data };
+};

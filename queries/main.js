@@ -27,6 +27,8 @@ import { getUserCartProducts } from "./getUserCartProducts";
 import { deleteCartProduct } from "./deleteCartProduct";
 import getAboutInformation from "./getAboutInformation";
 import { getSellerFees } from "./getSellerFees";
+import updateCustomerQueryStatus from "./updateCustomerQueryStatus";
+import InsertCustomerQuery from "./insertCustomerQuery";
 import { insertNewOrder } from "./insertNewOrder";
 import { getUserOrders } from "./getUserOrders";
 import { updateUserOrderStatus } from "./updateUserOrderStatus";
@@ -69,6 +71,8 @@ const mapping = {
   deleteCartProduct,
   getAboutInformation,
   getSellerFees,
+  InsertCustomerQuery,
+  updateCustomerQueryStatus,
   insertNewOrder,
   getUserOrders,
   updateUserOrderStatus,
