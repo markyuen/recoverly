@@ -15,7 +15,7 @@ const SellOnRecoverly = () => {
             Recoup your capital from your excess inventory and returned eCommerce Goods anonymously
           </p>
           <div className="mt-6">
-              <Link href="/about">
+              <Link href="/about" passHref>
               <button className="bg-dark-blue-recoverly hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Learn More About Recoverly</button>
               </Link>
           </div>
@@ -33,6 +33,7 @@ const SellOnRecoverly = () => {
             src="/Logo Round Inverse for Dark BG (Mock-up).png"
             width="350"
             height="350"
+            alt="Unable to load logo"
           ></Image>
         </div>
       </div>

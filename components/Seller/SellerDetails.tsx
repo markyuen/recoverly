@@ -56,7 +56,7 @@ const SellerDetails = ({ callerType }) => {
         })
         .catch((err) => console.log(err))
     }
-  }, [user])
+  }, [user, callerType])
 
   const updateSellerData = (k: string, v: any) => {
     const newSellerData = { ...sellerData }
