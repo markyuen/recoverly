@@ -5,6 +5,7 @@ import Header from "../Common/Header";
 import CategoryCard from "./CategoryCard";
 import getParentCategories from "../../queries/getParentCategories";
 import SkeletonGrid from "../Skeleton/SkeletonGrid";
+import useTranslationHook from "../../hooks/useTranslationHook";
 
 const Categories = () => {
   const { data, error } = useSWR(
@@ -16,6 +17,8 @@ const Categories = () => {
     },
     fetcherWithBody
   );
+
+  const { translate } = useTranslationHook();
 
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState(3);
@@ -44,7 +47,7 @@ const Categories = () => {
   console.log(data);
   return (
     <>
-      <Header name="Popular Categories" />
+      <Header name={translate("Categories")} />
       <div className="flex items-center ">
         {start > 0 && (
           <svg
