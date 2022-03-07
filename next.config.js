@@ -6,7 +6,7 @@ module.exports = {
       "fakestoreapi.com",
       "images.unsplash.com",
       "lh3.googleusercontent.com",
-      "s.gravatar.com"
+      "s.gravatar.com",
     ],
   },
 };

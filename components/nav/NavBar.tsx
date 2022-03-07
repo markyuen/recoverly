@@ -1,13 +1,16 @@
 import Link from "next/link";
 import InternalLink from "../Common/Link";
-import SearchBar from "./SearchBar";
 import { useUser } from "@auth0/nextjs-auth0";
 import ShoppingCartIcon from "./ShoppingCartIcon";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
+import useTranslationHook from "../../hooks/useTranslationHook";
 
 const NavBar = () => {
   const { user } = useUser();
-
+  const router = useRouter();
+  const { translate, switchLanguage, currLanguage } = useTranslationHook();
   return (
     <>
       <div className="">
@@ -45,34 +48,35 @@ const NavBar = () => {
                   />
                   <InternalLink
                     href="/seller"
-                    name="Seller Dashboard"
+                    name={translate("Seller Dashboard")}
                     styling="px-2"
                     type="verified-seller"
                   />
                   <InternalLink
                     href="/account"
-                    name="Your Account"
+                    name={translate("Your Account")}
                     styling="px-2"
                     type="customer"
                   />
                   <InternalLink
                     href="/api/auth/logout"
-                    name="Sign Out"
+                    name={translate("Sign Out")}
                     styling="px-2"
                     type="customer"
                   />
                 </>
               )}
+              <p
+                className="px-2  border bg-white cursor-pointer py-2"
+                onClick={() => switchLanguage()}
+              >
+                Switch to {currLanguage == "en" ? "Thai" : "English"}
+              </p>
               <div className="cursor-pointer">
                 <ShoppingCartIcon />
               </div>
             </div>
           </div>
-
-          {/* <div className="text-md text-gray-600">
-            <span className="pr-5">Categories</span>
-            <span className="">Brands</span>
-          </div> */}
         </div>
       </div>
     </>
